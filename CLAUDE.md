@@ -1,5 +1,18 @@
 # GameReviewGraph — Claude Code Context
 
+> **Context tree root.** Each subdirectory with a `CLAUDE.md` carries deeper, scope-specific guidance.
+> Navigate down for more detail:
+>
+> ```
+> / (root)  ← you are here: project-wide rules, architecture, algorithms
+> ├── docs/CLAUDE.md    — MkDocs pages, nav map, content ownership
+> └── src/CLAUDE.md     — filter contracts, I/O paths, cache pattern, implementation rules
+> ```
+>
+> When working inside a subdirectory, read its `CLAUDE.md` first, then this file for project-wide constraints.
+
+---
+
 ## Project Overview
 
 Academic project for FGA0030 (Data Structures 2, UnB 2026/1). Transforms a corpus of ~200 fictional game reviews in Portuguese into a three-level hierarchical graph structure and detects semantic communities (topics) via progressive edge cutting. Pure Python implementation — no external graph libraries. Deadline: **22/06/2026 (last GitHub commit)**.
@@ -106,7 +119,7 @@ def build_word_graph(sentences: list[list[str]]) -> dict[str, dict[str, float]]:
 ```
 
 - Python 3.11+
-- No `requirements.txt` bloat — only `nltk` and/or `spacy` as dependencies
+- Dependencies managed via **uv** (`pyproject.toml`) — no `requirements.txt`
 - One module per graph level — do not mix responsibilities across files
 - Test each module independently before integrating into `main.py`
 
@@ -114,20 +127,25 @@ def build_word_graph(sentences: list[list[str]]) -> dict[str, dict[str, float]]:
 
 ## Verification Commands
 
+All execution goes through `make`. Never call `python`/`python3` directly.
+
 ```bash
+# Install dependencies
+make install
+
 # Run full pipeline
-python main.py
+make run
 
 # Run a specific module in isolation
-python -m preprocessing
-python -m tree
-python -m word_graph
+make preprocessing
+make tree
+make word-graph
 
 # Check output format
-python main.py | head -50
+make run | head -50
 ```
 
-After implementing any module, Claude should run it and confirm the output matches the expected structure before proceeding to the next.
+After implementing any module, Claude should run it via `make` and confirm the output matches the expected structure before proceeding to the next.
 
 ---
 
