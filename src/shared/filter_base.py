@@ -24,15 +24,20 @@ class AbstractFilter(ABC):
 
     Class attributes:
         name: Unique slug identifying this filter (e.g. ``"word_graph"``).
-        input_key: Key into ``S3_KEYS`` for the filter's input artifact.
+        input_key: Key into ``S3_KEYS`` for the filter's primary input artifact.
         output_key: Key into ``S3_KEYS`` for the filter's output artifact.
         output_format: ``"json"`` (default) or ``"text"`` for plain-text output.
+        extra_input_keys: Additional ``S3_KEYS`` keys required by multi-input
+            filters (e.g. ``["tree"]`` for ``sentence_graph``). When non-empty,
+            ``process()`` receives a dict instead of a plain object — see
+            ``_load_input()`` for the exact shape.
     """
 
     name: str
     input_key: str
     output_key: str
     output_format: str = "json"
+    extra_input_keys: list[str] = []
 
     def execute(self) -> None:
         """Run the full filter lifecycle: cache check → load → process → save.
@@ -62,12 +67,33 @@ class AbstractFilter(ABC):
         """
 
     def _load_input(self) -> Any:
-        """Download and deserialize the filter's input artifact from S3.
+        """Download the filter's input artifact(s) from S3.
+
+        When ``extra_input_keys`` is empty (the default), returns the primary
+        artifact as a plain Python object — identical to the previous behaviour,
+        no changes needed in single-input filters.
+
+        When ``extra_input_keys`` is non-empty, returns a dict of the form::
+
+            {
+                "primary": <primary artifact>,
+                "<extra_key_1>": <artifact>,
+                ...
+            }
+
+        Multi-input filters declare ``extra_input_keys`` at class level and
+        destructure this dict inside ``process()``.
 
         Returns:
-            Parsed JSON object from ``S3_KEYS[self.input_key]``.
+            Parsed JSON object, or a dict of multiple parsed JSON objects.
         """
-        return get_storage().read_json(S3_KEYS[self.input_key])
+        primary = get_storage().read_json(S3_KEYS[self.input_key])
+        if not self.extra_input_keys:
+            return primary
+        result: dict[str, Any] = {"primary": primary}
+        for key in self.extra_input_keys:
+            result[key] = get_storage().read_json(S3_KEYS[key])
+        return result
 
     def _write_output(self, result: Any) -> None:
         """Upload the filter's result to S3.
