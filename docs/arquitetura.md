@@ -7,18 +7,36 @@ O **GameReviewGraph** é estruturado como um pipeline de **Pipe and Filter**: ca
 ## Pipeline Completo
 
 ```mermaid
-flowchart LR
-    RAW["📄 data/comments.json"]
+flowchart TD
+    RAW["data/comments.json\n(entrada bruta)"]
 
-    PP["preprocessing.py\n(Filtro 1)"]
-    TR["tree.py\n(Filtro 2)"]
-    WG["word_graph.py\n(Filtro 3)"]
-    SG["sentence_graph.py\n(Filtro 4)"]
-    CG["comment_graph.py\n(Filtro 5)"]
-    FG["final_graph.py\n(Filtro 6)"]
-    CD["community_detection.py\n(Filtro 7)"]
-    MT["metrics.py\n(Filtro 8)"]
-    AN["analysis.py\n(Filtro 9)"]
+    subgraph F1["Filtro 1"]
+        PP["preprocessing.py"]
+    end
+    subgraph F2["Filtro 2"]
+        TR["tree.py"]
+    end
+    subgraph F3["Filtro 3"]
+        WG["word_graph.py"]
+    end
+    subgraph F4["Filtro 4"]
+        SG["sentence_graph.py"]
+    end
+    subgraph F5["Filtro 5"]
+        CG["comment_graph.py"]
+    end
+    subgraph F6["Filtro 6"]
+        FG["final_graph.py"]
+    end
+    subgraph F7["Filtro 7"]
+        CD["community_detection.py"]
+    end
+    subgraph F8["Filtro 8"]
+        MT["metrics.py"]
+    end
+    subgraph F9["Filtro 9"]
+        AN["analysis.py"]
+    end
 
     PRE["preprocessed.json"]
     TREE["tree.json"]
@@ -30,21 +48,20 @@ flowchart LR
     MET["metrics.json"]
     REP["report.txt"]
 
-    RAW --> PP --> PRE
-    PRE --> TR --> TREE
-    TREE --> WG --> WGJ
-    WGJ --> SG
-    TREE --> SG --> SGJ
-    SGJ --> CG
-    TREE --> CG --> CGJ
-    WGJ --> FG
-    SGJ --> FG
-    CGJ --> FG
-    TREE --> FG --> FGJ
-    FGJ --> CD --> COM
-    COM --> MT
-    FGJ --> MT --> MET
-    MET --> AN --> REP
+    RAW --> F1 --> PRE --> F2 --> TREE
+    TREE --> F3 --> WGJ
+    WGJ --> F4
+    TREE --> F4 --> SGJ
+    SGJ --> F5
+    TREE --> F5 --> CGJ
+    WGJ --> F6
+    SGJ --> F6
+    CGJ --> F6
+    TREE --> F6 --> FGJ
+    FGJ --> F7 --> COM
+    FGJ --> F8
+    COM --> F8 --> MET
+    MET --> F9 --> REP
 ```
 
 ---
