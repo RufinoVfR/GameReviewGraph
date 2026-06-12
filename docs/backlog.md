@@ -4,7 +4,7 @@ O backlog reúne todas as funcionalidades previstas para o **GameReviewGraph** n
 
 ---
 
-## 9.1 Backlog Geral
+## 1. Backlog Geral
 
 ### Temas Estratégicos
 
@@ -50,7 +50,7 @@ O backlog reúne todas as funcionalidades previstas para o **GameReviewGraph** n
 
 ---
 
-## 9.2 Priorização do Backlog
+## 2. Priorização do Backlog
 
 A priorização foi conduzida com base em uma análise de **dependência técnica** — que é o principal critério ordenador em sistemas de pipeline — combinada a uma avaliação de **Benefício (B)**, **Urgência (U)**, **Esforço (E)** e **Risco (R)** em escala de 1 a 5.
 
@@ -77,7 +77,7 @@ Histórias com maior dependência de outras foram posicionadas primeiro independ
 
 ---
 
-## 9.3 MVP
+## 3. MVP
 
 O MVP do **GameReviewGraph** corresponde ao pipeline completo e funcional — da entrada de comentários brutos à saída dos tópicos detectados com métricas de qualidade. Dado que o projeto é um sistema de análise acadêmica com entrega única, **todas as histórias de usuário compõem o MVP**, pois cada uma representa uma etapa obrigatória do pipeline sem a qual as etapas subsequentes não podem ser executadas.
 
@@ -100,7 +100,7 @@ O MVP do **GameReviewGraph** corresponde ao pipeline completo e funcional — da
 
 ---
 
-## 9.4 Critérios de Aceitação do MVP
+## 4. Critérios de Aceitação do MVP
 
 **US01 — Pré-processar comentários**
 

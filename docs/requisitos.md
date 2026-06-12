@@ -4,7 +4,7 @@ Esta seção apresenta os requisitos funcionais e não funcionais que fundamenta
 
 ---
 
-## 7.1 Requisitos Funcionais
+## 1. Requisitos Funcionais
 
 Os requisitos funcionais descrevem as funcionalidades que o sistema deve implementar para transformar comentários textuais em comunidades semânticas interpretáveis como tópicos.
 
@@ -36,7 +36,7 @@ Os requisitos funcionais descrevem as funcionalidades que o sistema deve impleme
 
 ---
 
-## 7.2 Requisitos Não Funcionais
+## 2. Requisitos Não Funcionais
 
 Os requisitos não funcionais definem restrições técnicas e de qualidade que o sistema deve satisfazer, derivadas das exigências da disciplina e das decisões arquiteturais do grupo.
 
