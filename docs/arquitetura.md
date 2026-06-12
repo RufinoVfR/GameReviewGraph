@@ -1,6 +1,6 @@
 # Arquitetura — Pipe and Filter
 
-O **GameReviewGraph** é estruturado como um pipeline de **Pipe and Filter**: cada módulo é um filtro independente que lê uma entrada bem definida, aplica uma transformação e escreve uma saída serializada. Os filtros se comunicam exclusivamente por arquivos intermediários — nenhum filtro importa diretamente funções internas de outro.
+O **GameReviewGraph** é estruturado como um pipeline de **Pipe and Filter**: cada módulo é um filtro independente que lê uma entrada bem definida, aplica uma transformação e escreve uma saída serializada. Os filtros se comunicam exclusivamente por artefatos JSON armazenados no **MinIO S3** — nenhum filtro importa diretamente funções internas de outro. Resultados intermediários são mantidos no **Redis** para evitar reprocessamento.
 
 ---
 
@@ -8,7 +8,7 @@ O **GameReviewGraph** é estruturado como um pipeline de **Pipe and Filter**: ca
 
 ```mermaid
 flowchart TD
-    RAW["data/comments.json\n(entrada bruta)"]
+    RAW["MinIO\npipeline/comments.json\n(entrada bruta)"]
 
     subgraph F1["Filtro 1"]
         PP["preprocessing.py"]
@@ -38,15 +38,15 @@ flowchart TD
         AN["analysis.py"]
     end
 
-    PRE["preprocessed.json"]
-    TREE["tree.json"]
-    WGJ["word_graph.json"]
-    SGJ["sentence_graph.json"]
-    CGJ["comment_graph.json"]
-    FGJ["final_graph.json"]
-    COM["communities.json"]
-    MET["metrics.json"]
-    REP["report.txt"]
+    PRE["pipeline/preprocessed.json"]
+    TREE["pipeline/tree.json"]
+    WGJ["pipeline/word_graph.json"]
+    SGJ["pipeline/sentence_graph.json"]
+    CGJ["pipeline/comment_graph.json"]
+    FGJ["pipeline/final_graph.json"]
+    COM["pipeline/communities.json"]
+    MET["pipeline/metrics.json"]
+    REP["pipeline/report.txt"]
 
     RAW --> F1 --> PRE --> F2 --> TREE
     TREE --> F3 --> WGJ
@@ -64,12 +64,14 @@ flowchart TD
     MET --> F9 --> REP
 ```
 
+> Todos os artefatos intermediários residem no bucket `game-review-graph` do MinIO sob o prefixo `pipeline/`. O Redis mantém os resultados em cache com a chave `filter:<nome>` — em um cache hit, `AbstractFilter.execute()` pula `process()` e regrava o artefato no S3 sem reprocessar.
+
 ---
 
 ## Tabela de Filtros
 
-| # | Filtro | Entradas | Saída | Responsabilidade |
-|---|--------|----------|-------|-----------------|
+| # | Filtro | Entradas (S3) | Saída (S3) | Responsabilidade |
+|---|--------|---------------|------------|-----------------|
 | 1 | `preprocessing.py` | `comments.json` | `preprocessed.json` | Lowercase, remoção de pontuação, tokenização, stopwords, stemming/lematização |
 | 2 | `tree.py` | `preprocessed.json` | `tree.json` | Constrói a Árvore N-ária: Dataset → Comentário → Frase → Palavra |
 | 3 | `word_graph.py` | `tree.json` | `word_graph.json` | Grafo de co-ocorrência de palavras com peso posicional |
@@ -78,16 +80,16 @@ flowchart TD
 | 6 | `final_graph.py` | `word_graph.json` + `sentence_graph.json` + `comment_graph.json` + `tree.json` | `final_graph.json` | Grafo unificado: 3 níveis + arestas hierárquicas da árvore |
 | 7 | `community_detection.py` | `final_graph.json` | `communities.json` | Corte progressivo de arestas + BFS/DFS → K=10 comunidades |
 | 8 | `metrics.py` | `final_graph.json` + `communities.json` | `metrics.json` | Centralidade de grau ponderada + Modularidade Q |
-| 9 | `analysis.py` | `metrics.json` | `report.txt` + stdout | Geração do relatório final com tópicos e métricas |
+| 9 | `analysis.py` | `metrics.json` | `report.txt` | Geração do relatório final com tópicos e métricas |
 
 ---
 
 ## Contratos de Interface (Tipos Python)
 
-Cada filtro expõe uma função principal com assinatura tipada. O `main.py` chama os filtros em sequência, passando objetos Python em memória (o I/O em disco é para persistência e execução isolada).
+Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `main.py` instancia os filtros e os encadeia via `FilterChain` — o I/O com MinIO e o cache Redis são gerenciados automaticamente por `AbstractFilter.execute()`.
 
-| Filtro | Tipo de entrada (Python) | Tipo de saída (Python) |
-|--------|--------------------------|------------------------|
+| Filtro | Tipo de entrada (`process`) | Tipo de saída (`process`) |
+|--------|-----------------------------|--------------------------|
 | `preprocessing.py` | `list[RawComment]` | `list[ProcessedComment]` |
 | `tree.py` | `list[ProcessedComment]` | `NaryTree` |
 | `word_graph.py` | `NaryTree` | `Graph` |
@@ -101,42 +103,35 @@ Cada filtro expõe uma função principal com assinatura tipada. O `main.py` cha
 **Aliases de tipo** (definidos em `src/types.py`):
 
 ```python
-# tipos canônicos do projeto
-RawComment      = dict                            # {"id": int, "topic": str, "text": str}
-ProcessedComment = dict                           # {"id": int, "topic": str, "sentences": list[list[str]]}
-Graph           = dict[str, dict[str, float]]     # adjacency list; keys prefixed w_, s_, c_
-Communities     = dict[int, list[str]]            # community_id → [node_key, ...]
-Metrics         = dict                            # ver schema em metrics.py
+RawComment       = dict                        # {"id": int, "topic": str, "text": str}
+ProcessedComment = dict                        # {"id": int, "topic": str, "sentences": list[list[str]]}
+Graph            = dict[str, dict[str, float]] # adjacency list; keys prefixed w_, s_, c_
+Communities      = dict[int, list[str]]        # community_id → [node_key, ...]
+Metrics          = dict                        # ver schema em metrics.py
 ```
 
 ---
 
-## Estrutura de Arquivos em Disco
+## Estrutura de Artefatos (MinIO)
+
+Todos os artefatos vivem no bucket `game-review-graph` sob o prefixo `pipeline/`. O mapeamento entre chave lógica e objeto S3 é definido em `src/config.py` (`S3_KEYS`):
 
 ```
-data/
-├── comments.json           # entrada bruta — NUNCA modificar
-├── preprocessed.json       # saída do Filtro 1
-├── tree.json               # saída do Filtro 2
-├── word_graph.json         # saída do Filtro 3
-├── sentence_graph.json     # saída do Filtro 4
-├── comment_graph.json      # saída do Filtro 5
-├── final_graph.json        # saída do Filtro 6
-├── communities.json        # saída do Filtro 7
-├── metrics.json            # saída do Filtro 8
-├── report.txt              # saída do Filtro 9 (legível por humanos)
-└── cache/
-    ├── preprocessed.pkl    # cache pickle (opcional, aceleração)
-    ├── tree.pkl
-    ├── word_graph.pkl
-    ├── sentence_graph.pkl
-    ├── comment_graph.pkl
-    ├── final_graph.pkl
-    ├── communities.pkl
-    └── metrics.pkl
+s3://game-review-graph/
+└── pipeline/
+    ├── comments.json           # entrada bruta — carregada via make init-data
+    ├── preprocessed.json       # saída do Filtro 1
+    ├── tree.json               # saída do Filtro 2
+    ├── word_graph.json         # saída do Filtro 3
+    ├── sentence_graph.json     # saída do Filtro 4
+    ├── comment_graph.json      # saída do Filtro 5
+    ├── final_graph.json        # saída do Filtro 6
+    ├── communities.json        # saída do Filtro 7
+    ├── metrics.json            # saída do Filtro 8
+    └── report.txt              # saída do Filtro 9 (legível por humanos)
 ```
 
-**Regra de cache:** cada filtro verifica `data/cache/<nome>.pkl` antes de processar. Se existir e o JSON de entrada não tiver sido modificado (por mtime), carrega o pickle. Caso contrário, processa e salva ambos (JSON + pickle).
+**Cache Redis:** cada filtro armazena seu resultado serializado com pickle sob a chave `filter:<nome>` (ex.: `filter:word_graph`). `make clean` apaga todas as chaves `filter:*` e os artefatos S3 (exceto `comments.json`).
 
 ---
 
@@ -144,10 +139,14 @@ data/
 
 | Decisão | Escolha | Justificativa |
 |---------|---------|---------------|
-| Comunicação entre filtros | Arquivos intermediários (JSON oficial + pickle opcional) | Permite executar qualquer filtro de forma isolada sem reprocessar o pipeline inteiro; JSON é versionável e legível para inspeção manual |
-| Execução isolada | Cada módulo tem bloco `if __name__ == "__main__"` | Facilita debug por etapa durante o desenvolvimento em ondas |
-| Prefixos de nó (`w_`, `s_`, `c_`) | Convenção no `final_graph.json` | Permite identificar o tipo de um nó sem tabela auxiliar; evita colisão de chaves entre os três níveis |
-| Organização do código | Tudo em `src/` | Separa código de `docs/`, `data/` e arquivos de configuração na raiz |
+| Comunicação entre filtros | Artefatos JSON no MinIO S3 | Permite executar qualquer filtro isoladamente; artefatos são inspecionáveis via console MinIO (`localhost:9001`) |
+| Cache de resultados | Redis com pickle | Evita reprocessamento em execuções parciais; `make clean` invalida o cache sem destruir os artefatos S3 |
+| Execução isolada | `make <filtro>` via `docker compose run` | Debug por etapa sem reprocessar o pipeline inteiro |
+| Prefixos de nó (`w_`, `s_`, `c_`) | Convenção no `final_graph.json` | Identifica o tipo de um nó sem tabela auxiliar; evita colisão de chaves entre os três níveis |
+| Infraestrutura de padrões GoF | `src/shared/` isolado dos filtros de domínio | Filtros de domínio não importam uns dos outros; `shared/` é a única dependência cruzada permitida |
+| Padrões GoF aplicados | Template Method, Chain of Responsibility, Facade, Observer, Strategy | Ver [Padrões de Projeto](padroes_projeto.md) para especificação completa |
+| Execução containerizada | Docker obrigatório | Garante paridade entre dev, CI e entrega; elimina "funciona na minha máquina" |
+| S3 local em dev | MinIO | API 100% compatível com AWS S3; zero custo; console visual para inspeção |
 | Sem bibliotecas de grafos | Regra da disciplina | Penalidade de −5,0 pontos em caso de violação |
 | K = 10 comunidades | Constante global em `src/config.py` | Facilita ajuste sem alterar código dos filtros |
 
@@ -158,3 +157,4 @@ data/
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
 | 12/06/2026 | 1.0 | Criação inicial do documento | Lucas Antunes |
+| 12/06/2026 | 2.0 | Migração para MinIO S3 + Redis; atualização do diagrama, tabela de filtros e estrutura de artefatos | Lucas Antunes |
