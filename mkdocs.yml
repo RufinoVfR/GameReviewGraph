@@ -1,0 +1,42 @@
+site_name: GameReviewGraph
+site_url: https://rufinovfr.github.io/GameReviewGraph/
+repo_url: https://github.com/RufinoVfR/GameReviewGraph
+repo_name: RufinoVfR/GameReviewGraph
+
+theme:
+  name: material
+  language: pt
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Modo escuro
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Modo claro
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.tables
+
+nav:
+  - Início: index.md
+  - Visão do Produto e Projeto: visao_produto_projeto.md
+  - Requisitos: requisitos.md
+  - Backlog: backlog.md
+  - Cronograma: cronograma.md
+
+markdown_extensions:
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.highlight
+  - pymdownx.superfences
