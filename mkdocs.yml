@@ -35,6 +35,7 @@ nav:
   - Cronograma: cronograma.md
   - Arquitetura: arquitetura.md
   - Padrões de Projeto: padroes_projeto.md
+  - Utilitários de Grafos: grafos.md
   - Infraestrutura: infraestrutura.md
   - Contribuição: contributing.md
 

@@ -33,6 +33,7 @@ classDiagram
         +name: str
         +input_key: str
         +output_key: str
+        +extra_input_keys: list[str]
         +execute() None
         #_load_input() Any
         #_write_output(result) None
@@ -80,12 +81,38 @@ classDiagram
 
 ```
 AbstractFilter.execute()
-    ├── _load_cache(name)       → retorna objeto cacheado ou None
-    ├── [cache miss] _load_input()   → lê PATHS[input_key] do disco
-    ├── process(data)           → implementado pela subclasse  ← único método abstrato
-    ├── _write_output(result)   → escreve PATHS[output_key] + JSON
-    └── _save_cache(name, obj)  → persiste pickle em data/cache/
+    ├── _load_cache(name)         → retorna objeto cacheado ou None
+    ├── [cache miss] _load_input()
+    │       ├── extra_input_keys == []  → retorna primary artifact (objeto simples)
+    │       └── extra_input_keys != []  → retorna {"primary": ..., "<key>": ..., ...}
+    ├── process(data)             → implementado pela subclasse  ← único método abstrato
+    ├── _write_output(result)     → grava em MinIO via S3_KEYS[output_key]
+    └── _save_cache(name, obj)    → persiste no Redis sob filter:<name>
 ```
+
+### Filtros com múltiplas entradas
+
+Filtros que precisam de mais de um artefato declaram `extra_input_keys` e recebem um `dict` em `process()`:
+
+```python
+class SentenceGraphFilter(AbstractFilter):
+    name = "sentence_graph"
+    input_key = "word_graph"       # artefato primário
+    extra_input_keys = ["tree"]    # artefatos secundários
+    output_key = "sentence_graph"
+
+    def process(self, data: dict) -> Graph:
+        word_graph = data["primary"]
+        tree = data["tree"]
+        ...
+```
+
+| Filtro | `input_key` | `extra_input_keys` |
+|--------|-------------|-------------------|
+| `sentence_graph` | `"word_graph"` | `["tree"]` |
+| `comment_graph` | `"sentence_graph"` | `["preprocessed"]` |
+| `final_graph` | `"comment_graph"` | `["word_graph", "sentence_graph"]` |
+| `metrics` | `"communities"` | `["final_graph"]` |
 
 ---
 
@@ -236,10 +263,17 @@ classDiagram
 
     class ProgressiveEdgeCuttingStrategy {
         +detect(graph: Graph, k: int) Communities
-        -_sort_edges(graph) list[tuple]
-        -_remove_edge(graph, u, v) None
-        -_count_components(graph) int
-        -_bfs(graph, start, visited) list[str]
+    }
+
+    class src_shared_graph {
+        <<utility>>
+        copy_graph()
+        iter_edges()
+        has_edge()
+        degree()
+        remove_edge()
+        count_components()
+        connected_components()
     }
 
     class CommunityDetectionFilter {
@@ -249,7 +283,10 @@ classDiagram
 
     CommunityDetectionStrategy <|-- ProgressiveEdgeCuttingStrategy
     CommunityDetectionFilter o-- CommunityDetectionStrategy : delega detect()
+    ProgressiveEdgeCuttingStrategy --> src_shared_graph : delega travessia
 ```
+
+`ProgressiveEdgeCuttingStrategy` não possui métodos privados de travessia — toda lógica de BFS, contagem de componentes e iteração de arestas é delegada para `src.shared.graph`.
 
 ---
 
@@ -297,3 +334,4 @@ src/config.py e src/types.py  →  permitidos em qualquer lugar
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
 | 12/06/2026 | 1.0 | Criação do documento com cinco padrões GoF | Lucas Antunes |
+| 12/06/2026 | 1.1 | Template Method: extra_input_keys e filtros multi-input; Strategy: delegação para src.shared.graph | Lucas Antunes |

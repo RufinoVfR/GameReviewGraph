@@ -114,26 +114,60 @@ Os testes ficam em `tests/unit/test_<modulo>.py` (um arquivo por filtro) e `test
 
 **Ao implementar um filtro:**
 
-1. Descomente os imports no arquivo `tests/unit/test_<modulo>.py` correspondente
-2. Substitua o `test_placeholder` por testes reais que cobrem a função principal e casos de borda
-3. Use as fixtures de `tests/conftest.py` (`raw_comments`, `processed_comments`, `small_word_graph`) como ponto de partida
+1. Substitua o `test_placeholder` por testes reais que cobrem a função principal e casos de borda
+2. Use as fixtures de `tests/conftest.py` como ponto de partida (listadas abaixo)
+3. Nunca suba testes que dependem de MinIO ou Redis reais — use `mock_storage` e `mock_cache`
 
 O CI executa `make test` automaticamente em todo PR para `main` ou `dev`. O PR só pode ser mergeado se todos os testes passarem.
+
+### Fixtures disponíveis em `tests/conftest.py`
+
+| Fixture / Função | Tipo | Descrição |
+|------------------|------|-----------|
+| `raw_comments` | fixture | 4 comentários brutos em 2 tópicos (`list[dict]`) |
+| `processed_comments` | fixture | Versão pré-tokenizada dos comentários acima |
+| `small_word_graph` | fixture | Grafo de palavras com 6 nós e 2 componentes implícitos |
+| `clustered_graph` | fixture | Grafo com 2 clusters densos e uma ponte fraca — ideal para testar corte de arestas |
+| `mock_storage` | fixture | `S3Storage` com backend moto (sem MinIO real); reseta o singleton após o teste |
+| `mock_cache` | fixture | `RedisCache` com backend fakeredis (sem Redis real); reseta o singleton após o teste |
+| `make_graph(edges)` | função | Constrói um `Graph` simétrico a partir de uma lista `[(u, v, weight), ...]` |
+
+**Exemplo — testando um filtro sem infraestrutura:**
+
+```python
+from tests.conftest import make_graph
+
+class TestWordGraph:
+    def test_co_occurrence_weight(self, mock_storage, mock_cache):
+        # mock_storage e mock_cache garantem que execute() não tenta
+        # conectar em http://minio:9000 nem em redis://redis:6379
+        ...
+
+    def test_graph_is_symmetric(self, small_word_graph):
+        for u, neighbors in small_word_graph.items():
+            for v, w in neighbors.items():
+                assert small_word_graph[v][u] == w
+
+    def test_bridge_cut_splits_graph(self, clustered_graph):
+        # clustered_graph tem ponte (w_a1—w_b1, peso 0.1)
+        # remover ela deve resultar em 2 componentes
+        ...
+```
 
 ---
 
 ## 6. Adicionando um Novo Filtro
 
 1. Crie `src/<nome>.py` herdando de `AbstractFilter` (importado de `src/shared/filter_base.py`)
-2. Declare `name`, `input_key` e `output_key` como atributos de classe
+2. Declare `name`, `input_key`, `output_key` e, se necessário, `extra_input_keys` como atributos de classe
 3. Implemente apenas `process(data)` — o I/O e o cache são herdados
 4. Adicione o bloco `if __name__ == "__main__"` para execução isolada
 5. Instancie o filtro e registre-o na `FilterChain` em `src/main.py` na posição correta
-6. Descomente e implemente `tests/unit/test_<nome>.py`
+6. Implemente `tests/unit/test_<nome>.py` (substitua `test_placeholder`)
 7. Documente o contrato de interface (tipos de entrada/saída) em `docs/arquitetura.md`
-8. Adicione o `make <filtro>` ao `Makefile` e o arquivo de saída à estrutura `data/`
+8. Adicione o `make <filtro>` ao `Makefile`
 
-**Template de filtro concreto:**
+**Template — filtro de entrada única:**
 
 ```python
 from src.shared.filter_base import AbstractFilter
@@ -155,6 +189,34 @@ class WordGraphFilter(AbstractFilter):
         Returns:
             Adjacency dict mapping word node → {neighbor: weight}.
         """
+        ...
+```
+
+**Template — filtro de múltiplas entradas (`extra_input_keys`):**
+
+```python
+from src.shared.filter_base import AbstractFilter
+from src.types import Graph
+
+class SentenceGraphFilter(AbstractFilter):
+    """Build sentence graph from word graph and N-ary tree."""
+
+    name = "sentence_graph"
+    input_key = "word_graph"        # artefato primário
+    extra_input_keys = ["tree"]     # artefatos secundários
+    output_key = "sentence_graph"
+
+    def process(self, data: dict) -> Graph:
+        """Derive sentence graph from word co-occurrence weights.
+
+        Args:
+            data: Dict with keys "primary" (word_graph) and "tree".
+
+        Returns:
+            Adjacency dict mapping sentence node → {neighbor: weight}.
+        """
+        word_graph = data["primary"]
+        tree = data["tree"]
         ...
 ```
 
@@ -275,3 +337,4 @@ Um módulo está concluído quando **todos** os critérios abaixo são verdadeir
 | 12/06/2026 | 1.0 | Criação inicial do documento | Lucas Antunes |
 | 12/06/2026 | 1.1 | Seções de padrões GoF, template de filtro concreto, DoD atualizado | Lucas Antunes |
 | 12/06/2026 | 1.2 | Migração para Docker + MinIO + Redis: seções 2, 3, 4 e DoD atualizados | Lucas Antunes |
+| 12/06/2026 | 1.3 | Fixtures de teste (mock_storage, mock_cache, clustered_graph, make_graph); template multi-input com extra_input_keys | Lucas Antunes |

@@ -8,7 +8,10 @@
 
 ## What this directory is
 
-`src/shared/` contains the pipeline infrastructure — four files that implement the five GoF patterns that structure the system. **None of these files contain domain logic.** Domain logic lives exclusively in the concrete filters at `src/*.py`.
+`src/shared/` contains two layers of reusable infrastructure:
+
+1. **Pipeline infrastructure** — GoF patterns, S3/Redis adapters. No domain logic.
+2. **Graph utilities** (`graph/`) — primitive operations on `Graph = dict[str, dict[str, float]]` shared across all graph-building filters. No domain logic, no weight formulas.
 
 Every file here is imported by multiple concrete filters. A change here affects the entire pipeline. PRs touching this directory require approval from all team members before merge.
 
@@ -24,7 +27,13 @@ src/shared/
 ├── observers.py      ← Observer  (PipelineObserver, LoggingObserver)
 ├── strategies.py     ← Strategy  (CommunityDetectionStrategy, ProgressiveEdgeCuttingStrategy)
 ├── storage.py        ← S3 / MinIO adapter  (S3Storage, get_storage)
-└── cache.py          ← Redis cache adapter  (RedisCache, get_cache)
+├── cache.py          ← Redis cache adapter  (RedisCache, get_cache)
+└── graph/            ← graph primitive utilities (see graph/CLAUDE.md)
+    ├── __init__.py   ← public re-exports: add_edge, increase_weight, degree, connected_components, …
+    ├── ops.py        ← CRUD: add_edge, increase_weight, remove_edge, iter_edges, copy_graph
+    ├── metrics.py    ← properties: degree, weighted_degree, density, node_count, edge_count
+    ├── traversal.py  ← BFS, DFS, connected_components, count_components, is_connected
+    └── validate.py   ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
 ```
 
 ---
@@ -37,9 +46,11 @@ src/shared/
 
 ```python
 class AbstractFilter(ABC):
-    name: str        # unique slug, e.g. "word_graph"
-    input_key: str   # key in PATHS dict from src/config.py
-    output_key: str  # key in PATHS dict from src/config.py
+    name: str              # unique slug, e.g. "word_graph"
+    input_key: str         # primary key in S3_KEYS from src/config.py
+    output_key: str        # key in S3_KEYS for the output artifact
+    output_format: str = "json"         # "json" or "text"
+    extra_input_keys: list[str] = []    # additional S3_KEYS for multi-input filters
 
     def execute(self) -> None:
         """Run the full filter lifecycle: load → process → save."""
@@ -49,23 +60,53 @@ class AbstractFilter(ABC):
         """Apply the filter's domain transformation.
 
         Args:
-            data: Python object loaded from PATHS[input_key].
+            data: When extra_input_keys is empty — the deserialized primary
+                  artifact (plain Python object).
+                  When extra_input_keys is non-empty — a dict of the form
+                  {"primary": <primary>, "<key>": <artifact>, ...}.
 
         Returns:
-            Transformed result to be written to PATHS[output_key].
+            Transformed result to be written to S3_KEYS[output_key].
         """
 ```
+
+### Multi-input filters
+
+Filters that need more than one artifact declare `extra_input_keys` at class level. `_load_input()` then returns a dict instead of a plain object:
+
+```python
+class SentenceGraphFilter(AbstractFilter):
+    name = "sentence_graph"
+    input_key = "word_graph"         # primary
+    extra_input_keys = ["tree"]      # secondary
+    output_key = "sentence_graph"
+
+    def process(self, data: dict) -> Graph:
+        word_graph = data["primary"]
+        tree = data["tree"]
+        ...
+```
+
+Filters requiring multiple inputs in the pipeline:
+
+| Filter | `input_key` | `extra_input_keys` |
+|--------|-------------|-------------------|
+| `sentence_graph` | `"word_graph"` | `["tree"]` |
+| `comment_graph` | `"sentence_graph"` | `["preprocessed"]` |
+| `final_graph` | `"comment_graph"` | `["word_graph", "sentence_graph"]` |
+| `metrics` | `"communities"` | `["final_graph"]` |
 
 ### Rules
 
 - **Do** declare `name`, `input_key`, `output_key` as class-level attributes (not in `__init__`).
+- **Do** declare `extra_input_keys` when the filter needs more than one artifact.
 - **Do not** override `execute()`, `_load_input()`, `_write_output()`, `_load_cache()`, or `_save_cache()` in concrete filters — those methods are the Template Method's invariant steps.
 - **Do not** perform any JSON reads or writes inside `process()` — that is `execute()`'s responsibility.
 - **Do** call `super().__init__()` if you add a custom `__init__` to a concrete filter.
 
 ### Cache behaviour
 
-`execute()` checks `data/cache/<name>.pkl` before calling `process()`. If the pickle exists, it is returned directly and `process()` is skipped. `make clean` removes the cache; use it whenever you change a filter's logic and need to force reprocessing.
+`execute()` calls `get_cache().get(self.name)` (Redis) before calling `process()`. On a hit the cached result is written back to S3 and `process()` is skipped. `make clean` flushes all `filter:*` Redis keys; use it whenever you change a filter's logic and need to force reprocessing.
 
 ---
 
@@ -182,9 +223,9 @@ class ProgressiveEdgeCuttingStrategy(CommunityDetectionStrategy):
 ### Rules
 
 - `Strategy` is scoped exclusively to community detection. Do **not** use this pattern for other algorithmic variations in the project.
-- Implement BFS/DFS from scratch inside the strategy — never import graph libraries.
+- **All traversal is delegated to `src.shared.graph`** — `ProgressiveEdgeCuttingStrategy` uses `copy_graph`, `iter_edges`, `has_edge`, `degree`, `remove_edge`, `count_components`, and `connected_components` from that sub-package. Never reimplement BFS/DFS inside a strategy.
 - Inject a non-default strategy via `CommunityDetectionFilter.__init__(strategy=...)` in `main.py`, not by modifying the filter class itself.
-- `detect()` must not mutate the `graph` argument — work on a deep copy if edge removal is required.
+- `detect()` must not mutate the `graph` argument — call `copy_graph()` from `src.shared.graph`.
 
 ---
 
@@ -201,8 +242,9 @@ Concretely:
 ```python
 # CORRECT — any concrete filter
 from src.shared.filter_base import AbstractFilter
+from src.shared.graph import add_edge, increase_weight, degree
 from src.types import Graph
-from src.config import PATHS
+from src.config import S3_KEYS
 
 # WRONG — filter importing another filter
 from src.word_graph import build_word_graph  # forbidden
@@ -258,6 +300,21 @@ class RedisCache:
 - `flush()` deletes only keys matching `filter:*` — it does not flush the entire Redis database.
 - Results are serialized with `pickle` — only store objects that are safely picklable.
 - Do not set TTL on cache entries — cache lifetime is managed via `make clean` / `RedisCache.flush()`.
+
+---
+
+## `graph/` — Graph Utility Sub-package
+
+See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. Summary:
+
+| Module | Responsibility |
+|--------|----------------|
+| `ops.py` | `add_edge`, `increase_weight`, `remove_edge`, `iter_edges`, `copy_graph` |
+| `metrics.py` | `degree`, `weighted_degree`, `node_count`, `edge_count`, `density`, `average_weight` |
+| `traversal.py` | `bfs`, `dfs`, `reachable`, `connected_components`, `count_components`, `is_connected` |
+| `validate.py` | `is_symmetric`, `invalid_prefixes`, `isolated_nodes`, `assert_valid` |
+
+**Key rule:** `increase_weight` is the primary write operation for co-occurrence graphs — use it instead of `add_edge` whenever a pair can appear more than once. `merge_graphs` is **not** in `graph/`; it is a private helper inside `final_graph.py`.
 
 ---
 

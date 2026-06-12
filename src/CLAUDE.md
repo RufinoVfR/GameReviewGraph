@@ -36,13 +36,18 @@ No filter imports internal functions from another filter — communication happe
 
 ```
 src/
-├── shared/                  ← GoF infrastructure (see shared/CLAUDE.md)
+├── shared/                  ← pipeline infrastructure + graph utilities (see shared/CLAUDE.md)
 │   ├── filter_base.py       ← Template Method  (AbstractFilter)
 │   ├── pipeline.py          ← Chain of Responsibility + Facade  (FilterChain)
 │   ├── observers.py         ← Observer  (PipelineObserver, LoggingObserver)
 │   ├── strategies.py        ← Strategy  (CommunityDetectionStrategy)
 │   ├── storage.py           ← S3/MinIO adapter  (S3Storage, get_storage)
-│   └── cache.py             ← Redis cache adapter  (RedisCache, get_cache)
+│   ├── cache.py             ← Redis cache adapter  (RedisCache, get_cache)
+│   └── graph/               ← graph primitive utilities (see shared/graph/CLAUDE.md)
+│       ├── ops.py           ← add_edge, increase_weight, remove_edge, iter_edges, copy_graph
+│       ├── metrics.py       ← degree, weighted_degree, density, node_count, edge_count
+│       ├── traversal.py     ← BFS, DFS, connected_components, count_components
+│       └── validate.py      ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
 │
 ├── main.py                  ← orchestrator: instantiates FilterChain + all filters
 ├── config.py                ← env vars, S3_KEYS, K=10, MIN_FREQ
