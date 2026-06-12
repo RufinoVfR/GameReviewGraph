@@ -47,6 +47,7 @@ comments (text)
 - **Never commit directly to main** — use branches and PRs
 - **Never skip docstrings** — every function must have one; it is part of the evaluation criteria
 - **Never hardcode file paths** — use `pathlib.Path` and relative paths
+- **Never add Claude as co-author** — omit `Co-Authored-By: Claude` from every commit message, without exception
 - **Language:** all code, comments, docstrings, and commit messages in **English**; input data and output reports in **Portuguese**
 
 ---
