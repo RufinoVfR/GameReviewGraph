@@ -480,15 +480,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#71-requisitos-funcionais" class="md-nav__link">
+  <a href="#1-requisitos-funcionais" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7.1 Requisitos Funcionais
+        1. Requisitos Funcionais
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="7.1 Requisitos Funcionais">
+    <nav class="md-nav" aria-label="1. Requisitos Funcionais">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -530,15 +530,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#72-requisitos-nao-funcionais" class="md-nav__link">
+  <a href="#2-requisitos-nao-funcionais" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7.2 Requisitos Não Funcionais
+        2. Requisitos Não Funcionais
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="7.2 Requisitos Não Funcionais">
+    <nav class="md-nav" aria-label="2. Requisitos Não Funcionais">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -679,15 +679,15 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#71-requisitos-funcionais" class="md-nav__link">
+  <a href="#1-requisitos-funcionais" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7.1 Requisitos Funcionais
+        1. Requisitos Funcionais
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="7.1 Requisitos Funcionais">
+    <nav class="md-nav" aria-label="1. Requisitos Funcionais">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -729,15 +729,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#72-requisitos-nao-funcionais" class="md-nav__link">
+  <a href="#2-requisitos-nao-funcionais" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7.2 Requisitos Não Funcionais
+        2. Requisitos Não Funcionais
       
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="7.2 Requisitos Não Funcionais">
+    <nav class="md-nav" aria-label="2. Requisitos Não Funcionais">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -812,7 +812,7 @@
 <h1 id="requisitos-de-software">Requisitos de Software<a class="headerlink" href="#requisitos-de-software" title="Permanent link">&para;</a></h1>
 <p>Esta seção apresenta os requisitos funcionais e não funcionais que fundamentam o desenvolvimento do <strong>GameReviewGraph</strong>, derivados diretamente dos objetivos específicos do projeto.</p>
 <hr />
-<h2 id="71-requisitos-funcionais">7.1 Requisitos Funcionais<a class="headerlink" href="#71-requisitos-funcionais" title="Permanent link">&para;</a></h2>
+<h2 id="1-requisitos-funcionais">1. Requisitos Funcionais<a class="headerlink" href="#1-requisitos-funcionais" title="Permanent link">&para;</a></h2>
 <p>Os requisitos funcionais descrevem as funcionalidades que o sistema deve implementar para transformar comentários textuais em comunidades semânticas interpretáveis como tópicos.</p>
 <h3 id="objetivo-especifico-1-processamento-e-representacao-dos-dados">Objetivo Específico 1 — Processamento e Representação dos Dados<a class="headerlink" href="#objetivo-especifico-1-processamento-e-representacao-dos-dados" title="Permanent link">&para;</a></h3>
 <p><strong>RF01 — Pré-processar comentários:</strong> O sistema deve receber uma coleção de comentários em texto e aplicar as etapas de conversão para minúsculas, remoção de pontuação, segmentação em frases, tokenização, remoção de stopwords e normalização (stemming ou lematização), produzindo tokens limpos como saída.</p>
@@ -828,7 +828,7 @@
 <p><strong>RF09 — Calcular modularidade Q:</strong> O sistema deve calcular a métrica de modularidade Q ao final do processo de corte, avaliando objetivamente a qualidade dos agrupamentos obtidos com base na fórmula <code>Q = (1/2m) × Σ [Aij − (ki × kj / 2m)] × δ(ci, cj)</code>.</p>
 <p><strong>RF10 — Gerar relatório de análise:</strong> O sistema deve produzir uma saída estruturada listando cada comunidade detectada com seus termos centrais, comentários associados e o valor de modularidade Q, no formato definido no planejamento do projeto.</p>
 <hr />
-<h2 id="72-requisitos-nao-funcionais">7.2 Requisitos Não Funcionais<a class="headerlink" href="#72-requisitos-nao-funcionais" title="Permanent link">&para;</a></h2>
+<h2 id="2-requisitos-nao-funcionais">2. Requisitos Não Funcionais<a class="headerlink" href="#2-requisitos-nao-funcionais" title="Permanent link">&para;</a></h2>
 <p>Os requisitos não funcionais definem restrições técnicas e de qualidade que o sistema deve satisfazer, derivadas das exigências da disciplina e das decisões arquiteturais do grupo.</p>
 <h3 id="implementacao">Implementação<a class="headerlink" href="#implementacao" title="Permanent link">&para;</a></h3>
 <p><strong>RNF01 — Proibição de bibliotecas externas para grafos e algoritmos principais:</strong> Nenhuma biblioteca externa de grafos (NetworkX, igraph, graph-tool ou equivalentes) pode ser utilizada. Os algoritmos de BFS, DFS, corte de arestas, centralidade de grau e modularidade devem ser implementados integralmente pelo grupo. O descumprimento desta restrição implica penalização de -5,0 pontos na avaliação.</p>
