@@ -132,6 +132,7 @@ Dataset
 | **Markdown** | Formato da documentação |
 | **WhatsApp** | Comunicação informal e rápida entre os membros |
 | **Discord** | Reuniões formais e sincronização da equipe |
+| **Claude Code** | Ferramenta para auxiliar o desenvolvimento do produto |
 
 ### 2.4 Análise da Solução no Contexto Acadêmico
 
