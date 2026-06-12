@@ -1,0 +1,160 @@
+# GameReviewGraph — Claude Code Context
+
+## Project Overview
+
+Academic project for FGA0030 (Data Structures 2, UnB 2026/1). Transforms a corpus of ~200 fictional game reviews in Portuguese into a three-level hierarchical graph structure and detects semantic communities (topics) via progressive edge cutting. Pure Python implementation — no external graph libraries. Deadline: **22/06/2026 (last GitHub commit)**.
+
+---
+
+## Architecture
+
+```
+comments (text)
+    → preprocessing.py       # tokenization, stopwords, normalization
+    → tree.py                # N-ary Tree: Dataset → Comment → Sentence → Word
+    → word_graph.py          # word co-occurrence graph (positional weight)
+    → sentence_graph.py      # sentence graph (derived from word graph)
+    → comment_graph.py       # comment graph (derived from sentence graph)
+    → final_graph.py         # unified graph: all 3 levels + hierarchical edges
+    → community_detection.py # progressive edge cutting + BFS/DFS
+    → metrics.py             # weighted degree centrality + modularity Q
+    → analysis.py            # report generation and interpretation
+    → main.py                # entry point
+```
+
+**Internal graph representation:** adjacency list as `dict[str, dict[str, float]]`. Node prefixes: `w_word`, `s_12`, `c_3`.
+
+---
+
+## Non-Negotiable Rules
+
+- **Never use external graph libraries** (NetworkX, igraph, graph-tool, etc.) — this is a strict academic requirement worth -5.0 points if violated
+- **Never use libraries for the main algorithms** — BFS, DFS, edge cutting, centrality, and modularity must be implemented from scratch by the team
+- **NLP libraries ARE allowed** (NLTK, spaCy) — only for preprocessing
+- **Never commit directly to main** — use branches and PRs
+- **Never skip docstrings** — every function must have one; it is part of the evaluation criteria
+- **Never hardcode file paths** — use `pathlib.Path` and relative paths
+- **Language:** all code, comments, docstrings, and commit messages in **English**; input data and output reports in **Portuguese**
+
+---
+
+## Key Algorithms (Implement From Scratch)
+
+### Edge Weight Formulas
+
+```python
+# Word graph — positional co-occurrence weight
+weight(wi, wj) = Σ 1 / (1 + |pos(wi) - pos(wj)|)  # sum over all sentences
+
+# Sentence graph — normalized word relation average
+weight(sa, sb) = Σ weight(wi, wj) / (|sa| × |sb|)  # wi ∈ sa, wj ∈ sb
+
+# Comment graph — normalized sentence relation average
+weight(ca, cb) = Σ weight(si, sj) / (|ca| × |cb|)  # si ∈ ca, sj ∈ cb
+```
+
+### Community Detection (Progressive Edge Cutting)
+
+```
+1. Sort all edges ascending by weight
+2. For each edge (u, v): if degree(u) > 1 AND degree(v) > 1 → remove it
+3. After each removal → run BFS/DFS to count connected components
+4. Stop when components == K (K=10) or no more edges can be removed
+```
+
+### Modularity Q
+
+```
+Q = (1/2m) × Σ [Aij - (ki × kj / 2m)] × δ(ci, cj)
+# m = total edges, ki = weighted degree of i, δ = 1 if same community
+```
+
+---
+
+## Data
+
+- **Source:** ~200 fictional comments in Portuguese, AI-generated via structured prompts
+- **Topics (10):** desempenho, narrativa, multiplayer, interface, progressão, áudio, gráficos, controles, conteúdo pós-lançamento, suporte técnico
+- **Distribution:** 20 comments per topic
+- **Location:** `data/comments.json` (or `.txt` — confirm with team)
+- **Format example:**
+  ```json
+  {"id": 1, "topic": "desempenho", "text": "O jogo trava muito depois da atualização."}
+  ```
+
+---
+
+## Development Conventions
+
+```python
+# Imports: stdlib → third-party → local
+import json
+from pathlib import Path
+import nltk
+from tree import NaryTree
+
+# Type hints: always use them
+def build_word_graph(sentences: list[list[str]]) -> dict[str, dict[str, float]]:
+    """Build word co-occurrence graph from tokenized sentences.
+    
+    Args:
+        sentences: List of tokenized sentences (words already preprocessed).
+    
+    Returns:
+        Adjacency dict mapping word → {neighbor: weight}.
+    """
+```
+
+- Python 3.11+
+- No `requirements.txt` bloat — only `nltk` and/or `spacy` as dependencies
+- One module per graph level — do not mix responsibilities across files
+- Test each module independently before integrating into `main.py`
+
+---
+
+## Verification Commands
+
+```bash
+# Run full pipeline
+python main.py
+
+# Run a specific module in isolation
+python -m preprocessing
+python -m tree
+python -m word_graph
+
+# Check output format
+python main.py | head -50
+```
+
+After implementing any module, Claude should run it and confirm the output matches the expected structure before proceeding to the next.
+
+---
+
+## Expected Output Format
+
+```
+=== Comunidade 1 — Tópico: Desempenho ===
+Termos centrais: fps, travamento, lag, otimizacao, queda
+Comentários associados: c_3, c_17, c_42
+Modularidade Q: 0.74
+
+=== Comunidade 2 — Tópico: Narrativa ===
+Termos centrais: historia, personagem, campanha, missao, enredo
+...
+```
+
+---
+
+## Academic Evaluation Criteria (for awareness)
+
+| Criterion | Weight | Key Risk |
+|-----------|--------|----------|
+| Problem definition | 0.5 | — |
+| Data quality | 1.0 | LLM-generated data must be coherent |
+| Implementation | 3.5 | Modularity, legibility, correct graph modeling |
+| Graph algorithms | 2.0 | Must be implemented from scratch — highest penalty risk |
+| Result analysis | 2.0 | Semantic interpretation of communities |
+| Final presentation | 1.0 | All required slides must be present |
+
+**Zero-score penalties:** no graphs used, code doesn't run, no GitHub, no presentation, project unrelated to NLP.
