@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GameReviewGraph</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0d1117;
+      color: #c9d1d9;
+      line-height: 1.7;
+    }
+    header {
+      background: #161b22;
+      border-bottom: 1px solid #30363d;
+      padding: 2.5rem 2rem;
+      text-align: center;
+    }
+    header h1 { font-size: 2.2rem; color: #58a6ff; }
+    header p  { margin-top: .5rem; color: #8b949e; font-size: 1.05rem; }
+    main {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem;
+    }
+    section { margin-bottom: 3rem; }
+    h2 {
+      font-size: 1.3rem;
+      color: #f0f6fc;
+      border-bottom: 1px solid #30363d;
+      padding-bottom: .4rem;
+      margin-bottom: 1.2rem;
+    }
+    p { color: #8b949e; margin-bottom: .8rem; }
+    .pipeline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem;
+    }
+    .step {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 6px;
+      padding: .5rem 1rem;
+      font-size: .85rem;
+      color: #58a6ff;
+    }
+    .step span { color: #8b949e; font-size: .75rem; display: block; }
+    .tags { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
+    .tag {
+      background: #1f3a5f;
+      color: #58a6ff;
+      padding: .25rem .75rem;
+      border-radius: 20px;
+      font-size: .8rem;
+    }
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: #484f58;
+      font-size: .85rem;
+      border-top: 1px solid #30363d;
+    }
+    a { color: #58a6ff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>GameReviewGraph</h1>
+  <p>Detecção automática de tópicos em reviews de jogos via grafos hierárquicos</p>
+  <p style="margin-top:.8rem">
+    <a href="https://github.com/RufinoVfR/GameReviewGraph">Ver no GitHub</a>
+  </p>
+</header>
+
+<main>
+
+  <section>
+    <h2>Sobre o projeto</h2>
+    <p>
+      Sistema que transforma um corpus de ~200 reviews de jogos em português em uma estrutura
+      de grafo hierárquica de três níveis (palavras → frases → comentários) e detecta
+      comunidades semânticas (tópicos) por corte progressivo de arestas.
+    </p>
+    <p>
+      Implementado em Python puro — sem bibliotecas externas de grafos. Disciplina
+      FGA0030 — Estruturas de Dados 2 / UnB 2026/1.
+    </p>
+  </section>
+
+  <section>
+    <h2>Pipeline</h2>
+    <div class="pipeline">
+      <div class="step">Comentários<span>corpus bruto</span></div>
+      <div class="step">Pré-processamento<span>tokenização · stopwords</span></div>
+      <div class="step">Árvore N-ária<span>Dataset → Comentário → Frase → Palavra</span></div>
+      <div class="step">Grafo de Palavras<span>co-ocorrência posicional</span></div>
+      <div class="step">Grafo de Frases<span>derivado do grafo de palavras</span></div>
+      <div class="step">Grafo de Comentários<span>derivado do grafo de frases</span></div>
+      <div class="step">Grafo Final<span>3 níveis + arestas hierárquicas</span></div>
+      <div class="step">Detecção de Comunidades<span>corte progressivo + BFS/DFS</span></div>
+      <div class="step">Métricas<span>modularidade Q · centralidade</span></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tópicos detectados</h2>
+    <div class="tags">
+      <span class="tag">Desempenho</span>
+      <span class="tag">Narrativa</span>
+      <span class="tag">Multiplayer</span>
+      <span class="tag">Interface</span>
+      <span class="tag">Progressão</span>
+      <span class="tag">Áudio</span>
+      <span class="tag">Gráficos</span>
+      <span class="tag">Controles</span>
+      <span class="tag">Conteúdo Pós-lançamento</span>
+      <span class="tag">Suporte Técnico</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tecnologias</h2>
+    <div class="tags">
+      <span class="tag">Python 3.11+</span>
+      <span class="tag">NLTK</span>
+      <span class="tag">BFS / DFS</span>
+      <span class="tag">Modularidade Q</span>
+      <span class="tag">Árvore N-ária</span>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  FGA0030 — Estruturas de Dados 2 · UnB 2026/1
+</footer>
+
+</body>
+</html>
