@@ -18,7 +18,10 @@ htmlcov/
 # MkDocs
 site/
 
-# Data intermediaries (never commit generated pipeline outputs)
+# Environment — never commit credentials
+.env
+
+# Data intermediaries (pipeline outputs now live in MinIO — kept locally only for init-data)
 data/preprocessed.json
 data/tree.json
 data/word_graph.json
