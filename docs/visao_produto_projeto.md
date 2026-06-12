@@ -8,14 +8,6 @@
 
 ---
 
-## Histórico de Revisão
-
-| Data | Versão | Descrição | Autor |
-|------|--------|-----------|-------|
-| 11/06/2026 | 1.0 | Criação inicial do documento | Equipe GameReviewGraph |
-
----
-
 ## Sumário
 
 1. [Cenário Atual e Contexto do Problema](#1-cenário-atual-e-contexto-do-problema)
@@ -274,27 +266,7 @@ A validação do produto ocorre em dois momentos dentro de cada onda:
 
 ---
 
-## 6. Lições Aprendidas
-
-### 6.1 Onda 1
-
-> _A ser preenchido ao final da Onda 1 (13/06/2026)_
-
-### 6.2 Onda 2
-
-> _A ser preenchido ao final da Onda 2 (17/06/2026)_
-
-### 6.3 Onda 3
-
-> _A ser preenchido ao final da Onda 3 (20/06/2026)_
-
-### 6.4 Onda 4
-
-> _A ser preenchido ao final da Onda 4 (22/06/2026)_
-
----
-
-## 7. Referências Bibliográficas
+## 6. Referências Bibliográficas
 
 1. SOMMERVILLE, Ian. **Engenharia de Software**. 10. ed. São Paulo: Pearson, 2018.
 
@@ -311,3 +283,11 @@ A validação do produto ocorre em dois momentos dentro de cada onda:
 7. BECK, Kent. **Extreme Programming Explained: Embrace Change**. 2. ed. Addison-Wesley, 2004.
 
 8. MANIFESTO ÁGIL. **Manifesto para Desenvolvimento Ágil de Software**, 2001. Disponível em: https://agilemanifesto.org/iso/ptbr/manifesto.html
+
+---
+
+## Histórico de Revisão
+
+| Data | Versão | Descrição | Autor |
+|------|--------|-----------|-------|
+| 11/06/2026 | 1.0 | Criação inicial do documento | [Vinícius Rufino](https://github.com/RufinoVfR) |

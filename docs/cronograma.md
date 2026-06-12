@@ -42,4 +42,4 @@ Esta seção define as principais etapas e prazos do projeto, garantindo a entre
 
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
-| 11/06/2026 | 1.0 | Criação do documento | Equipe GameReviewGraph |
+| 11/06/2026 | 1.0 | Criação inicial do documento | [Vinícius Rufino](https://github.com/RufinoVfR) |
