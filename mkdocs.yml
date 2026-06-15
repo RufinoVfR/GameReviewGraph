@@ -33,10 +33,16 @@ nav:
   - Requisitos: requisitos.md
   - Backlog: backlog.md
   - Cronograma: cronograma.md
+  - Arquitetura: arquitetura.md
+  - Contribuição: contributing.md
 
 markdown_extensions:
   - tables
   - toc:
       permalink: true
   - pymdownx.highlight
-  - pymdownx.superfences
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format

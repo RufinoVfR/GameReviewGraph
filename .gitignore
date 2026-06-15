@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+*.egg-info/
+dist/
+build/
+
+# uv
+.python-version
+
+# pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# MkDocs
+site/
+
+# Data intermediaries (never commit generated pipeline outputs)
+data/preprocessed.json
+data/tree.json
+data/word_graph.json
+data/sentence_graph.json
+data/comment_graph.json
+data/final_graph.json
+data/communities.json
+data/metrics.json
+data/report.txt
+data/cache/
+
+# OS
+.DS_Store
+Thumbs.db

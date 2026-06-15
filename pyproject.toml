@@ -1,0 +1,19 @@
+[project]
+name = "game-review-graph"
+version = "0.1.0"
+description = "Topic detection in game reviews via hierarchical graphs and progressive edge cutting"
+requires-python = ">=3.11"
+dependencies = [
+    "nltk>=3.9",
+]
+
+[dependency-groups]
+dev = [
+    "mkdocs-material>=9.5",
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
