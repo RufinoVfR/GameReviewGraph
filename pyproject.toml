@@ -20,4 +20,7 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short -m 'not env'"
+markers = [
+    "env: environment integrity tests that run make targets on the host (deselect with '-m not env')",
+]

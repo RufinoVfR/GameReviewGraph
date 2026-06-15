@@ -1,16 +1,19 @@
-.PHONY: help install \
+.PHONY: help setup install \
         build docker-up docker-down docker-restart docker-logs docker-status \
         init-data run clean \
         preprocessing tree word-graph sentence-graph \
         comment-graph final-graph community-detection \
         metrics analysis \
         docs docs-build \
-        test test-cov
+        test test-cov env-test
 
 # ── Help ───────────────────────────────────────────────────────────────────────
 
 help:
 	@echo "Usage: make <target>"
+	@echo ""
+	@echo "First-time setup (fresh machine, Debian/Ubuntu only)"
+	@echo "  setup                Install Docker, uv, and Python 3.11 — run once before anything else"
 	@echo ""
 	@echo "Local tooling"
 	@echo "  install              Install all dependencies via uv (for docs/tests outside Docker)"
@@ -42,10 +45,28 @@ help:
 	@echo "Tests"
 	@echo "  test                 Run test suite inside Docker"
 	@echo "  test-cov             Run tests with coverage report inside Docker"
+	@echo "  env-test             Run environment integrity tests on the host (setup, build, docker-up)"
 	@echo ""
 	@echo "Docs"
 	@echo "  docs                 Serve documentation locally (localhost:8000)"
 	@echo "  docs-build           Build static documentation site"
+
+# ── First-time setup ───────────────────────────────────────────────────────────
+
+setup:
+	@echo "==> Installing system packages (requires sudo, Debian/Ubuntu only)"
+	sudo apt-get update -qq
+	sudo apt-get install -y curl git docker.io docker-compose-v2
+	sudo systemctl enable --now docker
+	sudo usermod -aG docker $$USER
+	@echo "==> Installing uv"
+	curl -LsSf https://astral.sh/uv/install.sh | sh
+	@echo "==> Installing Python 3.11 via uv"
+	$$HOME/.local/bin/uv python install 3.11
+	@echo ""
+	@echo "Setup complete."
+	@echo "Reopen the terminal (or run 'newgrp docker') for Docker group changes to take effect."
+	@echo "Then run: make install && make docker-up && make init-data"
 
 # ── Local tooling ──────────────────────────────────────────────────────────────
 
@@ -121,6 +142,9 @@ test:
 
 test-cov:
 	docker compose -f docker-compose.yml -f docker-compose.ci.yml run --rm app uv run pytest --cov=src --cov-report=term-missing
+
+env-test:
+	uv run pytest -m env -v --tb=short tests/integration/test_environment.py
 
 # ── Docs ───────────────────────────────────────────────────────────────────────
 
