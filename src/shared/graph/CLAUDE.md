@@ -32,7 +32,7 @@ All functions operate on undirected weighted graphs. Writes always update both `
 src/shared/graph/
 ├── __init__.py     ← selective re-exports (public API of this sub-package)
 ├── ops.py          ← new_graph, add_node, add_edge, increase_edge, remove_edge, has_edge, get_edge_weight, iter_edges, copy_graph
-├── metrics.py      ← properties: degree, weighted_degree, density, node_count, edge_count
+├── metrics.py      ← properties: neighbor_count, total_edge_weight, density, node_count, edge_count
 ├── traversal.py    ← BFS, DFS, connected_components, count_components, is_connected, minimum_spanning_tree
 └── validate.py     ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
 ```
@@ -41,7 +41,7 @@ Import from the sub-package root — never from individual modules:
 
 ```python
 # CORRECT
-from src.shared.graph import add_edge, increase_edge, degree, connected_components
+from src.shared.graph import add_edge, increase_edge, neighbor_count, connected_components
 
 # WRONG — exposes internal structure, breaks if files are reorganised
 from src.shared.graph.ops import increase_edge
@@ -138,16 +138,16 @@ increase_edge(graph, f"s_{a}", f"s_{b}", word_graph_weight(wi, wj))
 
 ## `metrics.py` — graph properties
 
-Implementation note: `degree`/`weighted_degree` resolve `node` to an index via `graph.index[node]`, then scan `graph.matrix[i]` counting/summing entries `!= 0.0`. `node_count` is `len(graph.nodes)`; `edge_count` and `average_weight` iterate `iter_edges` rather than re-walking the matrix.
+Implementation note: `neighbor_count`/`total_edge_weight` resolve `node` to an index via `graph.index[node]`, then scan `graph.matrix[i]` counting/summing entries `!= 0.0`. `node_count` is `len(graph.nodes)`; `edge_count` and `average_edge_weight` iterate `iter_edges` rather than re-walking the matrix.
 
 ### Signatures
 
 ```python
-def degree(graph: Graph, node: str) -> int:
+def neighbor_count(graph: Graph, node: str) -> int:
     """Return the number of neighbours of node (unweighted degree)."""
 
-def weighted_degree(graph: Graph, node: str) -> float:
-    """Return the sum of edge weights incident to node."""
+def total_edge_weight(graph: Graph, node: str) -> float:
+    """Return the sum of edge weights incident to node (weighted degree)."""
 
 def node_count(graph: Graph) -> int:
     """Return the total number of nodes in the graph."""
@@ -162,7 +162,7 @@ def density(graph: Graph) -> float:
     Returns 0.0 for graphs with fewer than 2 nodes.
     """
 
-def average_weight(graph: Graph) -> float:
+def average_edge_weight(graph: Graph) -> float:
     """Return the mean edge weight across all unique edges.
 
     Returns 0.0 for empty graphs.
@@ -171,14 +171,14 @@ def average_weight(graph: Graph) -> float:
 
 ### Usage
 
-`metrics.py` (Filter 8) uses `weighted_degree` for centrality:
+`metrics.py` (Filter 8) uses `total_edge_weight` for centrality:
 ```python
-centrality[node] = weighted_degree(graph, node) / (2 * sum_of_all_weights)
+centrality[node] = total_edge_weight(graph, node) / (2 * sum_of_all_weights)
 ```
 
-`community_detection.py` uses `degree` to check the removal condition:
+`community_detection.py` uses `neighbor_count` to check the removal condition:
 ```python
-if degree(graph, u) > 1 and degree(graph, v) > 1:
+if neighbor_count(graph, u) > 1 and neighbor_count(graph, v) > 1:
     remove_edge(graph, u, v)
 ```
 
@@ -256,7 +256,7 @@ The private helpers `_bfs`, `_bfs_collect`, `_count_components`, `_label_compone
 
 ## `validate.py` — graph validation
 
-Implementation note: `invalid_prefixes` and `isolated_nodes` iterate `graph.nodes` (and use `degree`/`graph.index` for the latter). `is_symmetric` and the self-loop check in `assert_valid` walk `graph.matrix` directly (`matrix[i][j] == matrix[j][i]` for all `i, j`; `matrix[i][i] == 0.0` for all `i`).
+Implementation note: `invalid_prefixes` and `isolated_nodes` iterate `graph.nodes` (and use `neighbor_count`/`graph.index` for the latter). `is_symmetric` and the self-loop check in `assert_valid` walk `graph.matrix` directly (`matrix[i][j] == matrix[j][i]` for all `i, j`; `matrix[i][i] == 0.0` for all `i`).
 
 ### Signatures
 
@@ -303,8 +303,8 @@ from src.shared.graph.ops import (
     has_edge, get_edge_weight, iter_edges, copy_graph,
 )
 from src.shared.graph.metrics import (
-    degree, weighted_degree,
-    node_count, edge_count, density, average_weight,
+    neighbor_count, total_edge_weight,
+    node_count, edge_count, density, average_edge_weight,
 )
 from src.shared.graph.traversal import (
     bfs, dfs, reachable,

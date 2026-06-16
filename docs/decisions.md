@@ -76,9 +76,9 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 ### MST + corte progressivo, em vez de corte progressivo direto no grafo denso
 
-**Decisão:** `community_detection.py` primeiro reduz o `final_graph` a uma MST via Prim, e só então aplica o corte progressivo de arestas (ordenar por peso ascendente, cortar se `degree(u) > 1 e degree(v) > 1`, parar em K componentes) sobre essa árvore — em vez de cortar arestas direto no grafo completo.
+**Decisão:** `community_detection.py` primeiro reduz o `final_graph` a uma MST via Prim, e só então aplica o corte progressivo de arestas (ordenar por peso ascendente, cortar se `neighbor_count(u) > 1 e neighbor_count(v) > 1`, parar em K componentes) sobre essa árvore — em vez de cortar arestas direto no grafo completo.
 
-**Por quê:** decisão de integrar os dois algoritmos: reduzir primeiro a V−1 arestas torna o corte progressivo mais barato (menos arestas para ordenar e avaliar) e mais previsível, já que a MST já captura as conexões de menor custo total entre os nós antes de qualquer corte. A condição `degree > 1` foi mantida mesmo sobre uma árvore (onde cortar qualquer aresta sempre separa em exatamente 2 componentes) para proteger nós-folha (grau 1) de virarem comunidades de tamanho 1 prematuramente — preservando o comportamento já validado do corte progressivo original.
+**Por quê:** decisão de integrar os dois algoritmos: reduzir primeiro a V−1 arestas torna o corte progressivo mais barato (menos arestas para ordenar e avaliar) e mais previsível, já que a MST já captura as conexões de menor custo total entre os nós antes de qualquer corte. A condição `neighbor_count > 1` foi mantida mesmo sobre uma árvore (onde cortar qualquer aresta sempre separa em exatamente 2 componentes) para proteger nós-folha (grau 1) de virarem comunidades de tamanho 1 prematuramente — preservando o comportamento já validado do corte progressivo original.
 
 ### K = 10 comunidades
 

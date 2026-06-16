@@ -31,7 +31,7 @@ src/shared/graph/
 
 ```python
 # CORRETO
-from src.shared.graph import add_edge, increase_edge, degree, connected_components
+from src.shared.graph import add_edge, increase_edge, neighbor_count, connected_components
 
 # ERRADO — expõe estrutura interna
 from src.shared.graph.ops import increase_edge
@@ -133,29 +133,29 @@ for u, v, w in iter_edges(graph):
 
 | Função | Descrição |
 |--------|-----------|
-| `degree(graph, node)` | Número de vizinhos do nó (grau não-ponderado) |
-| `weighted_degree(graph, node)` | Soma dos pesos das arestas incidentes ao nó |
+| `neighbor_count(graph, node)` | Número de vizinhos do nó (grau não-ponderado) |
+| `total_edge_weight(graph, node)` | Soma dos pesos das arestas incidentes ao nó |
 | `node_count(graph)` | Total de nós no grafo |
 | `edge_count(graph)` | Total de arestas não-direcionadas únicas |
 | `density(graph)` | Razão entre arestas existentes e máximo possível |
-| `average_weight(graph)` | Média dos pesos de todas as arestas únicas |
+| `average_edge_weight(graph)` | Média dos pesos de todas as arestas únicas |
 
-`degree`/`weighted_degree` resolvem `node` para um índice via `graph.index[node]` e percorrem a linha correspondente de `graph.matrix` contando/somando entradas `!= 0.0`. `node_count` é `len(graph.nodes)`; `edge_count` e `average_weight` reaproveitam `iter_edges`.
+`neighbor_count`/`total_edge_weight` resolvem `node` para um índice via `graph.index[node]` e percorrem a linha correspondente de `graph.matrix` contando/somando entradas `!= 0.0`. `node_count` é `len(graph.nodes)`; `edge_count` e `average_edge_weight` reaproveitam `iter_edges`.
 
 ### Uso em destaque
 
 **`community_detection.py`** — condição de remoção de aresta:
 
 ```python
-if degree(graph, u) > 1 and degree(graph, v) > 1:
+if neighbor_count(graph, u) > 1 and neighbor_count(graph, v) > 1:
     remove_edge(graph, u, v)
 ```
 
 **`metrics.py` (Filtro 8)** — centralidade de grau ponderada:
 
 ```python
-total = sum(weighted_degree(graph, n) for n in graph.nodes)
-centrality[node] = weighted_degree(graph, node) / total
+total = sum(total_edge_weight(graph, n) for n in graph.nodes)
+centrality[node] = total_edge_weight(graph, node) / total
 ```
 
 ---
@@ -204,7 +204,7 @@ components = count_components(working)
 | `isolated_nodes(graph)` | Lista de nós com grau zero |
 | `assert_valid(graph)` | Levanta `ValueError` se o grafo falha em qualquer invariante estrutural (simetria, prefixos, `matrix[i][i] == 0.0` para todo `i`) |
 
-`invalid_prefixes` e `isolated_nodes` percorrem `graph.nodes` (e usam `degree`/`graph.index` no segundo caso). `is_symmetric` e a checagem de self-loop em `assert_valid` percorrem `graph.matrix` diretamente.
+`invalid_prefixes` e `isolated_nodes` percorrem `graph.nodes` (e usam `neighbor_count`/`graph.index` no segundo caso). `is_symmetric` e a checagem de self-loop em `assert_valid` percorrem `graph.matrix` diretamente.
 
 ### Quando usar `assert_valid`
 

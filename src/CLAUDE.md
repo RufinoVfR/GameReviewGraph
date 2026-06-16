@@ -45,7 +45,7 @@ src/
 │   ├── cache.py             ← Redis cache adapter  (RedisCache, get_cache)
 │   └── graph/               ← graph primitive utilities (see shared/graph/CLAUDE.md)
 │       ├── ops.py           ← add_edge, increase_edge, remove_edge, iter_edges, copy_graph
-│       ├── metrics.py       ← degree, weighted_degree, density, node_count, edge_count
+│       ├── metrics.py       ← neighbor_count, total_edge_weight, density, node_count, edge_count
 │       ├── traversal.py     ← BFS, DFS, connected_components, count_components, minimum_spanning_tree
 │       └── validate.py      ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
 │

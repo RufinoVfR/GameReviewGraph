@@ -271,7 +271,7 @@ classDiagram
         minimum_spanning_tree()
         iter_edges()
         has_edge()
-        degree()
+        neighbor_count()
         remove_edge()
         count_components()
         connected_components()

@@ -29,9 +29,9 @@ src/shared/
 ├── storage.py        ← S3 / MinIO adapter  (S3Storage, get_storage)
 ├── cache.py          ← Redis cache adapter  (RedisCache, get_cache)
 └── graph/            ← graph primitive utilities (see graph/CLAUDE.md)
-    ├── __init__.py   ← public re-exports: add_edge, increase_edge, degree, connected_components, …
+    ├── __init__.py   ← public re-exports: add_edge, increase_edge, neighbor_count, connected_components, …
     ├── ops.py        ← CRUD: add_edge, increase_edge, remove_edge, iter_edges, copy_graph
-    ├── metrics.py    ← properties: degree, weighted_degree, density, node_count, edge_count
+    ├── metrics.py    ← properties: neighbor_count, total_edge_weight, density, node_count, edge_count
     ├── traversal.py  ← BFS, DFS, connected_components, count_components, is_connected, minimum_spanning_tree
     └── validate.py   ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
 ```
@@ -224,7 +224,7 @@ class ProgressiveEdgeCuttingStrategy(CommunityDetectionStrategy):
 ### Rules
 
 - `Strategy` is scoped exclusively to community detection. Do **not** use this pattern for other algorithmic variations in the project.
-- **All traversal and MST construction are delegated to `src.shared.graph`** — `ProgressiveEdgeCuttingStrategy` uses `minimum_spanning_tree`, `copy_graph`, `iter_edges`, `has_edge`, `degree`, `remove_edge`, `count_components`, and `connected_components` from that sub-package. Never reimplement BFS/DFS/Prim inside a strategy.
+- **All traversal and MST construction are delegated to `src.shared.graph`** — `ProgressiveEdgeCuttingStrategy` uses `minimum_spanning_tree`, `copy_graph`, `iter_edges`, `has_edge`, `neighbor_count`, `remove_edge`, `count_components`, and `connected_components` from that sub-package. Never reimplement BFS/DFS/Prim inside a strategy.
 - `detect()` first calls `mst = minimum_spanning_tree(graph)`, then runs the progressive-cutting loop on `mst` (V−1 edges) instead of on the original dense graph.
 - Inject a non-default strategy via `CommunityDetectionFilter.__init__(strategy=...)` in `main.py`, not by modifying the filter class itself.
 - `detect()` must not mutate the `graph` argument — call `copy_graph()` from `src.shared.graph`.
@@ -244,7 +244,7 @@ Concretely:
 ```python
 # CORRECT — any concrete filter
 from src.shared.filter_base import AbstractFilter
-from src.shared.graph import add_edge, increase_edge, degree
+from src.shared.graph import add_edge, increase_edge, neighbor_count
 from src.types import Graph
 from src.config import S3_KEYS
 
@@ -312,7 +312,7 @@ See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. S
 | Module | Responsibility |
 |--------|----------------|
 | `ops.py` | `new_graph`, `add_node`, `add_edge`, `increase_edge`, `remove_edge`, `has_edge`, `get_edge_weight`, `iter_edges`, `copy_graph` |
-| `metrics.py` | `degree`, `weighted_degree`, `node_count`, `edge_count`, `density`, `average_weight` |
+| `metrics.py` | `neighbor_count`, `total_edge_weight`, `node_count`, `edge_count`, `density`, `average_edge_weight` |
 | `traversal.py` | `bfs`, `dfs`, `reachable`, `connected_components`, `count_components`, `is_connected`, `minimum_spanning_tree` |
 | `validate.py` | `is_symmetric`, `invalid_prefixes`, `isolated_nodes`, `assert_valid` |
 
