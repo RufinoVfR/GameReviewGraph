@@ -40,14 +40,14 @@ Filters communicate via **MinIO S3** (JSON artifacts under `pipeline/` prefix).
 Filter results are cached in **Redis** (`filter:<name>` keys) to skip reprocessing.
 All pipeline infrastructure lives in `src/shared/` — see `src/shared/CLAUDE.md`.
 
-**Internal graph representation:** adjacency list as `dict[str, dict[str, float]]`. Node prefixes: `w_word`, `s_12`, `c_3`.
+**Internal graph representation:** adjacency matrix backed by a name→index mapping, not an adjacency dict. `Graph` (see `src/types.py`) is a dataclass with `nodes: list[str]` (index → name), `index: dict[str, int]` (name → index), and `matrix: list[list[float]]` (`matrix[i][j] == 0.0` means no edge — weights are always positive in this project's formulas, so `0.0` is a safe sentinel). The matrix grows one node at a time (append a column to every row + append a new row) — no pre-allocated capacity, since the structure is already O(n²) at any final size. Node prefixes: `w_word`, `s_12`, `c_3`.
 
 ---
 
 ## Non-Negotiable Rules
 
 - **Never use external graph libraries** (NetworkX, igraph, graph-tool, etc.) — this is a strict academic requirement worth -5.0 points if violated
-- **Never use libraries for the main algorithms** — BFS, DFS, edge cutting, centrality, and modularity must be implemented from scratch by the team
+- **Never use libraries for the main algorithms** — BFS, DFS, minimum spanning tree (Prim), edge cutting, centrality, and modularity must be implemented from scratch by the team
 - **NLP libraries ARE allowed** (NLTK, spaCy) — only for preprocessing
 - **Never commit directly to main** — use branches and PRs
 - **Never skip docstrings** — every function must have one; it is part of the evaluation criteria
@@ -72,14 +72,21 @@ weight(sa, sb) = Σ weight(wi, wj) / (|sa| × |sb|)  # wi ∈ sa, wj ∈ sb
 weight(ca, cb) = Σ weight(si, sj) / (|ca| × |cb|)  # si ∈ ca, sj ∈ cb
 ```
 
-### Community Detection (Progressive Edge Cutting)
+### Community Detection (MST + Progressive Edge Cutting)
+
+The final graph is reduced to a Minimum Spanning Tree before cutting — this keeps the edge-cutting step's input sparse (V−1 edges instead of the full dense graph) while still respecting all original weights.
 
 ```
-1. Sort all edges ascending by weight
-2. For each edge (u, v): if degree(u) > 1 AND degree(v) > 1 → remove it
-3. After each removal → run BFS/DFS to count connected components
-4. Stop when components == K (K=10) or no more edges can be removed
+1. Build a Minimum Spanning Tree (MST) of the final graph via Prim's algorithm
+   (dense/array variant, O(V²) — no priority queue needed, since the graph
+   is already an adjacency matrix)
+2. Sort the MST's edges ascending by weight
+3. For each edge (u, v): if degree(u) > 1 AND degree(v) > 1 → remove it
+4. After each removal → run BFS/DFS to count connected components
+5. Stop when components == K (K=10) or no more edges can be removed
 ```
+
+Why Prim over Kruskal here: the project's graphs are dense and already stored as adjacency matrices, so dense Prim is O(V²) with no extra data structures, versus Kruskal's O(E log E) (≈ O(V² log V) on a dense graph) which would require extracting and sorting all edges plus a Union-Find structure. The `degree(u) > 1 AND degree(v) > 1` guard is kept even though every MST cut splits the tree into exactly two components — it protects leaf nodes (degree 1) from being isolated as singleton communities prematurely.
 
 ### Modularity Q
 

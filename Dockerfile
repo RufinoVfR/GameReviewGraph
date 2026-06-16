@@ -9,6 +9,7 @@ RUN uv sync --no-dev
 
 COPY src/ ./src/
 COPY scripts/ ./scripts/
+COPY tests/ ./tests/
 COPY data/comments.json ./data/comments.json
 
 CMD ["uv", "run", "python", "-m", "src.main"]

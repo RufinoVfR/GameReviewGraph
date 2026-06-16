@@ -36,6 +36,7 @@ nav:
   - Arquitetura: arquitetura.md
   - Padrões de Projeto: padroes_projeto.md
   - Utilitários de Grafos: grafos.md
+  - Decisões de Projeto: decisions.md
   - Infraestrutura: infraestrutura.md
   - Contribuição: contributing.md
 

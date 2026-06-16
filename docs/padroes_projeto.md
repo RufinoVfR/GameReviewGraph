@@ -252,7 +252,7 @@ Definir uma família de algoritmos, encapsular cada um deles e torná-los interc
 
 ### Aplicação
 
-`CommunityDetectionFilter` delega o algoritmo de corte de arestas para uma `CommunityDetectionStrategy`. A implementação padrão é `ProgressiveEdgeCuttingStrategy`. Trocar o algoritmo não exige modificar o filtro.
+`CommunityDetectionFilter` delega o algoritmo de corte de arestas para uma `CommunityDetectionStrategy`. A implementação padrão é `ProgressiveEdgeCuttingStrategy`, que primeiro reduz o grafo final a uma Árvore Geradora Mínima (MST, via Prim) e só então aplica o corte progressivo sobre essa árvore — mantém o corte operando sobre uma estrutura esparsa (V−1 arestas) em vez do grafo denso completo. Trocar o algoritmo não exige modificar o filtro.
 
 ```mermaid
 classDiagram
@@ -268,6 +268,7 @@ classDiagram
     class src_shared_graph {
         <<utility>>
         copy_graph()
+        minimum_spanning_tree()
         iter_edges()
         has_edge()
         degree()
@@ -283,10 +284,10 @@ classDiagram
 
     CommunityDetectionStrategy <|-- ProgressiveEdgeCuttingStrategy
     CommunityDetectionFilter o-- CommunityDetectionStrategy : delega detect()
-    ProgressiveEdgeCuttingStrategy --> src_shared_graph : delega travessia
+    ProgressiveEdgeCuttingStrategy --> src_shared_graph : delega MST + travessia
 ```
 
-`ProgressiveEdgeCuttingStrategy` não possui métodos privados de travessia — toda lógica de BFS, contagem de componentes e iteração de arestas é delegada para `src.shared.graph`.
+`ProgressiveEdgeCuttingStrategy` não possui métodos privados de travessia nem de construção de árvore — toda lógica de MST (Prim), BFS, contagem de componentes e iteração de arestas é delegada para `src.shared.graph`. O fluxo de `detect()` passa a ser: `mst = minimum_spanning_tree(graph)` → corte progressivo sobre `mst` (mesma lógica de antes, só que a entrada já é a árvore).
 
 ---
 

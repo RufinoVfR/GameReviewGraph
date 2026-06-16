@@ -42,7 +42,7 @@ Os requisitos não funcionais definem restrições técnicas e de qualidade que 
 
 ### Implementação
 
-**RNF01 — Proibição de bibliotecas externas para grafos e algoritmos principais:** Nenhuma biblioteca externa de grafos (NetworkX, igraph, graph-tool ou equivalentes) pode ser utilizada. Os algoritmos de BFS, DFS, corte de arestas, centralidade de grau e modularidade devem ser implementados integralmente pelo grupo. O descumprimento desta restrição implica penalização de -5,0 pontos na avaliação.
+**RNF01 — Proibição de bibliotecas externas para grafos e algoritmos principais:** Nenhuma biblioteca externa de grafos (NetworkX, igraph, graph-tool ou equivalentes) pode ser utilizada. Os algoritmos de BFS, DFS, árvore geradora mínima (Prim), corte de arestas, centralidade de grau e modularidade devem ser implementados integralmente pelo grupo. O descumprimento desta restrição implica penalização de -5,0 pontos na avaliação.
 
 **RNF02 — Linguagem de implementação:** O sistema deve ser implementado inteiramente em Python 3.11 ou superior.
 

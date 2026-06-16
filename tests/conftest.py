@@ -1,11 +1,14 @@
 """Shared pytest fixtures for GameReviewGraph test suite."""
 import pytest
 
+from src.shared.graph.ops import add_edge, new_graph
+from src.types import Graph
+
 
 # ── Helper functions ───────────────────────────────────────────────────────────
 
 
-def make_graph(edges: list[tuple[str, str, float]]) -> dict[str, dict[str, float]]:
+def make_graph(edges: list[tuple[str, str, float]]) -> Graph:
     """Build a symmetric Graph from a list of (u, v, weight) edge tuples.
 
     Args:
@@ -13,12 +16,11 @@ def make_graph(edges: list[tuple[str, str, float]]) -> dict[str, dict[str, float
                directions so the result is always undirected.
 
     Returns:
-        Adjacency dict of type Graph = dict[str, dict[str, float]].
+        A Graph (adjacency matrix + name-to-index mapping).
     """
-    graph: dict[str, dict[str, float]] = {}
+    graph = new_graph()
     for u, v, w in edges:
-        graph.setdefault(u, {})[v] = w
-        graph.setdefault(v, {})[u] = w
+        add_edge(graph, u, v, w)
     return graph
 
 
@@ -48,7 +50,7 @@ def processed_comments() -> list[dict]:
 
 
 @pytest.fixture
-def small_word_graph() -> dict[str, dict[str, float]]:
+def small_word_graph() -> Graph:
     """Minimal word graph for testing sentence/comment graph builders."""
     return make_graph([
         ("w_jogo", "w_trav", 1.0),
@@ -61,7 +63,7 @@ def small_word_graph() -> dict[str, dict[str, float]]:
 
 
 @pytest.fixture
-def clustered_graph() -> dict[str, dict[str, float]]:
+def clustered_graph() -> Graph:
     """Graph with two dense clusters and one weak bridge edge.
 
     Cluster A: w_a1, w_a2, w_a3 — strongly connected (weights ~2.0).

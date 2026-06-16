@@ -24,7 +24,8 @@ docs/
 ├── cronograma.md            ← 4-wave schedule with milestones and risk notes
 ├── arquitetura.md           ← pipe-and-filter diagram, filter contracts, I/O file map, design decisions
 ├── padroes_projeto.md       ← five GoF patterns: Template Method, Chain of Responsibility, Facade, Observer, Strategy
-├── grafos.md                ← graph utility sub-package: ops, metrics, traversal, validate; increase_weight vs add_edge
+├── grafos.md                ← graph utility sub-package: ops, metrics, traversal, validate; increase_edge vs add_edge
+├── decisions.md              ← justification for every architectural/algorithmic decision (the "why", not the "what")
 ├── infraestrutura.md        ← Docker, MinIO, Redis: services, env vars, S3 key map, CI/CD
 └── contributing.md          ← git workflow, running filters, coding standards, definition of done
 ```
@@ -43,6 +44,7 @@ nav:
   - Arquitetura: arquitetura.md
   - Padrões de Projeto: padroes_projeto.md
   - Utilitários de Grafos: grafos.md
+  - Decisões de Projeto: decisions.md
   - Infraestrutura: infraestrutura.md
   - Contribuição: contributing.md
 ```
@@ -60,6 +62,7 @@ Do not rename files without updating the nav. Do not add pages without adding a 
 | `requisitos.md` | Requirement changes | When RF/RNF are added, removed, or revised |
 | `backlog.md` | Sprint / wave planning | When user stories are added, split, or acceptance criteria change |
 | `cronograma.md` | Timeline changes | When wave dates shift, milestones are added, or completion status changes |
+| `decisions.md` | Any architectural/algorithmic decision | When the team picks, changes, or reverses a non-obvious design choice — add a new entry rather than rewriting history |
 
 ---
 
