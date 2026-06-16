@@ -186,7 +186,7 @@ if degree(graph, u) > 1 and degree(graph, v) > 1:
 
 ## `traversal.py` — graph traversal
 
-Implementation note: traversal still operates on node **names** at the public API boundary (`start: str`, returned lists of `str`) — internally, resolve `start` to an index, walk neighbours by scanning the corresponding `graph.matrix` row for entries `!= 0.0`, and translate indices back to names via `graph.nodes[i]` before returning. `bfs` uses `collections.deque`; `dfs` uses an explicit stack (no recursion, to avoid Python's recursion limit on larger graphs).
+Implementation note: traversal still operates on node **names** at the public API boundary (`start: str`, returned lists of `str`) — internally, resolve `start` to an index, walk neighbours by scanning the corresponding `graph.matrix` row for entries `!= 0.0`, and translate indices back to names via `graph.nodes[i]` before returning. `bfs` uses `Queue` from `src/types/queue.py` (a from-scratch FIFO queue — singly linked list, O(1) `enqueue`/`dequeue` — used instead of `collections.deque`); `dfs` uses an explicit stack (a plain `list`, no recursion, to avoid Python's recursion limit on larger graphs), marking nodes visited at pop time (not push time) so the visiting order matches a recursive DFS.
 
 ### Signatures
 

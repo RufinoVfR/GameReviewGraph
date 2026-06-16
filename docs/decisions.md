@@ -46,6 +46,18 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** consequência direta da decisão anterior — `Graph` deixou de ser um alias de uma linha e passou a ser uma dataclass com docstring própria; agrupar por semântica evita um arquivo monolítico crescendo sem organização à medida que mais tipos são necessários (ex: tipos da árvore N-ária).
 
+### `Queue` própria (lista ligada) em vez de `collections.deque`
+
+**Decisão:** `bfs` (em `src/shared/graph/traversal.py`) usa `Queue` — uma fila FIFO implementada do zero em `src/types/queue.py` como lista ligada simples (ponteiros `head`/`tail`, O(1) `enqueue`/`dequeue`) — em vez de `collections.deque` da biblioteca padrão.
+
+**Por quê:** decisão explícita do time de não depender da estrutura pronta da linguagem para a fila usada no algoritmo de travessia, mesmo sem ser estritamente exigido pelo RNF01 (que cobre os algoritmos de grafo, não estruturas de apoio genéricas — ver decisão "Por que nenhum algoritmo usa biblioteca externa"). `Queue` vive em `src/types/`, não em `src/shared/graph/`, porque é uma estrutura genérica sem semântica de grafo (não conhece nós, arestas ou pesos) — fica junto dos outros tipos genéricos do pacote, não junto das operações específicas de grafo.
+
+### DFS com pilha explícita, visitado marcado no `pop` (não no `push`)
+
+**Decisão:** `dfs` usa uma pilha explícita (`list` do Python) em vez de recursão, e marca um nó como visitado somente quando ele é removido da pilha (`pop`), não quando é inserido (`push`).
+
+**Por quê:** evita o limite de recursão do Python em grafos maiores. Marcar visitado no `push` (o mesmo padrão usado no BFS) parece equivalente à primeira vista, mas produz uma ordem de visita diferente da DFS recursiva real — testado manualmente com `w_a-w_b, w_a-w_c, w_b-w_d`: marcar no push dá `[a, b, c, d]` (ordem tipo BFS invertido), enquanto marcar no pop dá `[a, b, d, c]`, igual à recursão (`visita a → primeiro vizinho b → primeiro vizinho de b que é d → backtrack → c`). Os vizinhos são empurrados em ordem reversa (`reversed(_neighbors(...))`) exatamente para preservar essa correspondência com a ordem de visita recursiva.
+
 ---
 
 ## Algoritmos implementados do zero
@@ -103,3 +115,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
 | 16/06/2026 | 1.0 | Criação do documento, consolidando decisões já tomadas no projeto | Lucas Antunes |
+| 16/06/2026 | 1.1 | `traversal.py` implementado (BFS, DFS, componentes conectados, MST); adicionada `Queue` própria em `src/types/queue.py`; justificada a marcação de visitado no `pop` da DFS | Lucas Antunes |

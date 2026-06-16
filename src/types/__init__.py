@@ -8,12 +8,14 @@ from src.types.comments import ProcessedComment, RawComment
 from src.types.communities import Communities
 from src.types.graph import Graph, NodeKey
 from src.types.metrics import Metrics
+from src.types.queue import Queue
 
 __all__ = [
     "RawComment",
     "ProcessedComment",
     "Graph",
     "NodeKey",
+    "Queue",
     "Communities",
     "Metrics",
 ]
