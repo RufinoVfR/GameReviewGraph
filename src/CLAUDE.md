@@ -57,7 +57,12 @@ src/
 │   ├── graph.py             ← Graph dataclass, NodeKey
 │   ├── communities.py       ← Communities
 │   └── metrics.py           ← Metrics
-├── preprocessing.py         ← ConcreteFilter 1: tokenization, stopwords, normalization
+├── preprocessing/           ← ConcreteFilter 1 (package): tokenization, stopwords, normalization
+│   ├── __init__.py          ← re-exports PreprocessingFilter
+│   ├── __main__.py          ← PreprocessingFilter().execute()  (target of `make preprocessing`)
+│   ├── filter.py            ← PreprocessingFilter(AbstractFilter) — orchestrates process()
+│   ├── clean.py             ← pure text/token helpers (lowercase, punctuation, segment, tokenize, noise, stopwords)
+│   └── normalize.py         ← RSLP grouping key + surface-form representative (decision A1')
 ├── tree.py                  ← ConcreteFilter 2: N-ary tree (Dataset → Comment → Sentence → Word)
 ├── word_graph.py            ← ConcreteFilter 3: word co-occurrence graph (positional weight)
 ├── sentence_graph.py        ← ConcreteFilter 4: sentence graph (derived from word graph)
@@ -189,4 +194,4 @@ Run with: `make word-graph` (delegates to `docker compose run --rm app uv run py
 - **Type hints on every function signature** — no `Any` unless truly unavoidable.
 - **Graph representation** — always the `Graph` dataclass (`nodes`, `index`, `matrix`) defined in `src/types/graph.py`; never reintroduce a nested-dict adjacency list, and never reach for an external graph library.
 - **BFS/DFS, edge cutting, centrality, and modularity** — implemented from scratch in their respective modules.
-- **NLP libraries** — NLTK/spaCy allowed only in `preprocessing.py`.
+- **NLP libraries** — NLTK allowed only in the `preprocessing/` package (spaCy not used).

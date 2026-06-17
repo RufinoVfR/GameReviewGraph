@@ -90,7 +90,7 @@ Reaproveite — **não** recrie grafos à mão em cada teste:
 |---------|---------------|
 | `make_graph(edges)` | helper: constrói `Graph` simétrico a partir de `[(u, v, w), ...]` |
 | `raw_comments` | 4 comentários crus (2 tópicos) |
-| `processed_comments` | 4 comentários já tokenizados (contrato de `preprocessing.py`) |
+| `processed_comments` | 4 comentários já tokenizados (contrato do pacote `preprocessing/`) |
 | `small_word_graph` | word graph mínimo para testar sentence/comment graph |
 | `clustered_graph` | 2 clusters densos + 1 ponte fraca (community detection / traversal) |
 | `mock_storage` | `S3Storage` sobre moto (S3 fake, offline) |
@@ -192,7 +192,7 @@ apenas a instancia e chama `detect(graph, K)`.
 - **Sem S3/Redis dentro de `process()`** — isso é responsabilidade de `execute()`.
 - **Docstring em toda função** (uma linha + `Args:` + `Returns:`) — vale nota.
 - **Type hints em toda assinatura.**
-- **NLP (NLTK/spaCy) só em `preprocessing.py`.**
+- **NLP (NLTK) só no pacote `preprocessing/`** (spaCy não é usado).
 - Código/comentários/commits em **inglês**; dados e relatório em **português**.
 
 ---
@@ -295,10 +295,13 @@ Para **cada** filtro, o passo a passo é o mesmo:
 7. Rode isolado: `make <filtro>` e confirme o artefato no MinIO.
 8. Abra PR.
 
-### Filtro 1 — `preprocessing.py`
-- **In:** `raw` → **Out:** `preprocessed`. NLP permitido aqui (e só aqui).
-- `process(data: list[RawComment]) -> list[ProcessedComment]`: lowercase, remover pontuação, tokenizar, remover stopwords PT, stemming/lematização; quebrar em frases.
-- Testes: usar `raw_comments`; verificar shape de saída, remoção de stopwords, tokenização.
+### Filtro 1 — `preprocessing/` (pacote)
+- **In:** `raw` → **Out:** `preprocessed`. NLP permitido aqui (e só aqui). É um **pacote** (`filter.py`, `clean.py`, `normalize.py`, `__main__.py`), não um arquivo — ver `src/preprocessing/CLAUDE.md` para o design completo.
+- `process(data: list[RawComment]) -> list[ProcessedComment]`: caixa-baixa → remover pontuação (preservando acento) → segmentar frases (regex `[.!?]+`) → tokenizar (`\w+`) → dropar numéricos e `len<3` → remover stopwords PT (NLTK).
+- **Normalização A1'** (decisão fechada — ver `docs/decisions.md`): o radical RSLP é só **chave de agrupamento**; emite-se a **forma de superfície mais frequente do grupo, com acento** (`{atualização, atualizações}` → nó `w_atualização`). O mapa radical→representante é montado numa passada de corpus dentro do `process()` e **não** sai do filtro. Corte por `MIN_FREQ` (de `src/config.py`) é por grupo.
+- Frase vazia após filtragem é descartada; o comentário é mantido (com `id`/`topic`).
+- **Infra:** o `Dockerfile` precisa baixar os corpora NLTK `stopwords` e `rslp` em build.
+- Testes: usar `raw_comments`; verificar shape, `id`/`topic` preservados, remoção de stopwords/ruído, agrupamento e representante (com acento).
 
 ### Filtro 2 — `tree.py`
 - **In:** `preprocessed` → **Out:** `tree`. Árvore N-ária: Dataset → Comentário → Frase → Palavra.
@@ -448,3 +451,4 @@ make clean          # limpa cache Redis + artefatos S3 (force reprocessamento)
 |------|--------|-----------|-------|
 | 2026-06-16 | 1.0 | Versão inicial: plano de testes compartilhados + guia de filtros paralelos | Equipe |
 | 2026-06-16 | 1.1 | Remove back-references ("idem"/"mesmo que"); fecha os contratos de `tree.json` e `metrics.json` sem deferir ao dono do módulo | Equipe |
+| 2026-06-16 | 1.2 | Filtro 1 reescrito: pacote `preprocessing/`, pipeline por regex, normalização A1', descarte de ruído e requisito de dados NLTK no Docker | Equipe |

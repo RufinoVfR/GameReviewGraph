@@ -323,7 +323,7 @@ See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. S
 ## Non-negotiable rules
 
 - **No domain logic in `src/shared/`** — no graph algorithms, no NLP, no weight formulas.
-- **No imports of concrete filters** — `src/shared/*.py` must never import from `src/preprocessing.py`, `src/tree.py`, etc.
+- **No imports of concrete filters** — `src/shared/*.py` must never import from `src/preprocessing/`, `src/tree.py`, etc.
 - **No external graph libraries** — even here, NetworkX and equivalents are forbidden.
 - **Docstrings on every public class and method** — format: one-line summary, blank line, `Args:` and `Returns:` sections.
 - **Type hints on every signature** — no `Any` unless truly unavoidable (document why when used).

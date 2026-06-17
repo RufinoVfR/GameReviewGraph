@@ -333,7 +333,7 @@ Não use `Strategy` para outros tipos de variação algorítmica — crie funç�
 | **Chaves S3/Redis** | Use `S3_KEYS` de `src/config.py`; nunca hardcode nomes de artefatos ou chaves Redis |
 | **Idioma** | Código, comentários, docstrings e commits em **inglês**; dados e relatório em **português** |
 | **Bibliotecas proibidas** | NetworkX, igraph, graph-tool e equivalentes — penalidade de −5,0 pontos |
-| **Bibliotecas de PLN** | NLTK e spaCy são permitidas exclusivamente em `preprocessing.py` |
+| **Bibliotecas de PLN** | NLTK é permitida exclusivamente no pacote `preprocessing/` (spaCy não é usado) |
 
 ---
 
@@ -364,3 +364,4 @@ Um módulo está concluído quando **todos** os critérios abaixo são verdadeir
 | 12/06/2026 | 1.2 | Migração para Docker + MinIO + Redis: seções 2, 3, 4 e DoD atualizados | Lucas Antunes |
 | 12/06/2026 | 1.3 | Fixtures de teste (mock_storage, mock_cache, clustered_graph, make_graph); template multi-input com extra_input_keys | Lucas Antunes |
 | 16/06/2026 | 1.4 | Seção Quick Start com a trilha de leitura do zero ao primeiro filtro | Equipe |
+| 16/06/2026 | 1.5 | PLN restrita ao pacote `preprocessing/` (NLTK; spaCy não usado) | Equipe |

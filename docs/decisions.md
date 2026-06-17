@@ -88,6 +88,40 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 ---
 
+## Pré-processamento (Filtro 1)
+
+### Normalização A1': radical como chave de agrupamento, emitindo a forma de superfície
+
+**Decisão:** o `preprocessing` aplica o stemmer RSLP (NLTK) apenas como **chave interna de agrupamento**. O token efetivamente emitido em `preprocessed.json` (e que vira o nó `w_<token>`) é a **forma de superfície mais frequente do grupo, com acento** (ex.: o grupo `{atualização, atualizações}` → radical `atualiz` → emite `"atualização"`). O mapa `radical → representante` é construído numa passada de corpus dentro do próprio `process()` e nunca sai do filtro.
+
+**Por quê:** o stemming agrupa variações morfológicas (densifica o grafo e melhora a coesão das comunidades), mas radicais crus (`trav`, `histór`) poluem o relatório final, que lista os termos centrais por comunidade. A alternativa "mostrar a forma bonita só no `analysis.py`" foi **rejeitada** porque exigiria carregar o mapa radical→forma através dos artefatos (ou dar ao último filtro acesso ao primeiro artefato via `extra_input_keys`) — acoplamento entre camadas que viola o princípio pipe-and-filter. Separar *chave de agrupamento* de *token emitido* resolve os dois: agrupa como stemming, exibe palavra real, e mantém o RSLP 100% confinado ao `preprocessing`. Lematização real (formas de dicionário) foi descartada porque o NLTK não tem lematizador PT decente — exigiria spaCy + modelo `pt_core_news`, uma dependência pesada fora do escopo. A forma é emitida **com acento** porque o agrupamento já unifica grafias (a chave faz fold de acento antes do RSLP), então preservar o acento no representante só aumenta a legibilidade sem custo de fragmentação.
+
+### Segmentação e tokenização por regex, não por `punkt` do NLTK
+
+**Decisão:** frases são segmentadas com `re.split(r"[.!?]+", ...)` e tokens extraídos com `re.findall(r"\w+", ...)`. O NLTK é usado só onde é genuinamente linguístico: lista de stopwords PT e stemmer RSLP.
+
+**Por quê:** o corpus são ~200 comentários fictícios curtos e bem-comportados (sem abreviações ambíguas), onde o tokenizador treinado `punkt` não traz ganho sobre regex. Evitar o `punkt` mantém a imagem Docker mais leve (não precisa baixar `punkt_tab`, renomeado no NLTK ≥3.9) e torna a segmentação determinística e trivial de testar offline.
+
+### Dados do NLTK provisionados no build do Docker
+
+**Decisão:** o `Dockerfile` baixa os corpora `stopwords` e `rslp` em build (`python -m nltk.downloader -d /usr/local/nltk_data ...` + `ENV NLTK_DATA`), em vez de baixá-los em runtime.
+
+**Por quê:** o NLTK não embute corpora — sem o download o filtro quebra com `LookupError` na primeira execução. Fazer no build (com `NLTK_DATA` apontando para um diretório no path de busca do NLTK) garante que toda execução e todo teste encontrem os dados, sem rede em runtime e sem estado mutável fora da imagem.
+
+### `preprocessing` como pacote, demais filtros como módulo único
+
+**Decisão:** `preprocessing` é um pacote (`src/preprocessing/` com `filter.py`, `clean.py`, `normalize.py`, `__main__.py`), não um único `preprocessing.py`. Os outros oito filtros seguem como arquivo único.
+
+**Por quê:** é o filtro com mais lógica interna (limpeza por-token + a passada de corpus do A1' + integração com NLTK), e separar por responsabilidade mantém cada submódulo pequeno e testável. Não há violação da regra "um módulo por filtro" — imports internos ao pacote são do mesmo filtro; a regra proíbe um filtro importar de **outro** filtro. O `__main__.py` preserva o contrato externo (`make preprocessing` → `python -m src.preprocessing`).
+
+### Descarte de ruído: tokens numéricos e com menos de 3 caracteres
+
+**Decisão:** após a tokenização, tokens puramente numéricos e com `len < 3` são removidos; o corte por baixa frequência (`MIN_FREQ` de `src/config.py`) opera por grupo (radical) no corpus inteiro.
+
+**Por quê:** números soltos e tokens muito curtos raramente carregam semântica de tópico e só adicionam nós de ruído ao grafo. Aplicar o corte de frequência no grupo (não na forma de superfície) é coerente com o A1' — a unidade de significado é o grupo, não cada flexão. Uma frase que esvazia após a filtragem é descartada, mas o comentário é mantido (com `id`/`topic`) para preservar seu nó `c_<id>` no pipeline.
+
+---
+
 ## Convenções de linguagem e execução
 
 ### Código em inglês, dados/relatórios em português
@@ -116,3 +150,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 |------|--------|-----------|-------|
 | 16/06/2026 | 1.0 | Criação do documento, consolidando decisões já tomadas no projeto | Lucas Antunes |
 | 16/06/2026 | 1.1 | `traversal.py` implementado (BFS, DFS, componentes conectados, MST); adicionada `Queue` própria em `src/types/queue.py`; justificada a marcação de visitado no `pop` da DFS | Lucas Antunes |
+| 16/06/2026 | 1.2 | Decisões do pré-processamento (Filtro 1): normalização A1', segmentação por regex, dados NLTK no Docker, pacote `preprocessing/`, descarte de ruído | Equipe |
