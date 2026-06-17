@@ -1,0 +1,31 @@
+[
+  {"id": 1, "topic": "desempenho", "text": "O jogo trava muito depois da atualização recente, os quadros por segundo caem constantemente."},
+  {"id": 2, "topic": "desempenho", "text": "O desempenho melhorou bastante após o patch, o jogo roda muito mais fluido agora."},
+
+  {"id": 3, "topic": "narrativa", "text": "A história é envolvente e os personagens têm profundidade, a campanha principal é excelente."},
+  {"id": 4, "topic": "narrativa", "text": "O enredo começa bem mas perde força no final, as missões secundárias salvam a experiência."},
+
+  {"id": 5, "topic": "multiplayer", "text": "O modo online está cheio de bugs e a conexão cai frequentemente durante as partidas."},
+  {"id": 6, "topic": "multiplayer", "text": "O matchmaking do multiplayer é rápido e os servidores estão estáveis na maior parte do tempo."},
+
+  {"id": 7, "topic": "interface", "text": "O menu principal é confuso e os ícones do HUD são pequenos demais para ler com clareza."},
+  {"id": 8, "topic": "interface", "text": "A interface foi redesenhada e ficou muito mais intuitiva, navegar pelos menus agora é fácil."},
+
+  {"id": 9, "topic": "progressão", "text": "O sistema de progressão é satisfatório, cada nível desbloqueado traz recompensas relevantes."},
+  {"id": 10, "topic": "progressão", "text": "A árvore de habilidades é confusa e a progressão parece lenta mesmo jogando por horas."},
+
+  {"id": 11, "topic": "áudio", "text": "A trilha sonora é incrível e os efeitos de som estão bem sincronizados com as ações do jogo."},
+  {"id": 12, "topic": "áudio", "text": "As dublagens estão abaixo do esperado e a música de fundo fica repetitiva rapidamente."},
+
+  {"id": 13, "topic": "gráficos", "text": "Os gráficos são impressionantes e os cenários têm um nível de detalhe muito alto nas texturas."},
+  {"id": 14, "topic": "gráficos", "text": "As animações dos personagens parecem rígidas e o desenho dos efeitos visuais é datado."},
+
+  {"id": 15, "topic": "controles", "text": "Os controles são responsivos e a curva de aprendizado é justa para novos jogadores."},
+  {"id": 16, "topic": "controles", "text": "O mapeamento dos botões é ruim e não é possível personalizar os controles como gostaríamos."},
+
+  {"id": 17, "topic": "conteúdo pós-lançamento", "text": "Os DLCs adicionam conteúdo relevante e valem o preço cobrado pela expansão."},
+  {"id": 18, "topic": "conteúdo pós-lançamento", "text": "O conteúdo pós-lançamento é escasso e as atualizações demoram muito para chegar."},
+
+  {"id": 19, "topic": "suporte técnico", "text": "O suporte respondeu rápido e resolveu meu problema com o salvamento corrompido em menos de um dia."},
+  {"id": 20, "topic": "suporte técnico", "text": "O suporte técnico é lento e as respostas automáticas não resolvem os problemas reportados."}
+]
