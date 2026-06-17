@@ -140,10 +140,10 @@ analysis:
 
 # ── Tests ──────────────────────────────────────────────────────────────────────
 
-test:
+test: build
 	docker compose -f docker-compose.yml -f docker-compose.ci.yml run --rm app uv run pytest
 
-test-cov:
+test-cov: build
 	docker compose -f docker-compose.yml -f docker-compose.ci.yml run --rm app uv run pytest --cov=src --cov-report=term-missing
 
 env-test:
