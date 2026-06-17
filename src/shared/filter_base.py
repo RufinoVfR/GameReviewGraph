@@ -39,17 +39,24 @@ class AbstractFilter(ABC):
     output_format: str = "json"
     extra_input_keys: list[str] = []
 
-    def execute(self) -> None:
+    def execute(self, use_cache: bool = True) -> None:
         """Run the full filter lifecycle: cache check → load → process → save.
 
         On a Redis cache hit, the cached result is written to S3 and
         ``process()`` is skipped. On a miss, ``process()`` is called, the
         result is written to S3, and then cached in Redis.
+
+        Args:
+            use_cache: When ``False``, the Redis cache is **not** read, so
+                ``process()`` always runs (force reprocessing). The fresh result
+                is still written to S3 and saved to the cache, refreshing any
+                stale entry. Defaults to ``True``.
         """
-        cached = self._load_cache()
-        if cached is not None:
-            self._write_output(cached)
-            return
+        if use_cache:
+            cached = self._load_cache()
+            if cached is not None:
+                self._write_output(cached)
+                return
         data = self._load_input()
         result = self.process(data)
         self._write_output(result)

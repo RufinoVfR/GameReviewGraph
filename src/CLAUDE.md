@@ -149,6 +149,8 @@ execute()
 
 Concrete filters must **never** call `get_storage()` or `get_cache()` directly — only `AbstractFilter` does.
 
+`execute(use_cache=False)` skips the Redis **read** to force reprocessing (the fresh result is still written to S3 and re-cached). Filter entry points expose this as a `--no-cache` flag, forwarded via the Makefile's `ARGS` variable — e.g. `make preprocessing ARGS=--no-cache`.
+
 ---
 
 ## Concrete filter template

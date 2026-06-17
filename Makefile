@@ -33,6 +33,7 @@ help:
 	@echo ""
 	@echo "Individual filters (run inside Docker)"
 	@echo "  preprocessing        Filter 1 — tokenization, stopwords, normalization"
+	@echo "                       (force rerun: make preprocessing ARGS=--no-cache)"
 	@echo "  tree                 Filter 2 — N-ary tree construction"
 	@echo "  word-graph           Filter 3 — word co-occurrence graph"
 	@echo "  sentence-graph       Filter 4 — sentence graph"
@@ -108,8 +109,9 @@ clean:
 
 # ── Individual filters ─────────────────────────────────────────────────────────
 
+# Pass extra args via ARGS, e.g.: make preprocessing ARGS=--no-cache
 preprocessing:
-	docker compose run --rm app uv run python -m src.preprocessing
+	docker compose run --rm app uv run python -m src.preprocessing $(ARGS)
 
 tree:
 	docker compose run --rm app uv run python -m src.tree

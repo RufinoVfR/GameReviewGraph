@@ -135,6 +135,19 @@ class TestProcess:
         assert "depois" not in tokens
         assert "muito" not in tokens
 
+    def test_multiple_sentences_per_comment(self):
+        """A comment with several .!?-separated sentences yields several token lists.
+
+        Guards the segmentation order: punctuation removal must run after
+        sentence segmentation, otherwise the .!? terminators are stripped and
+        the comment collapses into a single sentence.
+        """
+        data = [
+            {"id": 1, "topic": "t", "text": "O jogo trava sempre. O jogo trava demais! O jogo trava ainda?"},
+        ]
+        result = PreprocessingFilter().process(data)
+        assert len(result[0]["sentences"]) == 3
+
     def test_comment_kept_when_all_sentences_empty(self):
         """A comment whose tokens are all cut is still returned (empty sentences)."""
         data = [{"id": 7, "topic": "x", "text": "a o e."}]  # all stopwords/short
@@ -156,3 +169,29 @@ class TestExecute:
         assert len(written) == len(raw_comments)
         assert {c["id"] for c in written} == {c["id"] for c in raw_comments}
         assert all("sentences" in c for c in written)
+
+    def test_no_cache_ignores_cached_result(self, raw_comments, mock_storage, mock_cache):
+        """execute(use_cache=False) reprocesses instead of serving a stale cache."""
+        from src.config import S3_KEYS
+
+        mock_storage.write_json(S3_KEYS["raw"], raw_comments)
+        # Seed a poisoned cache entry that a cache read would surface verbatim.
+        mock_cache.set("preprocessing", [{"id": 999, "topic": "stale", "sentences": []}])
+
+        PreprocessingFilter().execute(use_cache=False)
+
+        written = mock_storage.read_json(S3_KEYS["preprocessed"])
+        assert {c["id"] for c in written} == {c["id"] for c in raw_comments}
+        assert 999 not in {c["id"] for c in written}
+
+    def test_cache_hit_short_circuits_process(self, raw_comments, mock_storage, mock_cache):
+        """With caching on, a cached result is served without reprocessing."""
+        from src.config import S3_KEYS
+
+        mock_storage.write_json(S3_KEYS["raw"], raw_comments)
+        mock_cache.set("preprocessing", [{"id": 999, "topic": "stale", "sentences": []}])
+
+        PreprocessingFilter().execute()  # use_cache=True by default
+
+        written = mock_storage.read_json(S3_KEYS["preprocessed"])
+        assert {c["id"] for c in written} == {999}
