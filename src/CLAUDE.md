@@ -28,7 +28,7 @@ make clean          # flush Redis cache + delete S3 pipeline artifacts
 ## What this directory is
 
 `src/` contains all Python source code. Each file is one **filter** in the pipeline.
-No filter imports internal functions from another filter — communication happens via **MinIO S3** artifacts and **Redis** cache. Only `src/shared/`, `src/config.py`, and `src/types.py` may be imported by multiple filters.
+No filter imports internal functions from another filter — communication happens via **MinIO S3** artifacts and **Redis** cache. Only `src/shared/`, `src/config.py`, and `src/types/` may be imported by multiple filters.
 
 ---
 
@@ -44,14 +44,19 @@ src/
 │   ├── storage.py           ← S3/MinIO adapter  (S3Storage, get_storage)
 │   ├── cache.py             ← Redis cache adapter  (RedisCache, get_cache)
 │   └── graph/               ← graph primitive utilities (see shared/graph/CLAUDE.md)
-│       ├── ops.py           ← add_edge, increase_weight, remove_edge, iter_edges, copy_graph
-│       ├── metrics.py       ← degree, weighted_degree, density, node_count, edge_count
-│       ├── traversal.py     ← BFS, DFS, connected_components, count_components
+│       ├── ops.py           ← add_edge, increase_edge, remove_edge, iter_edges, copy_graph, build_graph_from_deltas, serialize_graph
+│       ├── metrics.py       ← neighbor_count, total_edge_weight, density, node_count, edge_count
+│       ├── traversal.py     ← BFS, DFS, connected_components, count_components, minimum_spanning_tree
 │       └── validate.py      ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
 │
 ├── main.py                  ← orchestrator: instantiates FilterChain + all filters
 ├── config.py                ← env vars, S3_KEYS, K=10, MIN_FREQ
-├── types.py                 ← type aliases shared across modules
+├── types/                   ← type aliases/dataclasses, split by semantics (see types/CLAUDE.md)
+│   ├── __init__.py          ← re-exports: RawComment, ProcessedComment, Graph, NodeKey, Communities, Metrics
+│   ├── comments.py          ← RawComment, ProcessedComment
+│   ├── graph.py             ← Graph dataclass, NodeKey
+│   ├── communities.py       ← Communities
+│   └── metrics.py           ← Metrics
 ├── preprocessing.py         ← ConcreteFilter 1: tokenization, stopwords, normalization
 ├── tree.py                  ← ConcreteFilter 2: N-ary tree (Dataset → Comment → Sentence → Word)
 ├── word_graph.py            ← ConcreteFilter 3: word co-occurrence graph (positional weight)
@@ -67,12 +72,23 @@ src/
 
 ## Type contracts
 
-Defined in `src/types.py` — import from there, do not redefine locally.
+Defined in `src/types/` (one module per semantic group — see [`types/CLAUDE.md`](types/CLAUDE.md)) — always import from the package root, never from a submodule:
+
+```python
+# CORRECT
+from src.types import Graph, NodeKey
+
+# WRONG — exposes internal structure
+from src.types.graph import Graph
+```
 
 ```python
 RawComment       = dict   # {"id": int, "topic": str, "text": str}
 ProcessedComment = dict   # {"id": int, "topic": str, "sentences": list[list[str]]}
-Graph            = dict[str, dict[str, float]]  # adjacency list; keys prefixed w_, s_, c_
+NodeKey          = str    # "w_word", "s_12", "c_3"
+Graph            = dataclass(nodes: list[NodeKey], index: dict[NodeKey, int], matrix: list[list[float]])
+                             # adjacency matrix + name→index mapping; node names prefixed w_, s_, c_
+                             # matrix[i][j] == 0.0 means no edge (weights are always > 0)
 Communities      = dict[int, list[str]]         # community_id → [node_key, ...]
 Metrics          = dict                         # see metrics.py for full schema
 ```
@@ -150,7 +166,7 @@ class WordGraphFilter(AbstractFilter):
             data: Serialized NaryTree downloaded from MinIO.
 
         Returns:
-            Adjacency dict mapping word node → {neighbor: weight}.
+            Graph (adjacency matrix + name→index mapping) over word nodes.
         """
         ...
 
@@ -167,10 +183,10 @@ Run with: `make word-graph` (delegates to `docker compose run --rm app uv run py
 ## Non-negotiable implementation rules
 
 - **No external graph libraries** — NetworkX, igraph, graph-tool, and equivalents are forbidden. −5.0 points penalty.
-- **No imports between filters** — `word_graph.py` must not import from `sentence_graph.py`, and vice versa. Only `src/shared/`, `src/config.py`, and `src/types.py` are shared.
+- **No imports between filters** — `word_graph.py` must not import from `sentence_graph.py`, and vice versa. Only `src/shared/`, `src/config.py`, and `src/types/` are shared.
 - **No direct S3/Redis calls in filters** — use `AbstractFilter.execute()` for all I/O; never call `get_storage()` or `get_cache()` inside `process()`.
 - **Docstrings on every public function** — format: one-line summary, blank line, `Args:` and `Returns:` sections.
 - **Type hints on every function signature** — no `Any` unless truly unavoidable.
-- **Graph representation** — always `dict[str, dict[str, float]]`; no classes, no adjacency matrices.
+- **Graph representation** — always the `Graph` dataclass (`nodes`, `index`, `matrix`) defined in `src/types/graph.py`; never reintroduce a nested-dict adjacency list, and never reach for an external graph library.
 - **BFS/DFS, edge cutting, centrality, and modularity** — implemented from scratch in their respective modules.
 - **NLP libraries** — NLTK/spaCy allowed only in `preprocessing.py`.

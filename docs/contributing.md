@@ -4,6 +4,31 @@ Este documento define o processo de trabalho colaborativo no **GameReviewGraph**
 
 ---
 
+## 0. Quick Start — do zero ao primeiro filtro
+
+Entrou no projeto hoje e vai implementar um filtro? Siga esta trilha de leitura
+**nesta ordem** — é o mínimo suficiente, não "leia tudo".
+
+**Caminho crítico (ler em ordem):**
+
+1. **[`CLAUDE.md`](https://github.com/RufinoVfR/GameReviewGraph/blob/main/CLAUDE.md) (raiz)** — panorama, arquitetura pipe-and-filter, fórmulas dos algoritmos e as **regras inegociáveis** (sem libs de grafo, docstrings, inglês no código).
+2. **[Guia de Implementação](guia_implementacao.md)** — o documento-âncora: receita passo a passo por filtro, contratos que todo filtro respeita, contrato de artefatos JSON (já fechado, inclui `tree.json` e `metrics.json`), trilhas paralelas e *definition of done*. Se ler só um arquivo, é este.
+3. **`src/CLAUDE.md`** — template do filtro, mapa de módulos, `S3_KEYS`, contratos de tipo, como I/O e cache funcionam por baixo do `execute()`.
+4. **`src/shared/CLAUDE.md`** — contratos GoF que você herda/usa: `AbstractFilter`, tabela de filtros multi-input (`extra_input_keys`), `FilterChain`, regras de import.
+
+**Referência (deixar aberto enquanto codifica):**
+
+5. **`src/shared/graph/CLAUDE.md`** — API das ferramentas de grafo (`build_graph_from_deltas`, `serialize_graph`, `iter_edges`, `assert_valid`…).
+6. **`tests/conftest.py`** — fixtures prontas (`make_graph`, `clustered_graph`, `mock_storage`, `mock_cache`) — ver §5 deste guia.
+
+**Contexto, se sobrar tempo (não bloqueia implementar):** [Arquitetura](arquitetura.md), [Padrões de Projeto](padroes_projeto.md), [Decisões de Projeto](decisions.md).
+
+> Resumo: raiz `CLAUDE.md` → Guia de Implementação → `src/CLAUDE.md` → `src/shared/CLAUDE.md`, com `src/shared/graph/CLAUDE.md` e `conftest.py` abertos ao lado. Os quatro `CLAUDE.md` formam uma árvore (cada subpasta aprofunda a anterior) — leitura de cima para baixo.
+
+Depois da leitura, o passo a passo prático está em **§6 (Adicionando um Novo Filtro)** e a receita por filtro na Parte C do Guia de Implementação.
+
+---
+
 ## 1. Fluxo Git
 
 **Regra absoluta: nunca commitar diretamente na branch `main`.**
@@ -338,3 +363,4 @@ Um módulo está concluído quando **todos** os critérios abaixo são verdadeir
 | 12/06/2026 | 1.1 | Seções de padrões GoF, template de filtro concreto, DoD atualizado | Lucas Antunes |
 | 12/06/2026 | 1.2 | Migração para Docker + MinIO + Redis: seções 2, 3, 4 e DoD atualizados | Lucas Antunes |
 | 12/06/2026 | 1.3 | Fixtures de teste (mock_storage, mock_cache, clustered_graph, make_graph); template multi-input com extra_input_keys | Lucas Antunes |
+| 16/06/2026 | 1.4 | Seção Quick Start com a trilha de leitura do zero ao primeiro filtro | Equipe |

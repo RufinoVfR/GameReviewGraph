@@ -9,12 +9,13 @@ algorithms without modifying the filter.
 from abc import ABC, abstractmethod
 
 from src.shared.graph import (
+    connected_components,
     copy_graph,
     count_components,
-    connected_components,
-    degree,
     has_edge,
     iter_edges,
+    minimum_spanning_tree,
+    neighbor_count,
     remove_edge,
 )
 from src.types import Communities, Graph
@@ -42,16 +43,18 @@ class CommunityDetectionStrategy(ABC):
 
 
 class ProgressiveEdgeCuttingStrategy(CommunityDetectionStrategy):
-    """Default community detection via progressive edge cutting.
+    """Default community detection: MST reduction + progressive edge cutting.
 
     Algorithm:
-        1. Sort all edges ascending by weight.
-        2. For each edge (u, v): if degree(u) > 1 and degree(v) > 1, remove it.
-        3. After each removal, count connected components via BFS.
-        4. Stop when components >= k or no more removable edges remain.
+        1. Reduce the graph to a Minimum Spanning Tree (Prim) — V-1 edges.
+        2. Sort the MST's edges ascending by weight.
+        3. For each edge (u, v): if neighbor_count(u) > 1 and neighbor_count(v) > 1, remove it.
+        4. After each removal, count connected components via BFS.
+        5. Stop when components >= k or no more removable edges remain.
 
-    The input graph is never mutated; ``copy_graph`` is called before any
-    edge removal. All traversal is delegated to ``src.shared.graph``.
+    The input graph is never mutated; ``copy_graph`` is called before
+    building the MST. All traversal and MST construction is delegated to
+    ``src.shared.graph``.
     """
 
     def detect(self, graph: Graph, k: int) -> Communities:
@@ -64,12 +67,12 @@ class ProgressiveEdgeCuttingStrategy(CommunityDetectionStrategy):
         Returns:
             Mapping of community_id (1-indexed) to list of node keys.
         """
-        working = copy_graph(graph)
+        working = minimum_spanning_tree(copy_graph(graph))
         sorted_edges = sorted(iter_edges(working), key=lambda e: e[2])
         for u, v, _ in sorted_edges:
             if not has_edge(working, u, v):
                 continue
-            if degree(working, u) > 1 and degree(working, v) > 1:
+            if neighbor_count(working, u) > 1 and neighbor_count(working, v) > 1:
                 remove_edge(working, u, v)
                 if count_components(working) >= k:
                     break

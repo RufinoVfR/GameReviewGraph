@@ -78,7 +78,7 @@ flowchart TD
 | 4 | `sentence_graph.py` | `word_graph.json` + `tree.json` | `sentence_graph.json` | Grafo de frases derivado das relações entre palavras |
 | 5 | `comment_graph.py` | `sentence_graph.json` + `tree.json` | `comment_graph.json` | Grafo de comentários derivado das relações entre frases |
 | 6 | `final_graph.py` | `word_graph.json` + `sentence_graph.json` + `comment_graph.json` + `tree.json` | `final_graph.json` | Grafo unificado: 3 níveis + arestas hierárquicas da árvore |
-| 7 | `community_detection.py` | `final_graph.json` | `communities.json` | Corte progressivo de arestas + BFS/DFS → K=10 comunidades |
+| 7 | `community_detection.py` | `final_graph.json` | `communities.json` | MST (Prim) + corte progressivo de arestas + BFS/DFS → K=10 comunidades |
 | 8 | `metrics.py` | `final_graph.json` + `communities.json` | `metrics.json` | Centralidade de grau ponderada + Modularidade Q |
 | 9 | `analysis.py` | `metrics.json` | `report.txt` | Geração do relatório final com tópicos e métricas |
 
@@ -100,15 +100,18 @@ Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `
 | `metrics.py` | `Graph` + `Communities` | `Metrics` |
 | `analysis.py` | `Metrics` | `str` (relatório) |
 
-**Aliases de tipo** (definidos em `src/types.py`):
+**Tipos** (pacote `src/types/`, um módulo por grupo semântico — ver [`grafos.md`](grafos.md) para o detalhe de `Graph`):
 
 ```python
-RawComment       = dict                        # {"id": int, "topic": str, "text": str}
-ProcessedComment = dict                        # {"id": int, "topic": str, "sentences": list[list[str]]}
-Graph            = dict[str, dict[str, float]] # adjacency list; keys prefixed w_, s_, c_
-Communities      = dict[int, list[str]]        # community_id → [node_key, ...]
-Metrics          = dict                        # ver schema em metrics.py
+RawComment       = dict                                          # {"id": int, "topic": str, "text": str}
+ProcessedComment = dict                                          # {"id": int, "topic": str, "sentences": list[list[str]]}
+NodeKey          = str                                           # "w_word", "s_12", "c_3"
+Graph            = dataclass(nodes, index, matrix)                # matriz de adjacência + mapeamento nome→índice
+Communities      = dict[int, list[str]]                          # community_id → [node_key, ...]
+Metrics          = dict                                          # ver schema em metrics.py
 ```
+
+Sempre importar de `src.types` (o pacote), nunca de um submódulo (`src.types.graph`, etc.).
 
 ---
 
