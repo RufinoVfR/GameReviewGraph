@@ -23,6 +23,8 @@ docs/
 ├── backlog.md               ← user stories (US01–US14), prioritization, MVP, acceptance criteria
 ├── cronograma.md            ← 4-wave schedule with milestones and risk notes
 ├── arquitetura.md           ← pipe-and-filter diagram, filter contracts, I/O file map, design decisions
+├── padroes_projeto.md       ← five GoF patterns: Template Method, Chain of Responsibility, Facade, Observer, Strategy
+├── infraestrutura.md        ← Docker, MinIO, Redis: services, env vars, S3 key map, CI/CD
 └── contributing.md          ← git workflow, running filters, coding standards, definition of done
 ```
 
@@ -38,6 +40,8 @@ nav:
   - Backlog: backlog.md
   - Cronograma: cronograma.md
   - Arquitetura: arquitetura.md
+  - Padrões de Projeto: padroes_projeto.md
+  - Infraestrutura: infraestrutura.md
   - Contribuição: contributing.md
 ```
 

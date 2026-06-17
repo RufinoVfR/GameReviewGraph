@@ -5,8 +5,9 @@
 >
 > ```
 > / (root)  ← you are here: project-wide rules, architecture, algorithms
-> ├── docs/CLAUDE.md    — MkDocs pages, nav map, content ownership
-> └── src/CLAUDE.md     — filter contracts, I/O paths, cache pattern, implementation rules
+> ├── docs/CLAUDE.md           — MkDocs pages, nav map, content ownership
+> ├── src/CLAUDE.md            — filter contracts, S3/Redis I/O, implementation rules
+> └── src/shared/CLAUDE.md     — GoF infrastructure: AbstractFilter, FilterChain, Observer, Strategy, storage, cache
 > ```
 >
 > When working inside a subdirectory, read its `CLAUDE.md` first, then this file for project-wide constraints.
@@ -22,7 +23,7 @@ Academic project for FGA0030 (Data Structures 2, UnB 2026/1). Transforms a corpu
 ## Architecture
 
 ```
-comments (text)
+comments (text) [MinIO: pipeline/comments.json]
     → preprocessing.py       # tokenization, stopwords, normalization
     → tree.py                # N-ary Tree: Dataset → Comment → Sentence → Word
     → word_graph.py          # word co-occurrence graph (positional weight)
@@ -32,8 +33,12 @@ comments (text)
     → community_detection.py # progressive edge cutting + BFS/DFS
     → metrics.py             # weighted degree centrality + modularity Q
     → analysis.py            # report generation and interpretation
-    → main.py                # entry point
+    → main.py                # entry point — instantiates FilterChain
 ```
+
+Filters communicate via **MinIO S3** (JSON artifacts under `pipeline/` prefix).
+Filter results are cached in **Redis** (`filter:<name>` keys) to skip reprocessing.
+All pipeline infrastructure lives in `src/shared/` — see `src/shared/CLAUDE.md`.
 
 **Internal graph representation:** adjacency list as `dict[str, dict[str, float]]`. Node prefixes: `w_word`, `s_12`, `c_3`.
 
@@ -46,7 +51,7 @@ comments (text)
 - **NLP libraries ARE allowed** (NLTK, spaCy) — only for preprocessing
 - **Never commit directly to main** — use branches and PRs
 - **Never skip docstrings** — every function must have one; it is part of the evaluation criteria
-- **Never hardcode file paths** — use `pathlib.Path` and relative paths
+- **Never hardcode S3 keys or Redis keys** — use `S3_KEYS` from `src/config.py` and let `AbstractFilter` handle I/O
 - **Never add Claude as co-author** — omit `Co-Authored-By: Claude` from every commit message, without exception
 - **Language:** all code, comments, docstrings, and commit messages in **English**; input data and output reports in **Portuguese**
 
@@ -90,7 +95,7 @@ Q = (1/2m) × Σ [Aij - (ki × kj / 2m)] × δ(ci, cj)
 - **Source:** ~200 fictional comments in Portuguese, AI-generated via structured prompts
 - **Topics (10):** desempenho, narrativa, multiplayer, interface, progressão, áudio, gráficos, controles, conteúdo pós-lançamento, suporte técnico
 - **Distribution:** 20 comments per topic
-- **Location:** `data/comments.json` (or `.txt` — confirm with team)
+- **Location:** `data/comments.json` locally; uploaded to MinIO as `pipeline/comments.json` via `make init-data`
 - **Format example:**
   ```json
   {"id": 1, "topic": "desempenho", "text": "O jogo trava muito depois da atualização."}
@@ -102,27 +107,31 @@ Q = (1/2m) × Σ [Aij - (ki × kj / 2m)] × δ(ci, cj)
 
 ```python
 # Imports: stdlib → third-party → local
-import json
-from pathlib import Path
 import nltk
-from tree import NaryTree
+from src.shared.filter_base import AbstractFilter
+from src.types import Graph
 
-# Type hints: always use them
-def build_word_graph(sentences: list[list[str]]) -> dict[str, dict[str, float]]:
-    """Build word co-occurrence graph from tokenized sentences.
-    
-    Args:
-        sentences: List of tokenized sentences (words already preprocessed).
-    
-    Returns:
-        Adjacency dict mapping word → {neighbor: weight}.
-    """
+# Every concrete filter: inherit AbstractFilter, implement only process()
+class WordGraphFilter(AbstractFilter):
+    name = "word_graph"
+    input_key = "tree"
+    output_key = "word_graph"
+
+    def process(self, data: dict) -> Graph:
+        """Build word co-occurrence graph from the N-ary tree.
+
+        Args:
+            data: Serialized NaryTree from MinIO.
+
+        Returns:
+            Adjacency dict mapping word node → {neighbor: weight}.
+        """
 ```
 
 - Python 3.11+
 - Dependencies managed via **uv** (`pyproject.toml`) — no `requirements.txt`
 - One module per graph level — do not mix responsibilities across files
-- Test each module independently before integrating into `main.py`
+- All execution goes through Docker via `make` — never call `python`/`python3` directly
 
 ---
 
@@ -131,22 +140,30 @@ def build_word_graph(sentences: list[list[str]]) -> dict[str, dict[str, float]]:
 All execution goes through `make`. Never call `python`/`python3` directly.
 
 ```bash
-# Install dependencies
-make install
+# First-time setup
+make install       # install deps locally (for docs/tests tooling)
+make docker-up     # start MinIO + Redis + app in background
+make init-data     # upload data/comments.json to MinIO
 
 # Run full pipeline
 make run
 
-# Run a specific module in isolation
+# Run a specific filter in isolation (inside Docker)
 make preprocessing
 make tree
 make word-graph
 
-# Check output format
-make run | head -50
+# Infrastructure
+make docker-status  # check running containers
+make docker-logs    # follow all service logs
+make docker-restart # rebuild + restart
+
+# Cleanup
+make clean          # flush Redis cache + delete S3 pipeline artifacts
+make docker-down    # stop all containers
 ```
 
-After implementing any module, Claude should run it via `make` and confirm the output matches the expected structure before proceeding to the next.
+After implementing any module, run it via `make` and confirm the output artifact appears in MinIO before proceeding to the next.
 
 ---
 
