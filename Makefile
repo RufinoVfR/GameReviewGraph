@@ -98,7 +98,7 @@ docker-status:
 # ── Pipeline ───────────────────────────────────────────────────────────────────
 
 init-data:
-	docker compose run --rm app uv run python scripts/init_data.py
+	docker compose run --rm app uv run python -m scripts.init_data
 
 run:
 	docker compose run --rm app uv run python -m src.main
