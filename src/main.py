@@ -12,10 +12,12 @@ from src.preprocessing import PreprocessingFilter
 from src.shared.filter_base import AbstractFilter
 from src.shared.observers import LoggingObserver
 from src.shared.pipeline import FilterChain
+from src.tree import TreeFilter
 
 # Ordered list of pipeline filters. Extend as downstream filters land.
 FILTERS: list[AbstractFilter] = [
     PreprocessingFilter(),
+    TreeFilter(),
 ]
 
 
