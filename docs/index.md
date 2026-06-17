@@ -12,6 +12,19 @@ Implementado em Python puro, sem bibliotecas externas de grafos. Disciplina **FG
 
 ---
 
+## Quick Start — por onde começar
+
+Entrou no projeto e vai implementar um filtro? A trilha de leitura mínima, **nesta ordem**:
+
+1. **`CLAUDE.md` (raiz)** — panorama, arquitetura e regras inegociáveis.
+2. **[Guia de Implementação](guia_implementacao.md)** — documento-âncora: receita passo a passo por filtro, contratos e *definition of done*.
+3. **`src/CLAUDE.md`** — template do filtro, `S3_KEYS`, I/O e cache.
+4. **`src/shared/CLAUDE.md`** — contratos GoF (`AbstractFilter`, multi-input, `FilterChain`).
+
+Mantenha abertos como referência: `src/shared/graph/CLAUDE.md` (ferramentas de grafo) e `tests/conftest.py` (fixtures). O passo a passo completo está no [Guia de Contribuição](contributing.md#0-quick-start-do-zero-ao-primeiro-filtro).
+
+---
+
 ## Pipeline
 
 | Etapa | Módulo | Descrição |
