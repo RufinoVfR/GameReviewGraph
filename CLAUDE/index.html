@@ -352,13 +352,32 @@
   
   
     <li class="md-tabs__item">
-      <a href="../grafos.md" class="md-tabs__link">
+      <a href="../grafos/" class="md-tabs__link">
         
   
   
     
   
   Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../decisions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Decisões de Projeto
 
       </a>
     </li>
@@ -378,6 +397,25 @@
     
   
   Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../guia_implementacao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Implementação
 
       </a>
     </li>
@@ -644,7 +682,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../grafos.md" class="md-nav__link">
+      <a href="../grafos/" class="md-nav__link">
         
   
   
@@ -652,6 +690,33 @@
     
   
     Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de Projeto
   
 
     
@@ -679,6 +744,33 @@
     
   
     Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guia_implementacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Implementação
   
 
     
@@ -850,8 +942,10 @@ Every <code>.md</code> file here maps 1:1 to a page in the site via <code>mkdocs
 ├── cronograma.md            ← 4-wave schedule with milestones and risk notes
 ├── arquitetura.md           ← pipe-and-filter diagram, filter contracts, I/O file map, design decisions
 ├── padroes_projeto.md       ← five GoF patterns: Template Method, Chain of Responsibility, Facade, Observer, Strategy
-├── grafos.md                ← graph utility sub-package: ops, metrics, traversal, validate; increase_weight vs add_edge
+├── grafos.md                ← graph utility sub-package: ops, metrics, traversal, validate; increase_edge vs add_edge
+├── decisions.md              ← justification for every architectural/algorithmic decision (the &quot;why&quot;, not the &quot;what&quot;)
 ├── infraestrutura.md        ← Docker, MinIO, Redis: services, env vars, S3 key map, CI/CD
+├── guia_implementacao.md    ← step-by-step guide: shared test plan + parallel filter implementation
 └── contributing.md          ← git workflow, running filters, coding standards, definition of done
 </code></pre></div>
 <hr />
@@ -865,7 +959,9 @@ Every <code>.md</code> file here maps 1:1 to a page in the site via <code>mkdocs
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Arquitetura</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arquitetura.md</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Padrões de Projeto</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">padroes_projeto.md</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Utilitários de Grafos</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">grafos.md</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Decisões de Projeto</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">decisions.md</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Infraestrutura</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infraestrutura.md</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Guia de Implementação</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">guia_implementacao.md</span>
 <span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Contribuição</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">contributing.md</span>
 </code></pre></div>
 <p>Do not rename files without updating the nav. Do not add pages without adding a nav entry.</p>
@@ -904,6 +1000,11 @@ Every <code>.md</code> file here maps 1:1 to a page in the site via <code>mkdocs
 <td><code>cronograma.md</code></td>
 <td>Timeline changes</td>
 <td>When wave dates shift, milestones are added, or completion status changes</td>
+</tr>
+<tr>
+<td><code>decisions.md</code></td>
+<td>Any architectural/algorithmic decision</td>
+<td>When the team picks, changes, or reverses a non-obvious design choice — add a new entry rather than rewriting history</td>
 </tr>
 </tbody>
 </table>

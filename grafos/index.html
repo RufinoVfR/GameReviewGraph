@@ -1,0 +1,1792 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://rufinovfr.github.io/GameReviewGraph/grafos/">
+      
+      
+        <link rel="prev" href="../padroes_projeto/">
+      
+      
+        <link rel="next" href="../decisions/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Utilitários de Grafos - GameReviewGraph</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#utilitarios-de-grafos" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="GameReviewGraph" class="md-header__button md-logo" aria-label="GameReviewGraph" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GameReviewGraph
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Utilitários de Grafos
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/RufinoVfR/GameReviewGraph" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    RufinoVfR/GameReviewGraph
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../visao_produto_projeto/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Visão do Produto e Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../requisitos/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Requisitos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../backlog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Backlog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../arquitetura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitetura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../padroes_projeto/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Padrões de Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../decisions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Decisões de Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../infraestrutura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../guia_implementacao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Implementação
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contribuição
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="GameReviewGraph" class="md-nav__button md-logo" aria-label="GameReviewGraph" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    GameReviewGraph
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/RufinoVfR/GameReviewGraph" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    RufinoVfR/GameReviewGraph
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visao_produto_projeto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão do Produto e Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../requisitos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requisitos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backlog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backlog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arquitetura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../padroes_projeto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Padrões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consumidores-por-filtro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumidores por filtro
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opspy-operacoes-crud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ops.py — Operações CRUD
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ops.py — Operações CRUD">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_edge-vs-increase_edge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_edge vs increase_edge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemplos-por-nivel-de-grafo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemplos por nível de grafo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build_graph_from_deltas-envelope-comum-de-geracao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_graph_from_deltas — envelope comum de geração
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metricspy-propriedades-do-grafo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        metrics.py — Propriedades do Grafo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="metrics.py — Propriedades do Grafo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uso-em-destaque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uso em destaque
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traversalpy-travessias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        traversal.py — Travessias
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="traversal.py — Travessias">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#centralizacao-do-bfsdfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Centralização do BFS/DFS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validatepy-validacao-estrutural" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate.py — Validação Estrutural
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="validate.py — Validação Estrutural">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-usar-assert_valid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando usar assert_valid
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-nao-pertence-aqui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que não pertence aqui
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico-de-revisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico de Revisão
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infraestrutura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guia_implementacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Implementação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuição
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#consumidores-por-filtro" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Consumidores por filtro
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#opspy-operacoes-crud" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ops.py — Operações CRUD
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ops.py — Operações CRUD">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#add_edge-vs-increase_edge" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        add_edge vs increase_edge
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemplos-por-nivel-de-grafo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemplos por nível de grafo
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#build_graph_from_deltas-envelope-comum-de-geracao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        build_graph_from_deltas — envelope comum de geração
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#metricspy-propriedades-do-grafo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        metrics.py — Propriedades do Grafo
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="metrics.py — Propriedades do Grafo">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#uso-em-destaque" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Uso em destaque
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#traversalpy-travessias" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        traversal.py — Travessias
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="traversal.py — Travessias">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#centralizacao-do-bfsdfs" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Centralização do BFS/DFS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#validatepy-validacao-estrutural" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        validate.py — Validação Estrutural
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="validate.py — Validação Estrutural">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#funcoes_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Funções
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#quando-usar-assert_valid" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quando usar assert_valid
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#o-que-nao-pertence-aqui" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        O que não pertence aqui
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico-de-revisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico de Revisão
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="utilitarios-de-grafos">Utilitários de Grafos<a class="headerlink" href="#utilitarios-de-grafos" title="Permanent link">&para;</a></h1>
+<p>O sub-pacote <code>src/shared/graph/</code> fornece as operações primitivas sobre grafos compartilhadas por todos os filtros de construção e análise do pipeline. É uma camada utilitária pura sobre a representação canônica do projeto, definida em <code>src/types/graph.py</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">Graph</span><span class="p">:</span>
+    <span class="n">nodes</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>            <span class="c1"># índice -&gt; nome do nó (w_, s_, c_)</span>
+    <span class="n">index</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>       <span class="c1"># nome do nó -&gt; índice (mapeamento)</span>
+    <span class="n">matrix</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]]</span>   <span class="c1"># matriz de adjacência; matrix[i][j] == 0.0 significa &quot;sem aresta&quot;</span>
+</code></pre></div>
+<p>A matriz é sempre completa/simétrica (<code>matrix[i][j] == matrix[j][i]</code>) e cresce um nó por vez: ao registrar um nome ainda não visto, uma coluna <code>0.0</code> é adicionada a cada linha existente e uma nova linha cheia de <code>0.0</code> é adicionada à matriz. Não há pré-alocação de capacidade — como a estrutura já é O(n²) no tamanho final, crescer incrementalmente custa, no total, o mesmo que alocar tudo de uma vez. <code>0.0</code> é uma sentinela segura para "sem aresta" porque todas as fórmulas de peso do projeto produzem valores estritamente positivos.</p>
+<p>Nenhum filtro re-implementa operações básicas de grafo. Toda lógica de travessia, consulta e validação vive aqui e é importada via a API pública do sub-pacote.</p>
+<hr />
+<h2 id="estrutura">Estrutura<a class="headerlink" href="#estrutura" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>src/shared/graph/
+├── __init__.py     ← API pública: re-exports seletivos de todos os módulos
+├── ops.py          ← CRUD: criação, atualização e remoção de arestas
+├── metrics.py      ← propriedades: grau, densidade, contagens
+├── traversal.py    ← travessias: BFS, DFS, componentes conectados
+└── validate.py     ← validação estrutural: simetria, prefixos, nós isolados
+</code></pre></div>
+<p><strong>Regra de importação:</strong> filtros importam sempre do sub-pacote raiz, nunca dos módulos internos.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># CORRETO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">add_edge</span><span class="p">,</span> <span class="n">increase_edge</span><span class="p">,</span> <span class="n">neighbor_count</span><span class="p">,</span> <span class="n">connected_components</span>
+
+<span class="c1"># ERRADO — expõe estrutura interna</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">increase_edge</span>
+</code></pre></div>
+<hr />
+<h2 id="consumidores-por-filtro">Consumidores por filtro<a class="headerlink" href="#consumidores-por-filtro" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    subgraph graph["src/shared/graph/"]
+        OPS["ops.py"]
+        MET["metrics.py"]
+        TRV["traversal.py"]
+        VAL["validate.py"]
+    end
+
+    WG["word_graph.py"]
+    SG["sentence_graph.py"]
+    CG["comment_graph.py"]
+    FG["final_graph.py"]
+    CD["community_detection.py"]
+    MT["metrics.py (filtro)"]
+
+    WG --&gt; OPS
+    WG --&gt; VAL
+    SG --&gt; OPS
+    SG --&gt; MET
+    CG --&gt; OPS
+    CG --&gt; MET
+    FG --&gt; OPS
+    FG --&gt; MET
+    CD --&gt; TRV
+    CD --&gt; MET
+    CD --&gt; OPS
+    MT --&gt; MET
+    MT --&gt; TRV</code></pre>
+<hr />
+<h2 id="opspy-operacoes-crud"><code>ops.py</code> — Operações CRUD<a class="headerlink" href="#opspy-operacoes-crud" title="Permanent link">&para;</a></h2>
+<h3 id="funcoes">Funções<a class="headerlink" href="#funcoes" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Função</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>new_graph()</code></td>
+<td>Retorna um <code>Graph</code> vazio (sem nós, matriz vazia)</td>
+</tr>
+<tr>
+<td><code>add_node(graph, name)</code></td>
+<td>Retorna o índice de <code>name</code>, criando-o (e crescendo a matriz) se ausente; idempotente</td>
+</tr>
+<tr>
+<td><code>add_edge(graph, u, v, weight)</code></td>
+<td>Cria os nós ausentes e sobrescreve a aresta <code>(u, v)</code> com o peso dado</td>
+</tr>
+<tr>
+<td><code>increase_edge(graph, u, v, delta)</code></td>
+<td>Cria os nós ausentes e acrescenta <code>delta</code> ao peso de <code>(u, v)</code>; cria a aresta se não existir</td>
+</tr>
+<tr>
+<td><code>remove_edge(graph, u, v)</code></td>
+<td>Zera a célula <code>(u, v)</code> nas duas direções; não-op se algum nó ou a aresta não existir</td>
+</tr>
+<tr>
+<td><code>has_edge(graph, u, v)</code></td>
+<td>Retorna <code>True</code> se a aresta existe (<code>matrix[i][j] != 0.0</code>)</td>
+</tr>
+<tr>
+<td><code>get_edge_weight(graph, u, v)</code></td>
+<td>Retorna o peso da aresta ou <code>None</code></td>
+</tr>
+<tr>
+<td><code>iter_edges(graph)</code></td>
+<td>Percorre o triângulo superior da matriz (<code>j &gt; i</code>), retornando cada aresta exatamente uma vez como <code>(u, v, weight)</code></td>
+</tr>
+<tr>
+<td><code>copy_graph(graph)</code></td>
+<td>Retorna uma cópia profunda: nova lista de nós, novo dict de índices e matriz com cada linha copiada</td>
+</tr>
+<tr>
+<td><code>build_graph_from_deltas(deltas)</code></td>
+<td>Constrói um novo <code>Graph</code> acumulando triplas <code>(u, v, delta)</code> via <code>increase_edge</code> — envelope comum para word/sentence/comment graph</td>
+</tr>
+<tr>
+<td><code>serialize_graph(graph)</code></td>
+<td>Converte o <code>Graph</code> em <code>dict</code> JSON-serializável (<code>{"nodes", "index", "matrix"}</code>) — todo filtro que produz grafo retorna isto em <code>process()</code></td>
+</tr>
+<tr>
+<td><code>deserialize_graph(data)</code></td>
+<td>Reconstrói um <code>Graph</code> a partir do <code>dict</code> carregado do S3 — todo filtro que consome grafo chama isto antes de usar utilitários</td>
+</tr>
+</tbody>
+</table>
+<p><code>add_node</code> e <code>new_graph</code> são as únicas funções que alteram <code>graph.nodes</code>/<code>graph.index</code>/crescem <code>graph.matrix</code>. Toda outra operação de escrita chama <code>add_node</code> internamente para resolver nomes em índices — nenhuma função indexa a matriz diretamente com um nome bruto.</p>
+<blockquote>
+<p><strong>Serialização (obrigatória nos filtros de grafo).</strong> O <code>Graph</code> é um <code>dataclass</code> e <strong>não</strong> é serializável por <code>json.dumps</code> diretamente. Como <code>AbstractFilter.execute()</code> grava a saída de <code>process()</code> via <code>write_json</code> (e a cacheia no Redis), todo filtro que <strong>produz</strong> um grafo deve retornar <code>serialize_graph(graph)</code>, e todo filtro que <strong>consome</strong> um grafo deve chamar <code>deserialize_graph(data)</code> sobre o dict recebido antes de usar qualquer utilitário. O round-trip é exato: <code>deserialize_graph(json.loads(json.dumps(serialize_graph(g))))</code> reconstrói o grafo idêntico.</p>
+</blockquote>
+<h3 id="add_edge-vs-increase_edge"><code>add_edge</code> vs <code>increase_edge</code><a class="headerlink" href="#add_edge-vs-increase_edge" title="Permanent link">&para;</a></h3>
+<p>A distinção entre as duas operações de escrita é central para o modelo de grafos do projeto:</p>
+<table>
+<thead>
+<tr>
+<th>Situação</th>
+<th>Operação correta</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Definir um peso calculado externamente</td>
+<td><code>add_edge</code></td>
+</tr>
+<tr>
+<td>Registrar uma nova co-ocorrência de par <code>(u, v)</code></td>
+<td><code>increase_edge</code></td>
+</tr>
+</tbody>
+</table>
+<p>Os três grafos de co-ocorrência usam <strong>exclusivamente</strong> <code>increase_edge</code>: o peso de uma aresta é a soma das contribuições de todas as co-ocorrências do par ao longo do corpus.</p>
+<h3 id="exemplos-por-nivel-de-grafo">Exemplos por nível de grafo<a class="headerlink" href="#exemplos-por-nivel-de-grafo" title="Permanent link">&para;</a></h3>
+<p><strong><code>word_graph.py</code></strong> — contribuição posicional a cada co-ocorrência de <code>wi</code> e <code>wj</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">delta</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pos_i</span> <span class="o">-</span> <span class="n">pos_j</span><span class="p">))</span>
+<span class="n">increase_edge</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wj</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">delta</span><span class="p">)</span>
+</code></pre></div>
+<p><strong><code>sentence_graph.py</code></strong> — acumulação das contribuições de pares de palavras antes da normalização:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># acumula: weight(sa, sb) += weight(wi, wj)  para wi ∈ sa, wj ∈ sb</span>
+<span class="n">increase_edge</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;s_</span><span class="si">{</span><span class="n">a</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;s_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">get_edge_weight</span><span class="p">(</span><span class="n">word_graph</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wj</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+
+<span class="c1"># depois normaliza pelo produto dos tamanhos das sentenças</span>
+<span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">iter_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">):</span>
+    <span class="n">add_edge</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="o">/</span> <span class="p">(</span><span class="n">len_sa</span><span class="p">[</span><span class="n">u</span><span class="p">]</span> <span class="o">*</span> <span class="n">len_sb</span><span class="p">[</span><span class="n">v</span><span class="p">]))</span>
+</code></pre></div>
+<p><strong><code>comment_graph.py</code></strong> — mesmo padrão usando pesos de pares de sentenças.</p>
+<h3 id="build_graph_from_deltas-envelope-comum-de-geracao"><code>build_graph_from_deltas</code> — envelope comum de geração<a class="headerlink" href="#build_graph_from_deltas-envelope-comum-de-geracao" title="Permanent link">&para;</a></h3>
+<p>Cada filtro de grafo (word/sentence/comment) calcula seu próprio delta (fórmula posicional, ou peso já normalizado) e gera uma sequência de triplas <code>(u, v, delta)</code>. <code>build_graph_from_deltas</code> é o único ponto que sabe acumular essas triplas em um <code>Graph</code> — a fórmula de peso continua 100% dentro de cada filtro, nunca em <code>shared/graph/</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_word_pair_deltas</span><span class="p">(</span><span class="n">tree</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]:</span>
+    <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">iter_sentences</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">wi</span><span class="p">,</span> <span class="n">pos_i</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">wj</span><span class="p">,</span> <span class="n">pos_j</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">wi</span> <span class="o">!=</span> <span class="n">wj</span><span class="p">:</span>
+                    <span class="k">yield</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wj</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pos_i</span> <span class="o">-</span> <span class="n">pos_j</span><span class="p">)))</span>
+
+<span class="n">graph</span> <span class="o">=</span> <span class="n">build_graph_from_deltas</span><span class="p">(</span><span class="n">_word_pair_deltas</span><span class="p">(</span><span class="n">tree</span><span class="p">))</span>
+</code></pre></div>
+<hr />
+<h2 id="metricspy-propriedades-do-grafo"><code>metrics.py</code> — Propriedades do Grafo<a class="headerlink" href="#metricspy-propriedades-do-grafo" title="Permanent link">&para;</a></h2>
+<h3 id="funcoes_1">Funções<a class="headerlink" href="#funcoes_1" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Função</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>neighbor_count(graph, node)</code></td>
+<td>Número de vizinhos do nó (grau não-ponderado)</td>
+</tr>
+<tr>
+<td><code>total_edge_weight(graph, node)</code></td>
+<td>Soma dos pesos das arestas incidentes ao nó</td>
+</tr>
+<tr>
+<td><code>node_count(graph)</code></td>
+<td>Total de nós no grafo</td>
+</tr>
+<tr>
+<td><code>edge_count(graph)</code></td>
+<td>Total de arestas não-direcionadas únicas</td>
+</tr>
+<tr>
+<td><code>density(graph)</code></td>
+<td>Razão entre arestas existentes e máximo possível</td>
+</tr>
+<tr>
+<td><code>average_edge_weight(graph)</code></td>
+<td>Média dos pesos de todas as arestas únicas</td>
+</tr>
+</tbody>
+</table>
+<p><code>neighbor_count</code>/<code>total_edge_weight</code> resolvem <code>node</code> para um índice via <code>graph.index[node]</code> e percorrem a linha correspondente de <code>graph.matrix</code> contando/somando entradas <code>!= 0.0</code>. <code>node_count</code> é <code>len(graph.nodes)</code>; <code>edge_count</code> e <code>average_edge_weight</code> reaproveitam <code>iter_edges</code>.</p>
+<h3 id="uso-em-destaque">Uso em destaque<a class="headerlink" href="#uso-em-destaque" title="Permanent link">&para;</a></h3>
+<p><strong><code>community_detection.py</code></strong> — condição de remoção de aresta:</p>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">neighbor_count</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">neighbor_count</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">remove_edge</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</code></pre></div>
+<p><strong><code>metrics.py</code> (Filtro 8)</strong> — centralidade de grau ponderada:</p>
+<div class="highlight"><pre><span></span><code><span class="n">total</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">total_edge_weight</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">)</span>
+<span class="n">centrality</span><span class="p">[</span><span class="n">node</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_edge_weight</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="o">/</span> <span class="n">total</span>
+</code></pre></div>
+<hr />
+<h2 id="traversalpy-travessias"><code>traversal.py</code> — Travessias<a class="headerlink" href="#traversalpy-travessias" title="Permanent link">&para;</a></h2>
+<h3 id="funcoes_2">Funções<a class="headerlink" href="#funcoes_2" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Função</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bfs(graph, start)</code></td>
+<td>Retorna nós alcançáveis a partir de <code>start</code> em ordem BFS</td>
+</tr>
+<tr>
+<td><code>dfs(graph, start)</code></td>
+<td>Retorna nós alcançáveis a partir de <code>start</code> em ordem DFS</td>
+</tr>
+<tr>
+<td><code>reachable(graph, start)</code></td>
+<td>Conjunto de todos os nós alcançáveis a partir de <code>start</code></td>
+</tr>
+<tr>
+<td><code>connected_components(graph)</code></td>
+<td>Lista de componentes conectados (cada componente é uma lista de nós)</td>
+</tr>
+<tr>
+<td><code>count_components(graph)</code></td>
+<td>Número de componentes conectados</td>
+</tr>
+<tr>
+<td><code>is_connected(graph)</code></td>
+<td><code>True</code> se o grafo tem exatamente um componente</td>
+</tr>
+<tr>
+<td><code>minimum_spanning_tree(graph)</code></td>
+<td>Retorna um novo <code>Graph</code> com a Árvore Geradora Mínima de <code>graph</code>, construída via Prim (versão densa/array, O(V²), sem fila de prioridade)</td>
+</tr>
+</tbody>
+</table>
+<p>Todos os algoritmos são implementados do zero — sem bibliotecas de grafo externas. Na API pública, <code>start</code> e os nós retornados continuam sendo <strong>nomes</strong> (<code>str</code>); internamente, <code>start</code> é resolvido para um índice, os vizinhos são obtidos varrendo a linha correspondente de <code>graph.matrix</code> por entradas <code>!= 0.0</code>, e os índices são traduzidos de volta para nomes via <code>graph.nodes[i]</code> antes de retornar. <code>bfs</code> usa <code>Queue</code> (<code>src/types/queue.py</code> — fila própria, lista ligada, O(1) enqueue/dequeue, no lugar de <code>collections.deque</code>); <code>dfs</code> usa pilha explícita (sem recursão), marcando visitado no <code>pop</code> (não no <code>push</code>) para reproduzir a ordem de uma DFS recursiva.</p>
+<p><code>minimum_spanning_tree</code> foi escolhido com Prim (e não Kruskal) porque os grafos do projeto são densos e já estão representados como matriz de adjacência: Prim denso roda em O(V²) sem nenhuma estrutura auxiliar, enquanto Kruskal exigiria extrair e ordenar todas as arestas (O(E log E), ≈ O(V² log V) em grafo denso) mais uma estrutura Union-Find. <code>minimum_spanning_tree</code> não muta <code>graph</code> e é usada por <code>ProgressiveEdgeCuttingStrategy</code> (<code>strategies.py</code>) para reduzir o grafo final a V−1 arestas antes do corte progressivo.</p>
+<h3 id="centralizacao-do-bfsdfs">Centralização do BFS/DFS<a class="headerlink" href="#centralizacao-do-bfsdfs" title="Permanent link">&para;</a></h3>
+<p>Antes desta camada, <code>ProgressiveEdgeCuttingStrategy</code> em <code>strategies.py</code> mantinha implementações privadas de BFS (<code>_bfs</code>, <code>_bfs_collect</code>, <code>_count_components</code>, <code>_label_components</code>). Essas implementações foram removidas e substituídas pelas funções centralizadas:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># strategies.py — antes</span>
+<span class="n">components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_count_components</span><span class="p">(</span><span class="n">working</span><span class="p">)</span>
+
+<span class="c1"># strategies.py — depois</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">count_components</span><span class="p">,</span> <span class="n">connected_components</span>
+<span class="n">components</span> <span class="o">=</span> <span class="n">count_components</span><span class="p">(</span><span class="n">working</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="validatepy-validacao-estrutural"><code>validate.py</code> — Validação Estrutural<a class="headerlink" href="#validatepy-validacao-estrutural" title="Permanent link">&para;</a></h2>
+<h3 id="funcoes_3">Funções<a class="headerlink" href="#funcoes_3" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Função</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>is_symmetric(graph)</code></td>
+<td><code>True</code> se <code>matrix[i][j] == matrix[j][i]</code> para todo <code>i, j</code></td>
+</tr>
+<tr>
+<td><code>invalid_prefixes(graph, allowed=("w_", "s_", "c_"))</code></td>
+<td>Lista de nós com prefixo inválido</td>
+</tr>
+<tr>
+<td><code>isolated_nodes(graph)</code></td>
+<td>Lista de nós com grau zero</td>
+</tr>
+<tr>
+<td><code>assert_valid(graph)</code></td>
+<td>Levanta <code>ValueError</code> se o grafo falha em qualquer invariante estrutural (simetria, prefixos, <code>matrix[i][i] == 0.0</code> para todo <code>i</code>)</td>
+</tr>
+</tbody>
+</table>
+<p><code>invalid_prefixes</code> e <code>isolated_nodes</code> percorrem <code>graph.nodes</code> (e usam <code>neighbor_count</code>/<code>graph.index</code> no segundo caso). <code>is_symmetric</code> e a checagem de self-loop em <code>assert_valid</code> percorrem <code>graph.matrix</code> diretamente.</p>
+<h3 id="quando-usar-assert_valid">Quando usar <code>assert_valid</code><a class="headerlink" href="#quando-usar-assert_valid" title="Permanent link">&para;</a></h3>
+<p>Chame no final do <code>process()</code> de cada filtro durante o desenvolvimento e nos testes unitários. A chamada pode ser removida em produção se o profiling indicar gargalo — mas deve ser mantida nos testes.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ao final de process() em word_graph.py, sentence_graph.py, etc.</span>
+<span class="n">assert_valid</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+<span class="k">return</span> <span class="n">graph</span>
+</code></pre></div>
+<hr />
+<h2 id="o-que-nao-pertence-aqui">O que não pertence aqui<a class="headerlink" href="#o-que-nao-pertence-aqui" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Funcionalidade</th>
+<th>Onde fica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>merge_graphs</code></td>
+<td>Método privado de <code>final_graph.py</code> — usado exclusivamente por ele</td>
+</tr>
+<tr>
+<td>Fórmulas de peso (<code>1 / (1 + \|pos_i - pos_j\|)</code>)</td>
+<td>Dentro do <code>process()</code> de cada filtro</td>
+</tr>
+<tr>
+<td>Algoritmo de corte progressivo de arestas</td>
+<td><code>src/shared/strategies.py</code></td>
+</tr>
+<tr>
+<td>Modularidade Q</td>
+<td><code>metrics.py</code> (Filtro 8)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="historico-de-revisao">Histórico de Revisão<a class="headerlink" href="#historico-de-revisao" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Versão</th>
+<th>Descrição</th>
+<th>Autor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12/06/2026</td>
+<td>1.0</td>
+<td>Criação do documento</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>2.0</td>
+<td>Representação trocada de dict de adjacências para matriz de adjacência + mapeamento nome→índice (<code>Graph</code> dataclass em <code>src/types.py</code>); adicionadas <code>new_graph</code> e <code>add_node</code></td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>2.1</td>
+<td><code>src/types.py</code> transformado em pacote <code>src/types/</code>, dividido por semântica (<code>comments.py</code>, <code>graph.py</code>, <code>communities.py</code>, <code>metrics.py</code>)</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>2.2</td>
+<td>Adicionada <code>minimum_spanning_tree</code> (Prim, denso) em <code>traversal.py</code>; <code>ProgressiveEdgeCuttingStrategy</code> agora constrói a MST antes do corte progressivo</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>2.3</td>
+<td><code>traversal.py</code> implementado por completo (<code>bfs</code>, <code>dfs</code>, <code>reachable</code>, <code>connected_components</code>, <code>count_components</code>, <code>is_connected</code>, <code>minimum_spanning_tree</code>), usando <code>Queue</code> própria (<code>src/types/queue.py</code>) em vez de <code>collections.deque</code></td>
+<td>Lucas Antunes</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.tables"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>

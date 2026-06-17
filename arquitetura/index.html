@@ -358,13 +358,32 @@
   
   
     <li class="md-tabs__item">
-      <a href="../grafos.md" class="md-tabs__link">
+      <a href="../grafos/" class="md-tabs__link">
         
   
   
     
   
   Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../decisions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Decisões de Projeto
 
       </a>
     </li>
@@ -384,6 +403,25 @@
     
   
   Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../guia_implementacao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Implementação
 
       </a>
     </li>
@@ -763,7 +801,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../grafos.md" class="md-nav__link">
+      <a href="../grafos/" class="md-nav__link">
         
   
   
@@ -771,6 +809,33 @@
     
   
     Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de Projeto
   
 
     
@@ -798,6 +863,33 @@
     
   
     Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../guia_implementacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Implementação
   
 
     
@@ -1071,7 +1163,7 @@
 <td><code>community_detection.py</code></td>
 <td><code>final_graph.json</code></td>
 <td><code>communities.json</code></td>
-<td>Corte progressivo de arestas + BFS/DFS → K=10 comunidades</td>
+<td>MST (Prim) + corte progressivo de arestas + BFS/DFS → K=10 comunidades</td>
 </tr>
 <tr>
 <td>8</td>
@@ -1148,13 +1240,15 @@
 </tr>
 </tbody>
 </table>
-<p><strong>Aliases de tipo</strong> (definidos em <code>src/types.py</code>):</p>
-<div class="highlight"><pre><span></span><code><span class="n">RawComment</span>       <span class="o">=</span> <span class="nb">dict</span>                        <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;text&quot;: str}</span>
-<span class="n">ProcessedComment</span> <span class="o">=</span> <span class="nb">dict</span>                        <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;sentences&quot;: list[list[str]]}</span>
-<span class="n">Graph</span>            <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="c1"># adjacency list; keys prefixed w_, s_, c_</span>
-<span class="n">Communities</span>      <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>        <span class="c1"># community_id → [node_key, ...]</span>
-<span class="n">Metrics</span>          <span class="o">=</span> <span class="nb">dict</span>                        <span class="c1"># ver schema em metrics.py</span>
+<p><strong>Tipos</strong> (pacote <code>src/types/</code>, um módulo por grupo semântico — ver <a href="../grafos/"><code>grafos.md</code></a> para o detalhe de <code>Graph</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="n">RawComment</span>       <span class="o">=</span> <span class="nb">dict</span>                                          <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;text&quot;: str}</span>
+<span class="n">ProcessedComment</span> <span class="o">=</span> <span class="nb">dict</span>                                          <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;sentences&quot;: list[list[str]]}</span>
+<span class="n">NodeKey</span>          <span class="o">=</span> <span class="nb">str</span>                                           <span class="c1"># &quot;w_word&quot;, &quot;s_12&quot;, &quot;c_3&quot;</span>
+<span class="n">Graph</span>            <span class="o">=</span> <span class="n">dataclass</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span>                <span class="c1"># matriz de adjacência + mapeamento nome→índice</span>
+<span class="n">Communities</span>      <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>                          <span class="c1"># community_id → [node_key, ...]</span>
+<span class="n">Metrics</span>          <span class="o">=</span> <span class="nb">dict</span>                                          <span class="c1"># ver schema em metrics.py</span>
 </code></pre></div>
+<p>Sempre importar de <code>src.types</code> (o pacote), nunca de um submódulo (<code>src.types.graph</code>, etc.).</p>
 <hr />
 <h2 id="estrutura-de-artefatos-minio">Estrutura de Artefatos (MinIO)<a class="headerlink" href="#estrutura-de-artefatos-minio" title="Permanent link">&para;</a></h2>
 <p>Todos os artefatos vivem no bucket <code>game-review-graph</code> sob o prefixo <code>pipeline/</code>. O mapeamento entre chave lógica e objeto S3 é definido em <code>src/config.py</code> (<code>S3_KEYS</code>):</p>

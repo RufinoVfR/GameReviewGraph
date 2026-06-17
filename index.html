@@ -356,13 +356,32 @@
   
   
     <li class="md-tabs__item">
-      <a href="grafos.md" class="md-tabs__link">
+      <a href="grafos/" class="md-tabs__link">
         
   
   
     
   
   Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="decisions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Decisões de Projeto
 
       </a>
     </li>
@@ -382,6 +401,25 @@
     
   
   Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="guia_implementacao/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Implementação
 
       </a>
     </li>
@@ -523,6 +561,17 @@
     <span class="md-ellipsis">
       
         Sobre o projeto
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#quick-start-por-onde-comecar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start — por onde começar
       
     </span>
   </a>
@@ -739,7 +788,7 @@
   
   
     <li class="md-nav__item">
-      <a href="grafos.md" class="md-nav__link">
+      <a href="grafos/" class="md-nav__link">
         
   
   
@@ -747,6 +796,33 @@
     
   
     Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de Projeto
   
 
     
@@ -774,6 +850,33 @@
     
   
     Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="guia_implementacao/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Implementação
   
 
     
@@ -851,6 +954,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#quick-start-por-onde-comecar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Start — por onde começar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#pipeline" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -909,6 +1023,16 @@
 <h2 id="sobre-o-projeto">Sobre o projeto<a class="headerlink" href="#sobre-o-projeto" title="Permanent link">&para;</a></h2>
 <p>O <strong>GameReviewGraph</strong> transforma um corpus de ~200 reviews de jogos em português em uma estrutura de grafo hierárquica de três níveis — palavras → frases → comentários — e detecta comunidades semânticas (tópicos) por corte progressivo de arestas.</p>
 <p>Implementado em Python puro, sem bibliotecas externas de grafos. Disciplina <strong>FGA0030 — Estruturas de Dados 2 / UnB 2026/1</strong>.</p>
+<hr />
+<h2 id="quick-start-por-onde-comecar">Quick Start — por onde começar<a class="headerlink" href="#quick-start-por-onde-comecar" title="Permanent link">&para;</a></h2>
+<p>Entrou no projeto e vai implementar um filtro? A trilha de leitura mínima, <strong>nesta ordem</strong>:</p>
+<ol>
+<li><strong><code>CLAUDE.md</code> (raiz)</strong> — panorama, arquitetura e regras inegociáveis.</li>
+<li><strong><a href="guia_implementacao/">Guia de Implementação</a></strong> — documento-âncora: receita passo a passo por filtro, contratos e <em>definition of done</em>.</li>
+<li><strong><code>src/CLAUDE.md</code></strong> — template do filtro, <code>S3_KEYS</code>, I/O e cache.</li>
+<li><strong><code>src/shared/CLAUDE.md</code></strong> — contratos GoF (<code>AbstractFilter</code>, multi-input, <code>FilterChain</code>).</li>
+</ol>
+<p>Mantenha abertos como referência: <code>src/shared/graph/CLAUDE.md</code> (ferramentas de grafo) e <code>tests/conftest.py</code> (fixtures). O passo a passo completo está no <a href="contributing/#0-quick-start-do-zero-ao-primeiro-filtro">Guia de Contribuição</a>.</p>
 <hr />
 <h2 id="pipeline">Pipeline<a class="headerlink" href="#pipeline" title="Permanent link">&para;</a></h2>
 <table>

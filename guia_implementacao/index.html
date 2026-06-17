@@ -1,0 +1,1616 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://rufinovfr.github.io/GameReviewGraph/guia_implementacao/">
+      
+      
+        <link rel="prev" href="../infraestrutura/">
+      
+      
+        <link rel="next" href="../contributing/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Guia de Implementação - GameReviewGraph</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#guia-de-implementacao-testes-compartilhados-e-filtros-em-paralelo" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="GameReviewGraph" class="md-header__button md-logo" aria-label="GameReviewGraph" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GameReviewGraph
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Guia de Implementação
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/RufinoVfR/GameReviewGraph" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    RufinoVfR/GameReviewGraph
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../visao_produto_projeto/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Visão do Produto e Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../requisitos/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Requisitos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../backlog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Backlog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../arquitetura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitetura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../padroes_projeto/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Padrões de Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../grafos/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../decisions/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Decisões de Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../infraestrutura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Guia de Implementação
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contribuição
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="GameReviewGraph" class="md-nav__button md-logo" aria-label="GameReviewGraph" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    GameReviewGraph
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/RufinoVfR/GameReviewGraph" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    RufinoVfR/GameReviewGraph
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visao_produto_projeto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão do Produto e Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../requisitos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requisitos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backlog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backlog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arquitetura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../padroes_projeto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Padrões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grafos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../decisions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Decisões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infraestrutura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Implementação
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Guia de Implementação
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#estado-atual-ponto-de-partida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estado atual (ponto de partida)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuição
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#estado-atual-ponto-de-partida" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estado atual (ponto de partida)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="guia-de-implementacao-testes-compartilhados-e-filtros-em-paralelo">Guia de Implementação — Testes Compartilhados e Filtros em Paralelo<a class="headerlink" href="#guia-de-implementacao-testes-compartilhados-e-filtros-em-paralelo" title="Permanent link">&para;</a></h1>
+<p>Este guia leva do estado atual (camada compartilhada pronta) até a implementação
+dos nove filtros do pipeline <strong>em paralelo</strong>, sem que um time bloqueie o outro.
+Está dividido em quatro partes:</p>
+<ul>
+<li><strong>Parte A</strong> — Plano de testes da camada compartilhada (o que já existe, o que falta).</li>
+<li><strong>Parte B</strong> — Contratos que <strong>todo</strong> filtro precisa respeitar (Template Method, GoF, serialização).</li>
+<li><strong>Parte C</strong> — Guia passo a passo por filtro, com divisão de trabalho paralela.</li>
+<li><strong>Parte D</strong> — Fluxo de trabalho, validação e <em>definition of done</em>.</li>
+</ul>
+<blockquote>
+<p>Todos os comandos passam por <code>make</code> (Docker). Nunca chame <code>python</code>/<code>python3</code> direto.</p>
+</blockquote>
+<hr />
+<h2 id="estado-atual-ponto-de-partida">Estado atual (ponto de partida)<a class="headerlink" href="#estado-atual-ponto-de-partida" title="Permanent link">&para;</a></h2>
+<p>A camada <code>src/shared/</code> está completa e testada (96 testes unitários passando):</p>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Módulos</th>
+<th>Situação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Infraestrutura GoF</td>
+<td><code>filter_base.py</code>, <code>pipeline.py</code>, <code>observers.py</code>, <code>strategies.py</code></td>
+<td>Pronta</td>
+</tr>
+<tr>
+<td>Adaptadores de I/O</td>
+<td><code>storage.py</code> (S3/MinIO), <code>cache.py</code> (Redis)</td>
+<td>Prontos</td>
+</tr>
+<tr>
+<td>Utilitários de grafo</td>
+<td><code>graph/ops.py</code>, <code>graph/metrics.py</code>, <code>graph/traversal.py</code>, <code>graph/validate.py</code></td>
+<td>Prontos</td>
+</tr>
+<tr>
+<td>Tipos</td>
+<td><code>types/</code> (<code>Graph</code>, <code>Queue</code>, aliases)</td>
+<td>Prontos</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nenhum filtro concreto foi implementado ainda</strong> — <code>src/</code> contém apenas
+<code>config.py</code>, <code>types/</code> e <code>shared/</code>. É exatamente esse o trabalho a paralelizar.</p>
+<hr />
+<h1 id="parte-a-plano-de-testes-da-camada-compartilhada">Parte A — Plano de testes da camada compartilhada<a class="headerlink" href="#parte-a-plano-de-testes-da-camada-compartilhada" title="Permanent link">&para;</a></h1>
+<h2 id="a1-cobertura-atual">A.1 — Cobertura atual<a class="headerlink" href="#a1-cobertura-atual" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Arquivo de teste</th>
+<th>Casos</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>graph/ops.py</code></td>
+<td><code>test_graph_ops.py</code></td>
+<td>CRUD, <code>iter_edges</code>, <code>copy_graph</code>, <code>build_graph_from_deltas</code>, <strong>serialize/deserialize</strong></td>
+</tr>
+<tr>
+<td><code>graph/metrics.py</code></td>
+<td><code>test_graph_metrics.py</code></td>
+<td><code>neighbor_count</code>, <code>total_edge_weight</code>, contagens, <code>density</code>, <code>average_edge_weight</code></td>
+</tr>
+<tr>
+<td><code>graph/traversal.py</code></td>
+<td><code>test_graph_traversal.py</code></td>
+<td>BFS, DFS, componentes, <code>is_connected</code>, MST (Prim)</td>
+</tr>
+<tr>
+<td><code>graph/validate.py</code></td>
+<td><code>test_graph_validate.py</code></td>
+<td>simetria, prefixos, nós isolados, <code>assert_valid</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="a2-lacunas-a-cobrir-camada-compartilhada">A.2 — Lacunas a cobrir (camada compartilhada)<a class="headerlink" href="#a2-lacunas-a-cobrir-camada-compartilhada" title="Permanent link">&para;</a></h2>
+<p>Estes testes ainda <strong>não existem</strong> e devem ser escritos antes/junto dos filtros,
+pois são a rede de segurança que permite paralelizar com confiança:</p>
+<ol>
+<li><strong><code>strategies.py</code> — <code>ProgressiveEdgeCuttingStrategy</code></strong>
+   Usar a fixture <code>clustered_graph</code> (dois clusters + ponte fraca).</li>
+<li><code>detect(graph, k=2)</code> separa nos dois clusters esperados.</li>
+<li>Não muta o grafo de entrada (comparar antes/depois).</li>
+<li>Para em <code>k</code> componentes (não corta além do necessário).</li>
+<li>
+<p>Reduz à MST antes de cortar (o resultado é estável mesmo com grafo denso).</p>
+</li>
+<li>
+<p><strong><code>filter_base.py</code> — <code>AbstractFilter</code> (Template Method)</strong>
+   Usar <code>mock_storage</code> (moto) + <code>mock_cache</code> (fakeredis) do <code>conftest.py</code>.
+   Criar um filtro-dummy de teste e verificar:</p>
+</li>
+<li>Miss no cache → <code>process()</code> é chamado → grava no S3 → grava no cache.</li>
+<li>Hit no cache → <code>process()</code> <strong>não</strong> é chamado → resultado vai ao S3 mesmo assim.</li>
+<li>Multi-input (<code>extra_input_keys</code>) → <code>process()</code> recebe <code>{"primary": ..., "&lt;key&gt;": ...}</code>.</li>
+<li>
+<p><code>output_format == "text"</code> → usa <code>write_text</code>.</p>
+</li>
+<li>
+<p><strong><code>pipeline.py</code> — <code>FilterChain</code> (Chain of Responsibility + Facade)</strong></p>
+</li>
+<li>Executa filtros na ordem da lista.</li>
+<li><code>from_filter</code> pula os anteriores (dispara <code>on_skip</code>) e começa no nome dado.</li>
+<li><code>from_filter</code> inválido → <code>ValueError</code>.</li>
+<li>
+<p>Exceção em um filtro aborta o restante (fail-fast).</p>
+</li>
+<li>
+<p><strong><code>observers.py</code> — <code>LoggingObserver</code></strong></p>
+</li>
+<li><code>on_start</code>/<code>on_complete</code>/<code>on_skip</code> não levantam exceção e não mutam estado.</li>
+<li>Exceção dentro de observer é engolida (não aborta o pipeline).</li>
+</ol>
+<h2 id="a3-dois-niveis-de-teste">A.3 — Dois níveis de teste<a class="headerlink" href="#a3-dois-niveis-de-teste" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Nível</th>
+<th>Marcador</th>
+<th>Onde roda</th>
+<th>Usa</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Unit</strong></td>
+<td>(default)</td>
+<td>qualquer lugar via <code>make test</code></td>
+<td>fixtures + <code>mock_storage</code>/<code>mock_cache</code> (sem MinIO/Redis reais)</td>
+</tr>
+<tr>
+<td><strong>Integração</strong></td>
+<td><code>@pytest.mark.env</code> ou <code>tests/integration/</code></td>
+<td>Docker com serviços de pé</td>
+<td>MinIO + Redis reais</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><code>make test</code> → <code>pytest</code> (deselect de <code>-m env</code>): unit, offline, rápido.</li>
+<li><code>make test-cov</code> → <code>pytest</code> (deselect de <code>-m env</code>) com relatório de cobertura.</li>
+<li><code>tests/integration/test_pipeline.py</code> → ponta-a-ponta, só faz sentido quando
+  todos os filtros existirem e <code>data/comments.json</code> estiver no MinIO (<code>make init-data</code>).</li>
+</ul>
+<h2 id="a4-fixtures-ja-disponiveis-testsconftestpy">A.4 — Fixtures já disponíveis (<code>tests/conftest.py</code>)<a class="headerlink" href="#a4-fixtures-ja-disponiveis-testsconftestpy" title="Permanent link">&para;</a></h2>
+<p>Reaproveite — <strong>não</strong> recrie grafos à mão em cada teste:</p>
+<table>
+<thead>
+<tr>
+<th>Fixture</th>
+<th>O que entrega</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>make_graph(edges)</code></td>
+<td>helper: constrói <code>Graph</code> simétrico a partir de <code>[(u, v, w), ...]</code></td>
+</tr>
+<tr>
+<td><code>raw_comments</code></td>
+<td>4 comentários crus (2 tópicos)</td>
+</tr>
+<tr>
+<td><code>processed_comments</code></td>
+<td>4 comentários já tokenizados (contrato de <code>preprocessing.py</code>)</td>
+</tr>
+<tr>
+<td><code>small_word_graph</code></td>
+<td>word graph mínimo para testar sentence/comment graph</td>
+</tr>
+<tr>
+<td><code>clustered_graph</code></td>
+<td>2 clusters densos + 1 ponte fraca (community detection / traversal)</td>
+</tr>
+<tr>
+<td><code>mock_storage</code></td>
+<td><code>S3Storage</code> sobre moto (S3 fake, offline)</td>
+</tr>
+<tr>
+<td><code>mock_cache</code></td>
+<td><code>RedisCache</code> sobre fakeredis (offline)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h1 id="parte-b-contratos-que-todo-filtro-precisa-respeitar">Parte B — Contratos que todo filtro precisa respeitar<a class="headerlink" href="#parte-b-contratos-que-todo-filtro-precisa-respeitar" title="Permanent link">&para;</a></h1>
+<h2 id="b1-template-method-abstractfilter">B.1 — Template Method (<code>AbstractFilter</code>)<a class="headerlink" href="#b1-template-method-abstractfilter" title="Permanent link">&para;</a></h2>
+<p>Todo filtro herda de <code>AbstractFilter</code> e implementa <strong>apenas</strong> <code>process()</code>. Todo o
+I/O (ler do S3, gravar no S3, cache no Redis) já está em <code>execute()</code> — não
+sobrescreva <code>execute()</code>, <code>_load_input()</code>, <code>_write_output()</code>, <code>_load_cache()</code> nem
+<code>_save_cache()</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.filter_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractFilter</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WordGraphFilter</span><span class="p">(</span><span class="n">AbstractFilter</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;word_graph&quot;</span>        <span class="c1"># slug único; também é a chave de cache Redis</span>
+    <span class="n">input_key</span> <span class="o">=</span> <span class="s2">&quot;tree&quot;</span>         <span class="c1"># chave em S3_KEYS (config.py)</span>
+    <span class="n">output_key</span> <span class="o">=</span> <span class="s2">&quot;word_graph&quot;</span>  <span class="c1"># chave em S3_KEYS</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="o">...</span>                    <span class="c1"># única coisa que você escreve</span>
+        <span class="k">return</span> <span class="n">resultado</span>       <span class="c1"># objeto JSON-serializável (ver B.3)</span>
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">WordGraphFilter</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
+</code></pre></div>
+<p>Rode isolado com <code>make word-graph</code> (cada filtro tem seu alvo no Makefile).</p>
+<h2 id="b2-filtros-multi-input-extra_input_keys">B.2 — Filtros multi-input (<code>extra_input_keys</code>)<a class="headerlink" href="#b2-filtros-multi-input-extra_input_keys" title="Permanent link">&para;</a></h2>
+<p>Quando um filtro precisa de mais de um artefato, declare <code>extra_input_keys</code>. Aí
+<code>process()</code> recebe um <strong>dict</strong> <code>{"primary": &lt;input_key&gt;, "&lt;extra&gt;": &lt;artefato&gt;, ...}</code>.</p>
+<p>A tabela de contrato (autoritativa — bata com isto, não com diagramas soltos):</p>
+<table>
+<thead>
+<tr>
+<th>Filtro</th>
+<th><code>input_key</code></th>
+<th><code>extra_input_keys</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sentence_graph</code></td>
+<td><code>"word_graph"</code></td>
+<td><code>["tree"]</code></td>
+</tr>
+<tr>
+<td><code>comment_graph</code></td>
+<td><code>"sentence_graph"</code></td>
+<td><code>["preprocessed"]</code></td>
+</tr>
+<tr>
+<td><code>final_graph</code></td>
+<td><code>"comment_graph"</code></td>
+<td><code>["word_graph", "sentence_graph"]</code></td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td><code>"communities"</code></td>
+<td><code>["final_graph"]</code></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SentenceGraphFilter</span><span class="p">(</span><span class="n">AbstractFilter</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sentence_graph&quot;</span>
+    <span class="n">input_key</span> <span class="o">=</span> <span class="s2">&quot;word_graph&quot;</span>
+    <span class="n">extra_input_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tree&quot;</span><span class="p">]</span>
+    <span class="n">output_key</span> <span class="o">=</span> <span class="s2">&quot;sentence_graph&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="n">word_graph</span> <span class="o">=</span> <span class="n">deserialize_graph</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">])</span>  <span class="c1"># ver B.3</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tree&quot;</span><span class="p">]</span>
+        <span class="o">...</span>
+</code></pre></div>
+<h2 id="b3-serializacao-de-grafos-obrigatorio">B.3 — Serialização de grafos (OBRIGATÓRIO)<a class="headerlink" href="#b3-serializacao-de-grafos-obrigatorio" title="Permanent link">&para;</a></h2>
+<p><code>Graph</code> é um <code>dataclass</code> e <strong>não</strong> é serializável por <code>json.dumps</code>. Como
+<code>execute()</code> grava a saída de <code>process()</code> via <code>write_json</code> (e cacheia o mesmo
+objeto), todo filtro que mexe com grafo precisa traduzir nas duas pontas:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">serialize_graph</span><span class="p">,</span> <span class="n">deserialize_graph</span>
+
+<span class="c1"># CONSUMIR um grafo recebido do S3 (dict → Graph):</span>
+<span class="n">graph</span> <span class="o">=</span> <span class="n">deserialize_graph</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>            <span class="c1"># single-input</span>
+<span class="n">word_graph</span> <span class="o">=</span> <span class="n">deserialize_graph</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">])</span>  <span class="c1"># multi-input</span>
+
+<span class="c1"># PRODUZIR um grafo para o S3 (Graph → dict):</span>
+<span class="k">return</span> <span class="n">serialize_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+</code></pre></div>
+<p>Mesma pegadinha em <strong><code>communities.json</code></strong>: as chaves de <code>dict[int, ...]</code> viram
+<strong>strings</strong> no JSON. O consumidor (<code>metrics.py</code>) deve reconverter com <code>int(k)</code>.</p>
+<h2 id="b4-onde-cada-padrao-gof-aparece-e-o-que-voce-nao-faz">B.4 — Onde cada padrão GoF aparece (e o que você NÃO faz)<a class="headerlink" href="#b4-onde-cada-padrao-gof-aparece-e-o-que-voce-nao-faz" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Padrão</th>
+<th>Classe</th>
+<th>Seu papel ao implementar um filtro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Template Method</strong></td>
+<td><code>AbstractFilter</code></td>
+<td>herdar e implementar só <code>process()</code></td>
+</tr>
+<tr>
+<td><strong>Chain of Responsibility + Facade</strong></td>
+<td><code>FilterChain</code></td>
+<td>registrar o filtro em <code>main.py</code>, na ordem do pipeline</td>
+</tr>
+<tr>
+<td><strong>Observer</strong></td>
+<td><code>LoggingObserver</code></td>
+<td>nada — o <code>FilterChain</code> notifica sozinho</td>
+</tr>
+<tr>
+<td><strong>Strategy</strong></td>
+<td><code>CommunityDetectionStrategy</code></td>
+<td><code>community_detection.py</code> injeta a estratégia; <strong>não</strong> reimplemente BFS/MST/corte</td>
+</tr>
+</tbody>
+</table>
+<p>A <code>ProgressiveEdgeCuttingStrategy</code> <strong>já está pronta</strong> — <code>community_detection.py</code>
+apenas a instancia e chama <code>detect(graph, K)</code>.</p>
+<h2 id="b5-regras-nao-negociaveis-valem-nota">B.5 — Regras não-negociáveis (valem nota)<a class="headerlink" href="#b5-regras-nao-negociaveis-valem-nota" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Sem bibliotecas externas de grafo</strong> (NetworkX, igraph, …) — −5,0 pontos.</li>
+<li><strong>BFS, DFS, MST, corte de arestas, centralidade, modularidade</strong> implementados do zero (já estão em <code>shared/graph</code> e <code>strategies</code>; reutilize, não reescreva).</li>
+<li><strong>Filtros não importam uns aos outros</strong> — só <code>src/shared/</code>, <code>src/config.py</code> e <code>src/types/</code>.</li>
+<li><strong>Sem S3/Redis dentro de <code>process()</code></strong> — isso é responsabilidade de <code>execute()</code>.</li>
+<li><strong>Docstring em toda função</strong> (uma linha + <code>Args:</code> + <code>Returns:</code>) — vale nota.</li>
+<li><strong>Type hints em toda assinatura.</strong></li>
+<li><strong>NLP (NLTK/spaCy) só em <code>preprocessing.py</code>.</strong></li>
+<li>Código/comentários/commits em <strong>inglês</strong>; dados e relatório em <strong>português</strong>.</li>
+</ul>
+<hr />
+<h1 id="parte-c-guia-passo-a-passo-dos-filtros-paralelizavel">Parte C — Guia passo a passo dos filtros (paralelizável)<a class="headerlink" href="#parte-c-guia-passo-a-passo-dos-filtros-paralelizavel" title="Permanent link">&para;</a></h1>
+<h2 id="c1-por-que-da-para-paralelizar">C.1 — Por que dá para paralelizar<a class="headerlink" href="#c1-por-que-da-para-paralelizar" title="Permanent link">&para;</a></h2>
+<p>Os filtros só conversam por <strong>artefatos JSON de formato fixo</strong>. Se os times
+combinarem os formatos <strong>antes</strong> (a tabela abaixo), cada um implementa e testa o
+seu filtro contra uma <em>fixture</em> do artefato de entrada — sem esperar o filtro de
+cima ficar pronto. As fixtures de <code>conftest.py</code> já existem para isso.</p>
+<h3 id="contrato-de-artefatos-combine-isto-primeiro">Contrato de artefatos (combine isto primeiro!)<a class="headerlink" href="#contrato-de-artefatos-combine-isto-primeiro" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Artefato</th>
+<th>Produtor</th>
+<th>Formato JSON</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>comments.json</code></td>
+<td>(dado)</td>
+<td><code>[{"id": int, "topic": str, "text": str}]</code></td>
+</tr>
+<tr>
+<td><code>preprocessed.json</code></td>
+<td><code>preprocessing</code></td>
+<td><code>[{"id": int, "topic": str, "sentences": [[token, ...], ...]}]</code></td>
+</tr>
+<tr>
+<td><code>tree.json</code></td>
+<td><code>tree</code></td>
+<td>árvore N-ária uniforme <code>{"type", "children", ...}</code> — formato completo no bloco abaixo</td>
+</tr>
+<tr>
+<td><code>word_graph.json</code></td>
+<td><code>word_graph</code></td>
+<td><code>serialize_graph()</code> → <code>{"nodes": [str, ...], "index": {str: int}, "matrix": [[float, ...], ...]}</code></td>
+</tr>
+<tr>
+<td><code>sentence_graph.json</code></td>
+<td><code>sentence_graph</code></td>
+<td><code>serialize_graph()</code> → <code>{"nodes": [str, ...], "index": {str: int}, "matrix": [[float, ...], ...]}</code></td>
+</tr>
+<tr>
+<td><code>comment_graph.json</code></td>
+<td><code>comment_graph</code></td>
+<td><code>serialize_graph()</code> → <code>{"nodes": [str, ...], "index": {str: int}, "matrix": [[float, ...], ...]}</code></td>
+</tr>
+<tr>
+<td><code>final_graph.json</code></td>
+<td><code>final_graph</code></td>
+<td><code>serialize_graph()</code> → <code>{"nodes": [str, ...], "index": {str: int}, "matrix": [[float, ...], ...]}</code></td>
+</tr>
+<tr>
+<td><code>communities.json</code></td>
+<td><code>community_detection</code></td>
+<td><code>{"&lt;id&gt;": [node_key, ...]}</code> (chaves string!)</td>
+</tr>
+<tr>
+<td><code>metrics.json</code></td>
+<td><code>metrics</code></td>
+<td>dict com <code>modularity</code> + <code>communities</code> — formato completo no bloco abaixo</td>
+</tr>
+<tr>
+<td><code>report.txt</code></td>
+<td><code>analysis</code></td>
+<td>texto (português)</td>
+</tr>
+</tbody>
+</table>
+<p>Os dois artefatos não-triviais ficam <strong>totalmente definidos aqui</strong> — nada é
+deixado em aberto "para o dono do módulo decidir depois".</p>
+<p><strong><code>tree.json</code> — árvore N-ária uniforme</strong> (nó genérico <code>{"type", "children"}</code>;
+folhas carregam os dados de domínio). <code>sentence.index</code> é o índice global da
+frase no dataset (vira o nó <code>s_&lt;index&gt;</code>); <code>comment.id</code> vira <code>c_&lt;id&gt;</code>;
+<code>word.position</code> é a posição da palavra <strong>dentro da frase</strong> (insumo do peso
+posicional do <code>word_graph</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;dataset&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;comment&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;desempenho&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">          </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;sentence&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;index&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">12</span><span class="p">,</span>
+<span class="w">          </span><span class="nt">&quot;children&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">            </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;word&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;jogo&quot;</span><span class="p">,</span><span class="w">  </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">},</span>
+<span class="w">            </span><span class="p">{</span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;word&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;value&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;trava&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;position&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">}</span>
+<span class="w">          </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">      </span><span class="p">]</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+<p><strong><code>metrics.json</code> — métricas por comunidade + Q global:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;modularity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.74</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;communities&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;1&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="nt">&quot;topic&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;desempenho&quot;</span><span class="p">,</span>
+<span class="w">      </span><span class="nt">&quot;central_terms&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;fps&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;travamento&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;lag&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;comments&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;c_3&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;c_17&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;c_42&quot;</span><span class="p">],</span>
+<span class="w">      </span><span class="nt">&quot;size&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">18</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+<ul>
+<li><code>modularity</code>: Q global do particionamento (um único float).</li>
+<li><code>communities</code>: chaves string (<code>int(k)</code> ao reconverter), uma entrada por comunidade.</li>
+<li><code>central_terms</code>: nós <code>w_</code> ordenados por <code>total_edge_weight</code> decrescente (top-N).</li>
+<li><code>comments</code>: nós <code>c_</code> da comunidade. <code>size</code>: total de nós da comunidade.</li>
+</ul>
+<h2 id="c2-divisao-em-trilhas-paralelas">C.2 — Divisão em trilhas paralelas<a class="headerlink" href="#c2-divisao-em-trilhas-paralelas" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>Trilha 1 (NLP):     preprocessing → tree         [definem preprocessed.json e tree.json]
+Trilha 2 (grafos):  word_graph → sentence_graph → comment_graph → final_graph
+Trilha 3 (análise): community_detection → metrics → analysis
+</code></pre></div>
+<p>Todos podem começar <strong>no dia 1</strong> trabalhando contra fixtures. A ordem dentro de
+cada trilha é só a ordem de <strong>integração final</strong>, não de início.</p>
+<h2 id="c3-receita-por-filtro">C.3 — Receita por filtro<a class="headerlink" href="#c3-receita-por-filtro" title="Permanent link">&para;</a></h2>
+<p>Para <strong>cada</strong> filtro, o passo a passo é o mesmo:</p>
+<ol>
+<li>Crie a branch: <code>git checkout -b feat/&lt;nome-do-filtro&gt;</code>.</li>
+<li>Escreva o esqueleto herdando <code>AbstractFilter</code> (declare <code>name</code>/<code>input_key</code>/<code>output_key</code> e <code>extra_input_keys</code> se preciso).</li>
+<li>Implemente <code>process()</code> usando as ferramentas de <code>src.shared.graph</code>.</li>
+<li>Substitua o teste placeholder em <code>tests/unit/test_&lt;filtro&gt;.py</code> por testes reais (use as fixtures).</li>
+<li><code>make test</code> (rebuild da imagem se mexeu em <code>src/</code> — ver Parte D).</li>
+<li>Registre o filtro em <code>src/main.py</code> (posição = ordem no pipeline).</li>
+<li>Rode isolado: <code>make &lt;filtro&gt;</code> e confirme o artefato no MinIO.</li>
+<li>Abra PR.</li>
+</ol>
+<h3 id="filtro-1-preprocessingpy">Filtro 1 — <code>preprocessing.py</code><a class="headerlink" href="#filtro-1-preprocessingpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>raw</code> → <strong>Out:</strong> <code>preprocessed</code>. NLP permitido aqui (e só aqui).</li>
+<li><code>process(data: list[RawComment]) -&gt; list[ProcessedComment]</code>: lowercase, remover pontuação, tokenizar, remover stopwords PT, stemming/lematização; quebrar em frases.</li>
+<li>Testes: usar <code>raw_comments</code>; verificar shape de saída, remoção de stopwords, tokenização.</li>
+</ul>
+<h3 id="filtro-2-treepy">Filtro 2 — <code>tree.py</code><a class="headerlink" href="#filtro-2-treepy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>preprocessed</code> → <strong>Out:</strong> <code>tree</code>. Árvore N-ária: Dataset → Comentário → Frase → Palavra.</li>
+<li>O formato de <code>tree.json</code> <strong>já está fechado</strong> no bloco "Contrato de artefatos" (C.1): nó uniforme <code>{"type", "children"}</code>, folhas <code>word</code> com <code>value</code> + <code>position</code>, <code>sentence.index</code> global, <code>comment.id</code>. Implemente exatamente esse formato — a Trilha 2 consome <code>position</code>/<code>index</code>/<code>id</code> dele.</li>
+<li>Testes: usar <code>processed_comments</code>; verificar hierarquia, contagem de nós por nível e que cada palavra carrega <code>position</code>.</li>
+</ul>
+<h3 id="filtro-3-word_graphpy">Filtro 3 — <code>word_graph.py</code><a class="headerlink" href="#filtro-3-word_graphpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>tree</code> → <strong>Out:</strong> <code>word_graph</code>.</li>
+<li>Fórmula posicional, acumulada por co-ocorrência:
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_graph_from_deltas</span><span class="p">,</span> <span class="n">serialize_graph</span><span class="p">,</span> <span class="n">assert_valid</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_word_pair_deltas</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">iter_sentences</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>          <span class="c1"># palavras com posição</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">wi</span><span class="p">,</span> <span class="n">pos_i</span><span class="p">),</span> <span class="p">(</span><span class="n">wj</span><span class="p">,</span> <span class="n">pos_j</span><span class="p">)</span> <span class="ow">in</span> <span class="n">pairs</span><span class="p">(</span><span class="n">sentence</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">wi</span> <span class="o">!=</span> <span class="n">wj</span><span class="p">:</span>
+                <span class="k">yield</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wi</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;w_</span><span class="si">{</span><span class="n">wj</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">pos_i</span> <span class="o">-</span> <span class="n">pos_j</span><span class="p">)))</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">build_graph_from_deltas</span><span class="p">(</span><span class="n">_word_pair_deltas</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="n">assert_valid</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">serialize_graph</span><span class="p">(</span><span class="n">graph</span><span class="p">)</span>
+</code></pre></div></li>
+<li>Testes: simetria (<code>is_symmetric</code>), peso de pares conhecidos, prefixos <code>w_</code>.</li>
+</ul>
+<h3 id="filtro-4-sentence_graphpy">Filtro 4 — <code>sentence_graph.py</code><a class="headerlink" href="#filtro-4-sentence_graphpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>word_graph</code> (+ <code>tree</code>) → <strong>Out:</strong> <code>sentence_graph</code>.</li>
+<li>Acumular <code>weight(wi, wj)</code> para <code>wi∈sa, wj∈sb</code> e <strong>normalizar</strong> por <code>|sa|·|sb|</code>:
+  <div class="highlight"><pre><span></span><code><span class="n">word_graph</span> <span class="o">=</span> <span class="n">deserialize_graph</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">])</span>
+<span class="n">tree</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tree&quot;</span><span class="p">]</span>
+<span class="c1"># acumula via build_graph_from_deltas; depois normaliza com iter_edges + add_edge</span>
+</code></pre></div></li>
+<li>A <strong>fórmula e a normalização vivem aqui</strong> (domínio), nunca em <code>shared/graph</code>.</li>
+<li>Testes: usar <code>small_word_graph</code>; conferir um peso normalizado calculado à mão.</li>
+</ul>
+<h3 id="filtro-5-comment_graphpy">Filtro 5 — <code>comment_graph.py</code><a class="headerlink" href="#filtro-5-comment_graphpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>sentence_graph</code> (+ <code>preprocessed</code>) → <strong>Out:</strong> <code>comment_graph</code>.</li>
+<li>Acumular <code>weight(si, sj)</code> para <code>si∈ca, sj∈cb</code> e <strong>normalizar</strong> por <code>|ca|·|cb|</code>:
+  <div class="highlight"><pre><span></span><code><span class="n">sentence_graph</span> <span class="o">=</span> <span class="n">deserialize_graph</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">])</span>
+<span class="n">preprocessed</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;preprocessed&quot;</span><span class="p">]</span>
+<span class="c1"># acumula via build_graph_from_deltas; depois normaliza com iter_edges + add_edge</span>
+</code></pre></div></li>
+<li>A <strong>fórmula e a normalização vivem aqui</strong> (domínio), nunca em <code>shared/graph</code>.</li>
+<li>Testes: conferir à mão um peso normalizado entre dois comentários; prefixos <code>c_</code>.</li>
+</ul>
+<h3 id="filtro-6-final_graphpy">Filtro 6 — <code>final_graph.py</code><a class="headerlink" href="#filtro-6-final_graphpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>comment_graph</code> (+ <code>word_graph</code>, <code>sentence_graph</code>) → <strong>Out:</strong> <code>final_graph</code>.</li>
+<li>Unir os três níveis num só grafo + arestas hierárquicas (palavra↔frase↔comentário).</li>
+<li><code>merge_graphs</code> é <strong>helper privado deste arquivo</strong> — não vai para <code>shared/graph</code>.</li>
+<li>Testes: nós dos três prefixos presentes; <code>assert_valid</code>.</li>
+</ul>
+<h3 id="filtro-7-community_detectionpy">Filtro 7 — <code>community_detection.py</code><a class="headerlink" href="#filtro-7-community_detectionpy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>final_graph</code> → <strong>Out:</strong> <code>communities</code>.</li>
+<li>Usa a <strong>Strategy pronta</strong>:
+  <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.strategies</span><span class="w"> </span><span class="kn">import</span> <span class="n">ProgressiveEdgeCuttingStrategy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">deserialize_graph</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">K</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">CommunityDetectionFilter</span><span class="p">(</span><span class="n">AbstractFilter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy</span> <span class="o">=</span> <span class="n">strategy</span> <span class="ow">or</span> <span class="n">ProgressiveEdgeCuttingStrategy</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="n">graph</span> <span class="o">=</span> <span class="n">deserialize_graph</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">communities</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_strategy</span><span class="o">.</span><span class="n">detect</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span> <span class="n">K</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span><span class="nb">str</span><span class="p">(</span><span class="n">cid</span><span class="p">):</span> <span class="n">nodes</span> <span class="k">for</span> <span class="n">cid</span><span class="p">,</span> <span class="n">nodes</span> <span class="ow">in</span> <span class="n">communities</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>  <span class="c1"># chaves string</span>
+</code></pre></div></li>
+<li>Testes: usar <code>clustered_graph</code>; conferir nº de comunidades e composição.</li>
+</ul>
+<h3 id="filtro-8-metricspy">Filtro 8 — <code>metrics.py</code><a class="headerlink" href="#filtro-8-metricspy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>communities</code> (+ <code>final_graph</code>) → <strong>Out:</strong> <code>metrics</code>.</li>
+<li>Centralidade de grau ponderada (<code>total_edge_weight</code>) + <strong>modularidade Q</strong> (do zero).</li>
+<li>Lembre: chaves de <code>communities.json</code> são string → <code>int(k)</code>.</li>
+<li>O schema de <code>metrics.json</code> <strong>já está fechado</strong> no bloco "Contrato de artefatos" (C.1): <code>modularity</code> (float global) + <code>communities</code> com <code>topic</code>/<code>central_terms</code>/<code>comments</code>/<code>size</code> por comunidade. Produza exatamente esse formato — a Trilha 3 (<code>analysis</code>) consome esses campos.</li>
+</ul>
+<h3 id="filtro-9-analysispy">Filtro 9 — <code>analysis.py</code><a class="headerlink" href="#filtro-9-analysispy" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>In:</strong> <code>metrics</code> (+ <code>communities</code>) → <strong>Out:</strong> <code>report</code> (texto, PT).</li>
+<li><code>output_format = "text"</code>; usa <code>write_text</code> (já tratado por <code>execute()</code>).</li>
+<li>Formato do relatório: ver "Expected Output Format" no <code>CLAUDE.md</code> raiz.</li>
+</ul>
+<h2 id="c4-integracao-final-mainpy">C.4 — Integração final (<code>main.py</code>)<a class="headerlink" href="#c4-integracao-final-mainpy" title="Permanent link">&para;</a></h2>
+<p>Registrar todos os filtros na ordem do pipeline:</p>
+<div class="highlight"><pre><span></span><code><span class="n">chain</span> <span class="o">=</span> <span class="n">FilterChain</span><span class="p">(</span>
+    <span class="n">filters</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PreprocessingFilter</span><span class="p">(),</span> <span class="n">TreeFilter</span><span class="p">(),</span>
+        <span class="n">WordGraphFilter</span><span class="p">(),</span> <span class="n">SentenceGraphFilter</span><span class="p">(),</span> <span class="n">CommentGraphFilter</span><span class="p">(),</span> <span class="n">FinalGraphFilter</span><span class="p">(),</span>
+        <span class="n">CommunityDetectionFilter</span><span class="p">(),</span> <span class="n">MetricsFilter</span><span class="p">(),</span> <span class="n">AnalysisFilter</span><span class="p">(),</span>
+    <span class="p">],</span>
+    <span class="n">observers</span><span class="o">=</span><span class="p">[</span><span class="n">LoggingObserver</span><span class="p">()],</span>
+<span class="p">)</span>
+<span class="n">chain</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<h1 id="parte-d-fluxo-de-trabalho-e-definition-of-done">Parte D — Fluxo de trabalho e <em>definition of done</em><a class="headerlink" href="#parte-d-fluxo-de-trabalho-e-definition-of-done" title="Permanent link">&para;</a></h1>
+<h2 id="d1-comandos">D.1 — Comandos<a class="headerlink" href="#d1-comandos" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>make<span class="w"> </span>docker-up<span class="w">      </span><span class="c1"># sobe MinIO + Redis + app (primeira vez)</span>
+make<span class="w"> </span>init-data<span class="w">      </span><span class="c1"># envia data/comments.json ao MinIO (primeira vez)</span>
+make<span class="w"> </span><span class="nb">test</span><span class="w">           </span><span class="c1"># testes unitários (rebuild da imagem se mexeu em src/!)</span>
+make<span class="w"> </span>test-cov<span class="w">       </span><span class="c1"># testes + cobertura</span>
+make<span class="w"> </span>&lt;filtro&gt;<span class="w">       </span><span class="c1"># roda um filtro isolado dentro do Docker</span>
+make<span class="w"> </span>run<span class="w">            </span><span class="c1"># pipeline completo</span>
+make<span class="w"> </span>clean<span class="w">          </span><span class="c1"># limpa cache Redis + artefatos S3 (force reprocessamento)</span>
+</code></pre></div>
+<blockquote>
+<p><strong>Importante:</strong> a imagem <code>app</code> copia <code>src/</code> e <code>tests/</code> no build (sem volume
+mount). Depois de alterar código, <strong>rebuilde</strong> antes de testar:
+<code>docker compose -f docker-compose.yml -f docker-compose.ci.yml build app &amp;&amp; make test</code>.</p>
+<p>Mudou a <strong>lógica</strong> de um filtro mas o teste usa cache antigo? <code>make clean</code>
+esvazia as chaves <code>filter:*</code> do Redis e força o reprocessamento.</p>
+</blockquote>
+<h2 id="d2-definition-of-done-por-filtro">D.2 — Definition of Done (por filtro)<a class="headerlink" href="#d2-definition-of-done-por-filtro" title="Permanent link">&para;</a></h2>
+<ul>
+<li>[ ] Herda <code>AbstractFilter</code>, implementa só <code>process()</code>.</li>
+<li>[ ] <code>name</code>/<code>input_key</code>/<code>output_key</code> (+ <code>extra_input_keys</code>) corretos.</li>
+<li>[ ] Grafos: <code>deserialize_graph</code> na entrada, <code>serialize_graph</code> na saída.</li>
+<li>[ ] Docstrings + type hints em tudo.</li>
+<li>[ ] Nenhum import de outro filtro; nenhuma chamada de S3/Redis em <code>process()</code>.</li>
+<li>[ ] Testes unitários reais (placeholder removido) passando com fixtures.</li>
+<li>[ ] <code>make &lt;filtro&gt;</code> gera o artefato esperado no MinIO.</li>
+<li>[ ] Registrado em <code>main.py</code> na posição certa.</li>
+<li>[ ] Branch + PR (nunca commit direto na <code>main</code>).</li>
+</ul>
+<h2 id="d3-ordem-de-merge-sugerida">D.3 — Ordem de merge sugerida<a class="headerlink" href="#d3-ordem-de-merge-sugerida" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Camada de testes compartilhados (Parte A.2) — primeiro, é a rede de segurança.</li>
+<li><code>preprocessing</code> + <code>tree</code> (definem os formatos da Trilha 1).</li>
+<li><code>word_graph</code> → <code>sentence_graph</code> → <code>comment_graph</code> → <code>final_graph</code>.</li>
+<li><code>community_detection</code> → <code>metrics</code> → <code>analysis</code>.</li>
+<li><code>main.py</code> + teste de integração ponta-a-ponta (<code>tests/integration/test_pipeline.py</code>).</li>
+</ol>
+<hr />
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Versão</th>
+<th>Descrição</th>
+<th>Autor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2026-06-16</td>
+<td>1.0</td>
+<td>Versão inicial: plano de testes compartilhados + guia de filtros paralelos</td>
+<td>Equipe</td>
+</tr>
+<tr>
+<td>2026-06-16</td>
+<td>1.1</td>
+<td>Remove back-references ("idem"/"mesmo que"); fecha os contratos de <code>tree.json</code> e <code>metrics.json</code> sem deferir ao dono do módulo</td>
+<td>Equipe</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.tables"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
