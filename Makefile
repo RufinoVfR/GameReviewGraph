@@ -106,7 +106,7 @@ run:
 	docker compose run --rm app uv run python -m src.main
 
 clean:
-	docker compose run --rm app uv run python scripts/clean.py
+	docker compose run --rm app uv run python -m scripts.clean
 
 # ── Individual filters ─────────────────────────────────────────────────────────
 
