@@ -27,7 +27,8 @@ help:
 	@echo "  docker-status        Show running containers and health"
 	@echo ""
 	@echo "Pipeline"
-	@echo "  init-data            Upload data/comments.json to MinIO (run once before first pipeline run)"
+	@echo "  init-data            Upload a dataset to MinIO as the raw input (default: data/comments.json)"
+	@echo "                       (choose another: make init-data ARGS=data/comments_multi.json)"
 	@echo "  run                  Run the full pipeline (all 9 filters) inside Docker"
 	@echo "  clean                Flush Redis cache + delete S3 pipeline artifacts (keeps comments.json)"
 	@echo ""
@@ -99,7 +100,7 @@ docker-status:
 # ── Pipeline ───────────────────────────────────────────────────────────────────
 
 init-data:
-	docker compose run --rm app uv run python -m scripts.init_data
+	docker compose run --rm app uv run python -m scripts.init_data $(ARGS)
 
 run:
 	docker compose run --rm app uv run python -m src.main

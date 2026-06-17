@@ -16,6 +16,6 @@ RUN uv run python -m nltk.downloader -d /usr/local/nltk_data stopwords rslp
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY tests/ ./tests/
-COPY data/comments.json ./data/comments.json
+COPY data/ ./data/
 
 CMD ["uv", "run", "python", "-m", "src.main"]
