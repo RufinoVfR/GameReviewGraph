@@ -27,6 +27,7 @@ docs/
 ├── grafos.md                ← graph utility sub-package: ops, metrics, traversal, validate; increase_edge vs add_edge
 ├── decisions.md              ← justification for every architectural/algorithmic decision (the "why", not the "what")
 ├── infraestrutura.md        ← Docker, MinIO, Redis: services, env vars, S3 key map, CI/CD
+├── guia_implementacao.md    ← step-by-step guide: shared test plan + parallel filter implementation
 └── contributing.md          ← git workflow, running filters, coding standards, definition of done
 ```
 
@@ -46,6 +47,7 @@ nav:
   - Utilitários de Grafos: grafos.md
   - Decisões de Projeto: decisions.md
   - Infraestrutura: infraestrutura.md
+  - Guia de Implementação: guia_implementacao.md
   - Contribuição: contributing.md
 ```
 

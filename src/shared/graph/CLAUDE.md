@@ -31,7 +31,7 @@ All functions operate on undirected weighted graphs. Writes always update both `
 ```
 src/shared/graph/
 ├── __init__.py     ← selective re-exports (public API of this sub-package)
-├── ops.py          ← new_graph, add_node, add_edge, increase_edge, remove_edge, has_edge, get_edge_weight, iter_edges, copy_graph
+├── ops.py          ← new_graph, add_node, add_edge, increase_edge, remove_edge, has_edge, get_edge_weight, iter_edges, copy_graph, build_graph_from_deltas, serialize_graph, deserialize_graph
 ├── metrics.py      ← properties: neighbor_count, total_edge_weight, density, node_count, edge_count
 ├── traversal.py    ← BFS, DFS, connected_components, count_components, is_connected, minimum_spanning_tree
 └── validate.py     ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
@@ -111,6 +111,32 @@ def iter_edges(graph: Graph) -> Iterator[tuple[str, str, float]]:
 def copy_graph(graph: Graph) -> Graph:
     """Return a deep copy: new nodes list, new index dict, and a new matrix
     with every row copied — mutating the copy never affects the original."""
+
+def build_graph_from_deltas(deltas: Iterable[tuple[str, str, float]]) -> Graph:
+    """Build a new Graph by accumulating (u, v, delta) triples via increase_edge.
+
+    Common envelope for the three co-occurrence graph levels — each caller
+    supplies its own delta-generating logic (weight formula + any
+    normalisation already applied), and this function only handles
+    accumulation. The same pair may be yielded multiple times; each delta
+    is accumulated, not overwritten.
+    """
+
+def serialize_graph(graph: Graph) -> dict:
+    """Return a JSON-serializable dict ({"nodes", "index", "matrix"}) of graph.
+
+    Graph is a dataclass and is NOT directly json.dumps-able. Every filter
+    that OUTPUTS a graph must return serialize_graph(graph) from process(),
+    because execute() writes the result via write_json and caches it.
+    """
+
+def deserialize_graph(data: dict) -> Graph:
+    """Reconstruct a Graph from the dict produced by serialize_graph.
+
+    Every filter that CONSUMES a graph artifact must call this on the parsed
+    JSON dict before using any graph utility — execute() hands process() a
+    plain dict, not a Graph instance.
+    """
 ```
 
 ### Usage per graph level
@@ -301,6 +327,7 @@ Imports all functions that filters are expected to use directly. Adding a functi
 from src.shared.graph.ops import (
     new_graph, add_node, add_edge, increase_edge, remove_edge,
     has_edge, get_edge_weight, iter_edges, copy_graph,
+    build_graph_from_deltas, serialize_graph, deserialize_graph,
 )
 from src.shared.graph.metrics import (
     neighbor_count, total_edge_weight,

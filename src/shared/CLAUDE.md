@@ -30,7 +30,7 @@ src/shared/
 ├── cache.py          ← Redis cache adapter  (RedisCache, get_cache)
 └── graph/            ← graph primitive utilities (see graph/CLAUDE.md)
     ├── __init__.py   ← public re-exports: add_edge, increase_edge, neighbor_count, connected_components, …
-    ├── ops.py        ← CRUD: add_edge, increase_edge, remove_edge, iter_edges, copy_graph
+    ├── ops.py        ← CRUD: add_edge, increase_edge, remove_edge, iter_edges, copy_graph, build_graph_from_deltas, serialize_graph
     ├── metrics.py    ← properties: neighbor_count, total_edge_weight, density, node_count, edge_count
     ├── traversal.py  ← BFS, DFS, connected_components, count_components, is_connected, minimum_spanning_tree
     └── validate.py   ← is_symmetric, invalid_prefixes, isolated_nodes, assert_valid
@@ -311,7 +311,7 @@ See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. S
 
 | Module | Responsibility |
 |--------|----------------|
-| `ops.py` | `new_graph`, `add_node`, `add_edge`, `increase_edge`, `remove_edge`, `has_edge`, `get_edge_weight`, `iter_edges`, `copy_graph` |
+| `ops.py` | `new_graph`, `add_node`, `add_edge`, `increase_edge`, `remove_edge`, `has_edge`, `get_edge_weight`, `iter_edges`, `copy_graph`, `build_graph_from_deltas`, `serialize_graph`, `deserialize_graph` |
 | `metrics.py` | `neighbor_count`, `total_edge_weight`, `node_count`, `edge_count`, `density`, `average_edge_weight` |
 | `traversal.py` | `bfs`, `dfs`, `reachable`, `connected_components`, `count_components`, `is_connected`, `minimum_spanning_tree` |
 | `validate.py` | `is_symmetric`, `invalid_prefixes`, `isolated_nodes`, `assert_valid` |

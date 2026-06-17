@@ -89,8 +89,13 @@ flowchart LR
 | `get_edge_weight(graph, u, v)` | Retorna o peso da aresta ou `None` |
 | `iter_edges(graph)` | Percorre o triângulo superior da matriz (`j > i`), retornando cada aresta exatamente uma vez como `(u, v, weight)` |
 | `copy_graph(graph)` | Retorna uma cópia profunda: nova lista de nós, novo dict de índices e matriz com cada linha copiada |
+| `build_graph_from_deltas(deltas)` | Constrói um novo `Graph` acumulando triplas `(u, v, delta)` via `increase_edge` — envelope comum para word/sentence/comment graph |
+| `serialize_graph(graph)` | Converte o `Graph` em `dict` JSON-serializável (`{"nodes", "index", "matrix"}`) — todo filtro que produz grafo retorna isto em `process()` |
+| `deserialize_graph(data)` | Reconstrói um `Graph` a partir do `dict` carregado do S3 — todo filtro que consome grafo chama isto antes de usar utilitários |
 
 `add_node` e `new_graph` são as únicas funções que alteram `graph.nodes`/`graph.index`/crescem `graph.matrix`. Toda outra operação de escrita chama `add_node` internamente para resolver nomes em índices — nenhuma função indexa a matriz diretamente com um nome bruto.
+
+> **Serialização (obrigatória nos filtros de grafo).** O `Graph` é um `dataclass` e **não** é serializável por `json.dumps` diretamente. Como `AbstractFilter.execute()` grava a saída de `process()` via `write_json` (e a cacheia no Redis), todo filtro que **produz** um grafo deve retornar `serialize_graph(graph)`, e todo filtro que **consome** um grafo deve chamar `deserialize_graph(data)` sobre o dict recebido antes de usar qualquer utilitário. O round-trip é exato: `deserialize_graph(json.loads(json.dumps(serialize_graph(g))))` reconstrói o grafo idêntico.
 
 ### `add_edge` vs `increase_edge`
 
@@ -124,6 +129,21 @@ for u, v, w in iter_edges(graph):
 ```
 
 **`comment_graph.py`** — mesmo padrão usando pesos de pares de sentenças.
+
+### `build_graph_from_deltas` — envelope comum de geração
+
+Cada filtro de grafo (word/sentence/comment) calcula seu próprio delta (fórmula posicional, ou peso já normalizado) e gera uma sequência de triplas `(u, v, delta)`. `build_graph_from_deltas` é o único ponto que sabe acumular essas triplas em um `Graph` — a fórmula de peso continua 100% dentro de cada filtro, nunca em `shared/graph/`:
+
+```python
+def _word_pair_deltas(tree: dict) -> Iterator[tuple[str, str, float]]:
+    for sentence in iter_sentences(tree):
+        for wi, pos_i in sentence:
+            for wj, pos_j in sentence:
+                if wi != wj:
+                    yield (f"w_{wi}", f"w_{wj}", 1.0 / (1.0 + abs(pos_i - pos_j)))
+
+graph = build_graph_from_deltas(_word_pair_deltas(tree))
+```
 
 ---
 

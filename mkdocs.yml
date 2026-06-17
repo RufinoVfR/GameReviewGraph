@@ -38,6 +38,7 @@ nav:
   - Utilitários de Grafos: grafos.md
   - Decisões de Projeto: decisions.md
   - Infraestrutura: infraestrutura.md
+  - Guia de Implementação: guia_implementacao.md
   - Contribuição: contributing.md
 
 markdown_extensions:
