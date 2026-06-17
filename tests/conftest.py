@@ -42,15 +42,17 @@ def raw_comments() -> list[dict]:
 def processed_comments() -> list[dict]:
     """Pre-tokenized comments matching the output contract of the preprocessing/ package.
 
-    Tokens are accented surface forms (decision A1'): the RSLP stem only groups
-    variants internally, while the emitted token is the most frequent surface
-    form of the group, with its accent preserved.
+    No ``topic``: topic detection is unsupervised, so the gold label is dropped
+    after ingestion (it stays in the raw dataset, re-joined by ``id`` only at
+    validation). Tokens are accented surface forms (decision A1'): the RSLP stem
+    only groups variants internally, while the emitted token is the most frequent
+    surface form of the group, with its accent preserved.
     """
     return [
-        {"id": 1, "topic": "desempenho", "sentences": [["jogo", "trava", "atualização"]]},
-        {"id": 2, "topic": "desempenho", "sentences": [["fps", "caiu", "patch"]]},
-        {"id": 3, "topic": "narrativa", "sentences": [["história", "envolvente", "personagens", "profundidade"]]},
-        {"id": 4, "topic": "narrativa", "sentences": [["campanha", "principal", "narrativa", "excelente"]]},
+        {"id": 1, "sentences": [["jogo", "trava", "atualização"]]},
+        {"id": 2, "sentences": [["fps", "caiu", "patch"]]},
+        {"id": 3, "sentences": [["história", "envolvente", "personagens", "profundidade"]]},
+        {"id": 4, "sentences": [["campanha", "principal", "narrativa", "excelente"]]},
     ]
 
 

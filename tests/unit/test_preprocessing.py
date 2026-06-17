@@ -100,15 +100,16 @@ _REPEATED_CORPUS = [
 
 
 class TestProcess:
-    def test_shape_and_metadata_preserved(self, raw_comments):
-        """Output keeps id/topic and replaces text with a sentences structure."""
+    def test_shape_and_id_preserved_topic_dropped(self, raw_comments):
+        """Output keeps id, replaces text with sentences, and drops the gold topic."""
         result = PreprocessingFilter().process(raw_comments)
         assert len(result) == len(raw_comments)
         for original, processed in zip(raw_comments, result):
             assert processed["id"] == original["id"]
-            assert processed["topic"] == original["topic"]
-            assert "text" not in processed
             assert isinstance(processed["sentences"], list)
+            assert "text" not in processed
+            # The gold label must not flow past preprocessing (unsupervised).
+            assert "topic" not in processed
 
     def test_tokens_are_clean_and_accented(self):
         """Emitted tokens are lowercase and keep their accents (decision A1')."""

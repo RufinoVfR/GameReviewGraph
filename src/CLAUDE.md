@@ -88,8 +88,8 @@ from src.types.graph import Graph
 ```
 
 ```python
-RawComment       = dict   # {"id": int, "topic": str, "text": str}
-ProcessedComment = dict   # {"id": int, "topic": str, "sentences": list[list[str]]}
+RawComment       = dict   # {"id": int, "topic": str, "text": str}  — "topic" is the gold label, kept only here
+ProcessedComment = dict   # {"id": int, "sentences": list[list[str]]}  — no "topic" (unsupervised; re-joined by id at validation)
 NodeKey          = str    # "w_word", "s_12", "c_3"
 Graph            = dataclass(nodes: list[NodeKey], index: dict[NodeKey, int], matrix: list[list[float]])
                              # adjacency matrix + name→index mapping; node names prefixed w_, s_, c_

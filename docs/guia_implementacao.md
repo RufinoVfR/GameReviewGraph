@@ -211,7 +211,7 @@ cima ficar pronto. As fixtures de `conftest.py` já existem para isso.
 | Artefato | Produtor | Formato JSON |
 |----------|----------|--------------|
 | `comments.json` | (dado) | `[{"id": int, "topic": str, "text": str}]` |
-| `preprocessed.json` | `preprocessing` | `[{"id": int, "topic": str, "sentences": [[token, ...], ...]}]` |
+| `preprocessed.json` | `preprocessing` | `[{"id": int, "sentences": [[token, ...], ...]}]` (sem `topic` — ver nota abaixo) |
 | `tree.json` | `tree` | árvore N-ária uniforme `{"type", "children", ...}` — formato completo no bloco abaixo |
 | `word_graph.json` | `word_graph` | `serialize_graph()` → `{"nodes": [str, ...], "index": {str: int}, "matrix": [[float, ...], ...]}` |
 | `sentence_graph.json` | `sentence_graph` | `serialize_graph()` → `{"nodes": [str, ...], "index": {str: int}, "matrix": [[float, ...], ...]}` |
@@ -224,6 +224,13 @@ cima ficar pronto. As fixtures de `conftest.py` já existem para isso.
 Os dois artefatos não-triviais ficam **totalmente definidos aqui** — nada é
 deixado em aberto "para o dono do módulo decidir depois".
 
+> **`topic` não circula no pipeline.** O rótulo de tópico é o *gabarito* (gold
+> label): a detecção de comunidades é não supervisionada, então o `topic` é
+> removido já no `preprocessing` e **não** aparece em `preprocessed.json` nem em
+> `tree.json`/grafos. Ele permanece em `comments.json` e é reconciliado por `id`
+> só na validação final (o `topic` em `metrics.json` é o tópico que **o sistema
+> atribui** à comunidade, não o de entrada).
+
 **`tree.json` — árvore N-ária uniforme** (nó genérico `{"type", "children"}`;
 folhas carregam os dados de domínio). `sentence.index` é o índice global da
 frase no dataset (vira o nó `s_<index>`); `comment.id` vira `c_<id>`;
@@ -235,7 +242,7 @@ posicional do `word_graph`):
   "type": "dataset",
   "children": [
     {
-      "type": "comment", "id": 3, "topic": "desempenho",
+      "type": "comment", "id": 3,
       "children": [
         {
           "type": "sentence", "index": 12,
@@ -299,9 +306,10 @@ Para **cada** filtro, o passo a passo é o mesmo:
 - **In:** `raw` → **Out:** `preprocessed`. NLP permitido aqui (e só aqui). É um **pacote** (`filter.py`, `clean.py`, `normalize.py`, `__main__.py`), não um arquivo — ver `src/preprocessing/CLAUDE.md` para o design completo.
 - `process(data: list[RawComment]) -> list[ProcessedComment]`: caixa-baixa → **segmentar frases** (regex `[.!?]+`) → por frase: remover pontuação (preservando acento) → tokenizar (`\w+`) → dropar numéricos e `len<3` → remover stopwords PT (NLTK). A segmentação vem **antes** da remoção de pontuação — remover pontuação primeiro apagaria os terminadores `.!?` e colapsaria tudo numa única frase.
 - **Normalização A1'** (decisão fechada — ver `docs/decisions.md`): o radical RSLP é só **chave de agrupamento**; emite-se a **forma de superfície mais frequente do grupo, com acento** (`{atualização, atualizações}` → nó `w_atualização`). O mapa radical→representante é montado numa passada de corpus dentro do `process()` e **não** sai do filtro. Corte por `MIN_FREQ` (de `src/config.py`) é por grupo.
-- Frase vazia após filtragem é descartada; o comentário é mantido (com `id`/`topic`).
+- Frase vazia após filtragem é descartada; o comentário é mantido (pelo `id`).
+- **`topic` é removido** (gabarito não supervisionado): a saída tem só `id` + `sentences`. Ver nota em C.1.
 - **Infra:** o `Dockerfile` precisa baixar os corpora NLTK `stopwords` e `rslp` em build.
-- Testes: usar `raw_comments`; verificar shape, `id`/`topic` preservados, remoção de stopwords/ruído, agrupamento e representante (com acento).
+- Testes: usar `raw_comments`; verificar shape, `id` preservado, `topic` ausente, remoção de stopwords/ruído, agrupamento e representante (com acento).
 
 ### Filtro 2 — `tree.py`
 - **In:** `preprocessed` → **Out:** `tree`. Árvore N-ária: Dataset → Comentário → Frase → Palavra.
@@ -452,3 +460,4 @@ make clean          # limpa cache Redis + artefatos S3 (force reprocessamento)
 | 2026-06-16 | 1.0 | Versão inicial: plano de testes compartilhados + guia de filtros paralelos | Equipe |
 | 2026-06-16 | 1.1 | Remove back-references ("idem"/"mesmo que"); fecha os contratos de `tree.json` e `metrics.json` sem deferir ao dono do módulo | Equipe |
 | 2026-06-16 | 1.2 | Filtro 1 reescrito: pacote `preprocessing/`, pipeline por regex, normalização A1', descarte de ruído e requisito de dados NLTK no Docker | Equipe |
+| 2026-06-16 | 1.3 | `topic` removido de `preprocessed.json` e `tree.json` (rótulo-ouro fica só no raw, reconciliado por `id` na validação) | Equipe |

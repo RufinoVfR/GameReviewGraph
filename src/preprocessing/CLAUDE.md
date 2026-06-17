@@ -25,9 +25,13 @@ modules from the filter orchestration.
 - **Input** `input_key="raw"` → `comments.json`: `list[{"id": int, "topic": str, "text": str}]`.
   Delivered by `AbstractFilter.execute()` to `process()` — **never open a file inside the filter.**
 - **Output** `output_key="preprocessed"` → `preprocessed.json`:
-  `list[{"id": int, "topic": str, "sentences": list[list[str]]}]` (comment → sentences → tokens).
-- `id` and `topic` are **preserved** on every comment — `tree.py`, `comment_graph.py`, and
-  `metrics.py` depend on them (`c_<id>` nodes and topic labels). Never return a bare `list[list[list[str]]]`.
+  `list[{"id": int, "sentences": list[list[str]]}]` (comment → sentences → tokens).
+- `id` is **preserved** on every comment (it becomes the `c_<id>` node downstream).
+  Never return a bare `list[list[list[str]]]`.
+- `topic` is **dropped**: topic detection is unsupervised, so the gold label must
+  not flow down the pipeline. It stays in the raw `comments.json` and is re-joined
+  by `id` only at the final validation step. Same reasoning forbids it from
+  `tree.json` and the graph artifacts.
 
 ---
 
@@ -58,8 +62,8 @@ attributes. `MIN_FREQ` comes from `src/config.py` — never hardcode the thresho
 2. **Corpus pass:** flatten all surviving tokens and call `build_representatives(flat, MIN_FREQ)`.
 3. **Pass 2 — apply:** re-walk the hierarchy; each token becomes
    `representatives[group_key(tok)]` if its group survived, otherwise it is dropped.
-   Empty sentences are discarded; **the comment is kept** (with `id`/`topic`) even if `sentences` ends up `[]`.
-4. Return `list[{"id","topic","sentences"}]`. Token order is preserved (it becomes `position` in `tree`).
+   Empty sentences are discarded; **the comment is kept** (by `id`) even if `sentences` ends up `[]`.
+4. Return `list[{"id","sentences"}]`. Token order is preserved (it becomes `position` in `tree`).
 
 ---
 

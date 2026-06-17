@@ -43,13 +43,18 @@ class PreprocessingFilter(AbstractFilter):
         representative`` map (decision A1'), applying the low-frequency cut per
         group; (3) replace each surviving token by its representative and drop
         tokens whose group was cut. Empty sentences are discarded, but a comment
-        is always kept (with its ``id``/``topic``) so its ``c_<id>`` node survives.
+        is always kept (by its ``id``) so its ``c_<id>`` node survives.
+
+        The gold ``topic`` label is intentionally **dropped** here: topic
+        detection is unsupervised, so the label must not flow through the
+        pipeline. It stays in the raw ``comments.json`` and is re-joined by
+        ``id`` only at the final validation step.
 
         Args:
             data: List of raw comments ``{"id", "topic", "text"}``.
 
         Returns:
-            List of processed comments ``{"id", "topic", "sentences"}`` where
+            List of processed comments ``{"id", "sentences"}`` where
             ``sentences`` is a list of token lists. Token order is preserved.
         """
         stopwords = load_stopwords()
@@ -83,7 +88,5 @@ class PreprocessingFilter(AbstractFilter):
                 ]
                 if normalized:
                     normalized_sentences.append(normalized)
-            result.append(
-                {"id": comment["id"], "topic": comment["topic"], "sentences": normalized_sentences}
-            )
+            result.append({"id": comment["id"], "sentences": normalized_sentences})
         return result

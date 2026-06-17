@@ -118,7 +118,13 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Decisão:** após a tokenização, tokens puramente numéricos e com `len < 3` são removidos; o corte por baixa frequência (`MIN_FREQ` de `src/config.py`) opera por grupo (radical) no corpus inteiro.
 
-**Por quê:** números soltos e tokens muito curtos raramente carregam semântica de tópico e só adicionam nós de ruído ao grafo. Aplicar o corte de frequência no grupo (não na forma de superfície) é coerente com o A1' — a unidade de significado é o grupo, não cada flexão. Uma frase que esvazia após a filtragem é descartada, mas o comentário é mantido (com `id`/`topic`) para preservar seu nó `c_<id>` no pipeline.
+**Por quê:** números soltos e tokens muito curtos raramente carregam semântica de tópico e só adicionam nós de ruído ao grafo. Aplicar o corte de frequência no grupo (não na forma de superfície) é coerente com o A1' — a unidade de significado é o grupo, não cada flexão. Uma frase que esvazia após a filtragem é descartada, mas o comentário é mantido (pelo `id`) para preservar seu nó `c_<id>` no pipeline.
+
+### `topic` não circula no pipeline (rótulo-ouro reservado à validação)
+
+**Decisão:** o `topic` de cada comentário **não** aparece em `preprocessed.json` nem em nenhum artefato a jusante (`tree.json`, grafos). Ele fica apenas em `comments.json` (entrada) e é reconciliado por `id` somente na etapa final de validação. O `topic` que aparece em `metrics.json` é o tópico que **o sistema atribui** à comunidade detectada, não o de entrada.
+
+**Por quê:** a detecção de comunidades é **não supervisionada** — o objetivo do projeto é *descobrir* os tópicos a partir da estrutura do grafo. Se o rótulo-ouro fluísse pelo pipeline, haveria vazamento do gabarito: o sistema estaria "vendo a resposta" e a avaliação (Análise de Resultados, peso 2.0) perderia o sentido. Manter o `topic` só na entrada e juntá-lo por `id` no fim preserva a separação entre *o que o sistema infere* e *o que era esperado*, sem acoplar a detecção ao gabarito. O `id` continua circulando (vira `c_<id>`), então o join na validação é trivial e sem custo de acoplamento.
 
 ---
 
@@ -151,3 +157,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 16/06/2026 | 1.0 | Criação do documento, consolidando decisões já tomadas no projeto | Lucas Antunes |
 | 16/06/2026 | 1.1 | `traversal.py` implementado (BFS, DFS, componentes conectados, MST); adicionada `Queue` própria em `src/types/queue.py`; justificada a marcação de visitado no `pop` da DFS | Lucas Antunes |
 | 16/06/2026 | 1.2 | Decisões do pré-processamento (Filtro 1): normalização A1', segmentação por regex, dados NLTK no Docker, pacote `preprocessing/`, descarte de ruído | Equipe |
+| 16/06/2026 | 1.3 | `topic` não circula no pipeline: removido de `preprocessed.json`/grafos, reservado à validação por `id` | Equipe |

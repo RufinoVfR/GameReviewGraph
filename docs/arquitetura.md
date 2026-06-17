@@ -104,7 +104,7 @@ Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `
 
 ```python
 RawComment       = dict                                          # {"id": int, "topic": str, "text": str}
-ProcessedComment = dict                                          # {"id": int, "topic": str, "sentences": list[list[str]]}
+ProcessedComment = dict                                          # {"id": int, "sentences": list[list[str]]}  (sem "topic": rótulo-ouro fica só no raw)
 NodeKey          = str                                           # "w_word", "s_12", "c_3"
 Graph            = dataclass(nodes, index, matrix)                # matriz de adjacência + mapeamento nome→índice
 Communities      = dict[int, list[str]]                          # community_id → [node_key, ...]
@@ -162,3 +162,4 @@ s3://game-review-graph/
 | 12/06/2026 | 1.0 | Criação inicial do documento | Lucas Antunes |
 | 12/06/2026 | 2.0 | Migração para MinIO S3 + Redis; atualização do diagrama, tabela de filtros e estrutura de artefatos | Lucas Antunes |
 | 16/06/2026 | 2.1 | Filtro 1 vira pacote `preprocessing/`; descrição reflete normalização A1' (radical RSLP como chave; emite forma de superfície com acento) | Lucas Antunes |
+| 16/06/2026 | 2.2 | `ProcessedComment` sem `topic` (rótulo-ouro reservado à validação por `id`) | Equipe |
