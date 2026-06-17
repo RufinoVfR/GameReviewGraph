@@ -31,3 +31,17 @@ jobs:
 
       - name: Run tests
         run: uv run pytest
+
+  docker-test:
+    name: Docker (make test)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create .env from the example (dev defaults)
+        run: cp .env.example .env
+
+      - name: Run the test suite inside Docker
+        run: make test
