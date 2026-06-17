@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://rufinovfr.github.io/GameReviewGraph/contributing/">
       
       
-        <link rel="prev" href="../arquitetura/">
+        <link rel="prev" href="../infraestrutura/">
       
       
       
@@ -333,6 +333,63 @@
   
   
   
+  
+    <li class="md-tabs__item">
+      <a href="../padroes_projeto/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Padrões de Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../grafos.md" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../infraestrutura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
     
   
   
@@ -561,6 +618,87 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../padroes_projeto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Padrões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grafos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infraestrutura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
     
   
   
@@ -693,6 +831,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. Executando os Testes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixtures-disponiveis-em-testsconftestpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixtures disponíveis em tests/conftest.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -707,10 +862,82 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-padroes-de-codigo" class="md-nav__link">
+  <a href="#7-usando-os-padroes-de-projeto" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Padrões de Código
+        7. Usando os Padrões de Projeto
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Usando os Padrões de Projeto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regra-geral-nao-modifique-srcshared-sem-revisao-da-equipe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regra geral: não modifique src/shared/ sem revisão da equipe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-method-como-usar-abstractfilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template Method — como usar AbstractFilter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chain-of-responsibility-como-registrar-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chain of Responsibility — como registrar filtros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observer-como-adicionar-um-listener" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observer — como adicionar um listener
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-quando-criar-uma-nova-estrategia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy — quando criar uma nova estratégia
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-padroes-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Padrões de Código
       
     </span>
   </a>
@@ -718,10 +945,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-definition-of-done-por-modulo" class="md-nav__link">
+  <a href="#10-definition-of-done-por-modulo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        8. Definition of Done (por módulo)
+        10. Definition of Done (por módulo)
       
     </span>
   </a>
@@ -843,6 +1070,23 @@
     </span>
   </a>
   
+    <nav class="md-nav" aria-label="5. Executando os Testes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixtures-disponiveis-em-testsconftestpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fixtures disponíveis em tests/conftest.py
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
 </li>
       
         <li class="md-nav__item">
@@ -857,10 +1101,82 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#7-padroes-de-codigo" class="md-nav__link">
+  <a href="#7-usando-os-padroes-de-projeto" class="md-nav__link">
     <span class="md-ellipsis">
       
-        7. Padrões de Código
+        7. Usando os Padrões de Projeto
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Usando os Padrões de Projeto">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regra-geral-nao-modifique-srcshared-sem-revisao-da-equipe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regra geral: não modifique src/shared/ sem revisão da equipe
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#template-method-como-usar-abstractfilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template Method — como usar AbstractFilter
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#chain-of-responsibility-como-registrar-filtros" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chain of Responsibility — como registrar filtros
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#observer-como-adicionar-um-listener" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observer — como adicionar um listener
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#strategy-quando-criar-uma-nova-estrategia" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy — quando criar uma nova estratégia
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-padroes-de-codigo" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. Padrões de Código
       
     </span>
   </a>
@@ -868,10 +1184,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#8-definition-of-done-por-modulo" class="md-nav__link">
+  <a href="#10-definition-of-done-por-modulo" class="md-nav__link">
     <span class="md-ellipsis">
       
-        8. Definition of Done (por módulo)
+        10. Definition of Done (por módulo)
       
     </span>
   </a>
@@ -940,18 +1256,28 @@ Tipos: feat | fix | docs | refactor | test | chore
 </code></pre></div>
 <hr />
 <h2 id="2-configurando-o-ambiente">2. Configurando o ambiente<a class="headerlink" href="#2-configurando-o-ambiente" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="c1"># Instala todas as dependências (produção + dev) via uv</span>
+<p>O pipeline roda inteiramente dentro de Docker. Pré-requisitos: Docker Engine 24+ e Docker Compose v2.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Instale dependências locais (só para docs e linting — não para o pipeline)</span>
 make<span class="w"> </span>install
+
+<span class="c1"># 2. Copie as variáveis de ambiente</span>
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+
+<span class="c1"># 3. Construa a imagem e suba os serviços</span>
+make<span class="w"> </span>docker-up
+
+<span class="c1"># 4. Faça upload do arquivo de entrada bruta para MinIO (uma única vez)</span>
+make<span class="w"> </span>init-data
 </code></pre></div>
-<p>Isso executa <code>uv sync --all-groups</code> e cria o virtualenv gerenciado pelo uv em <code>.venv/</code>. Não é necessário ativar o ambiente manualmente — todos os comandos abaixo passam por <code>uv run</code>.</p>
+<p>Consulte <code>docs/infraestrutura.md</code> para detalhes sobre MinIO, Redis e variáveis de ambiente.</p>
 <hr />
 <h2 id="3-executando-o-pipeline-completo">3. Executando o Pipeline Completo<a class="headerlink" href="#3-executando-o-pipeline-completo" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>run
 </code></pre></div>
-<p>O <code>main.py</code> executa os 9 filtros em sequência, lendo e gravando os arquivos em <code>data/</code>. A saída final aparece no terminal e em <code>data/report.txt</code>.</p>
+<p><code>main.py</code> instancia a <code>FilterChain</code> com todos os 9 filtros e os executa em sequência. Cada filtro lê seu artefato de entrada do MinIO, processa, grava o resultado de volta no MinIO e armazena em cache no Redis. O relatório final fica disponível em <code>s3://game-review-graph/pipeline/report.txt</code> e é impresso no terminal.</p>
 <hr />
 <h2 id="4-executando-um-filtro-em-isolamento">4. Executando um Filtro em Isolamento<a class="headerlink" href="#4-executando-um-filtro-em-isolamento" title="Permanent link">&para;</a></h2>
-<p>Cada módulo pode ser executado individualmente via <code>make</code>. O filtro lê seus arquivos de entrada de <code>data/</code> e grava a saída sem rodar o pipeline inteiro.</p>
+<p>Cada módulo pode ser executado individualmente via <code>make</code>. O filtro lê seu artefato de entrada do MinIO e grava a saída sem rodar o pipeline inteiro.</p>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span>preprocessing<span class="w">        </span><span class="c1"># Filtro 1 — pré-processamento</span>
 make<span class="w"> </span>tree<span class="w">                 </span><span class="c1"># Filtro 2 — árvore N-ária</span>
 make<span class="w"> </span>word-graph<span class="w">           </span><span class="c1"># Filtro 3 — grafo de palavras</span>
@@ -962,20 +1288,12 @@ make<span class="w"> </span>community-detection<span class="w">  </span><span cl
 make<span class="w"> </span>metrics<span class="w">              </span><span class="c1"># Filtro 8 — centralidade e modularidade</span>
 make<span class="w"> </span>analysis<span class="w">             </span><span class="c1"># Filtro 9 — relatório</span>
 </code></pre></div>
-<p><strong>Pré-condição:</strong> os arquivos de entrada do filtro devem existir em <code>data/</code> (gerados pelos filtros anteriores ou fornecidos manualmente).</p>
+<p><strong>Pré-condição:</strong> o artefato de entrada do filtro deve existir no MinIO (gerado pelos filtros anteriores ou pelo <code>make init-data</code> para o Filtro 1). Inspecione os artefatos disponíveis em <code>http://localhost:9001</code>.</p>
 <p><strong>Template obrigatório para cada módulo:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-    <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-
-    <span class="n">input_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/&lt;entrada&gt;.json&quot;</span><span class="p">)</span>
-    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;data/&lt;saida&gt;.json&quot;</span><span class="p">)</span>
-
-    <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">input_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">função_principal</span><span class="o">&gt;</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-    <span class="n">output_path</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">),</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[&lt;modulo&gt;] Saída gravada em </span><span class="si">{</span><span class="n">output_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">NomeDoFiltro</span><span class="p">()</span><span class="o">.</span><span class="n">execute</span><span class="p">()</span>
 </code></pre></div>
+<p>O <code>execute()</code> herdado de <code>AbstractFilter</code> cuida de todo o I/O com MinIO e Redis automaticamente.</p>
 <hr />
 <h2 id="5-executando-os-testes">5. Executando os Testes<a class="headerlink" href="#5-executando-os-testes" title="Permanent link">&para;</a></h2>
 <div class="highlight"><pre><span></span><code>make<span class="w"> </span><span class="nb">test</span><span class="w">      </span><span class="c1"># roda todos os testes</span>
@@ -984,23 +1302,211 @@ make<span class="w"> </span>test-cov<span class="w">  </span><span class="c1"># 
 <p>Os testes ficam em <code>tests/unit/test_&lt;modulo&gt;.py</code> (um arquivo por filtro) e <code>tests/integration/test_pipeline.py</code>.</p>
 <p><strong>Ao implementar um filtro:</strong></p>
 <ol>
-<li>Descomente os imports no arquivo <code>tests/unit/test_&lt;modulo&gt;.py</code> correspondente</li>
 <li>Substitua o <code>test_placeholder</code> por testes reais que cobrem a função principal e casos de borda</li>
-<li>Use as fixtures de <code>tests/conftest.py</code> (<code>raw_comments</code>, <code>processed_comments</code>, <code>small_word_graph</code>) como ponto de partida</li>
+<li>Use as fixtures de <code>tests/conftest.py</code> como ponto de partida (listadas abaixo)</li>
+<li>Nunca suba testes que dependem de MinIO ou Redis reais — use <code>mock_storage</code> e <code>mock_cache</code></li>
 </ol>
 <p>O CI executa <code>make test</code> automaticamente em todo PR para <code>main</code> ou <code>dev</code>. O PR só pode ser mergeado se todos os testes passarem.</p>
+<h3 id="fixtures-disponiveis-em-testsconftestpy">Fixtures disponíveis em <code>tests/conftest.py</code><a class="headerlink" href="#fixtures-disponiveis-em-testsconftestpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Fixture / Função</th>
+<th>Tipo</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>raw_comments</code></td>
+<td>fixture</td>
+<td>4 comentários brutos em 2 tópicos (<code>list[dict]</code>)</td>
+</tr>
+<tr>
+<td><code>processed_comments</code></td>
+<td>fixture</td>
+<td>Versão pré-tokenizada dos comentários acima</td>
+</tr>
+<tr>
+<td><code>small_word_graph</code></td>
+<td>fixture</td>
+<td>Grafo de palavras com 6 nós e 2 componentes implícitos</td>
+</tr>
+<tr>
+<td><code>clustered_graph</code></td>
+<td>fixture</td>
+<td>Grafo com 2 clusters densos e uma ponte fraca — ideal para testar corte de arestas</td>
+</tr>
+<tr>
+<td><code>mock_storage</code></td>
+<td>fixture</td>
+<td><code>S3Storage</code> com backend moto (sem MinIO real); reseta o singleton após o teste</td>
+</tr>
+<tr>
+<td><code>mock_cache</code></td>
+<td>fixture</td>
+<td><code>RedisCache</code> com backend fakeredis (sem Redis real); reseta o singleton após o teste</td>
+</tr>
+<tr>
+<td><code>make_graph(edges)</code></td>
+<td>função</td>
+<td>Constrói um <code>Graph</code> simétrico a partir de uma lista <code>[(u, v, weight), ...]</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Exemplo — testando um filtro sem infraestrutura:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">tests.conftest</span><span class="w"> </span><span class="kn">import</span> <span class="n">make_graph</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestWordGraph</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_co_occurrence_weight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mock_storage</span><span class="p">,</span> <span class="n">mock_cache</span><span class="p">):</span>
+        <span class="c1"># mock_storage e mock_cache garantem que execute() não tenta</span>
+        <span class="c1"># conectar em http://minio:9000 nem em redis://redis:6379</span>
+        <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_graph_is_symmetric</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">small_word_graph</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">u</span><span class="p">,</span> <span class="n">neighbors</span> <span class="ow">in</span> <span class="n">small_word_graph</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">neighbors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">assert</span> <span class="n">small_word_graph</span><span class="p">[</span><span class="n">v</span><span class="p">][</span><span class="n">u</span><span class="p">]</span> <span class="o">==</span> <span class="n">w</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_bridge_cut_splits_graph</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustered_graph</span><span class="p">):</span>
+        <span class="c1"># clustered_graph tem ponte (w_a1—w_b1, peso 0.1)</span>
+        <span class="c1"># remover ela deve resultar em 2 componentes</span>
+        <span class="o">...</span>
+</code></pre></div>
 <hr />
 <h2 id="6-adicionando-um-novo-filtro">6. Adicionando um Novo Filtro<a class="headerlink" href="#6-adicionando-um-novo-filtro" title="Permanent link">&para;</a></h2>
 <ol>
-<li>Crie <code>src/&lt;nome&gt;.py</code> com a função principal tipada e docstring completa</li>
+<li>Crie <code>src/&lt;nome&gt;.py</code> herdando de <code>AbstractFilter</code> (importado de <code>src/shared/filter_base.py</code>)</li>
+<li>Declare <code>name</code>, <code>input_key</code>, <code>output_key</code> e, se necessário, <code>extra_input_keys</code> como atributos de classe</li>
+<li>Implemente apenas <code>process(data)</code> — o I/O e o cache são herdados</li>
 <li>Adicione o bloco <code>if __name__ == "__main__"</code> para execução isolada</li>
-<li>Registre o filtro em <code>src/main.py</code> na posição correta do pipeline</li>
-<li>Descomente e implemente <code>tests/unit/test_&lt;nome&gt;.py</code></li>
+<li>Instancie o filtro e registre-o na <code>FilterChain</code> em <code>src/main.py</code> na posição correta</li>
+<li>Implemente <code>tests/unit/test_&lt;nome&gt;.py</code> (substitua <code>test_placeholder</code>)</li>
 <li>Documente o contrato de interface (tipos de entrada/saída) em <code>docs/arquitetura.md</code></li>
-<li>Adicione o <code>make &lt;filtro&gt;</code> ao <code>Makefile</code> e o arquivo de saída à estrutura <code>data/</code></li>
+<li>Adicione o <code>make &lt;filtro&gt;</code> ao <code>Makefile</code></li>
 </ol>
+<p><strong>Template — filtro de entrada única:</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.filter_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractFilter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">WordGraphFilter</span><span class="p">(</span><span class="n">AbstractFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build word co-occurrence graph from the N-ary tree.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;word_graph&quot;</span>
+    <span class="n">input_key</span> <span class="o">=</span> <span class="s2">&quot;tree&quot;</span>
+    <span class="n">output_key</span> <span class="o">=</span> <span class="s2">&quot;word_graph&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform N-ary tree into word co-occurrence graph.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: Serialized NaryTree loaded from tree.json.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Adjacency dict mapping word node → {neighbor: weight}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+</code></pre></div>
+<p><strong>Template — filtro de múltiplas entradas (<code>extra_input_keys</code>):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.filter_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">AbstractFilter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">Graph</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">SentenceGraphFilter</span><span class="p">(</span><span class="n">AbstractFilter</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Build sentence graph from word graph and N-ary tree.&quot;&quot;&quot;</span>
+
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sentence_graph&quot;</span>
+    <span class="n">input_key</span> <span class="o">=</span> <span class="s2">&quot;word_graph&quot;</span>        <span class="c1"># artefato primário</span>
+    <span class="n">extra_input_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tree&quot;</span><span class="p">]</span>     <span class="c1"># artefatos secundários</span>
+    <span class="n">output_key</span> <span class="o">=</span> <span class="s2">&quot;sentence_graph&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Derive sentence graph from word co-occurrence weights.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: Dict with keys &quot;primary&quot; (word_graph) and &quot;tree&quot;.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Adjacency dict mapping sentence node → {neighbor: weight}.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">word_graph</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tree&quot;</span><span class="p">]</span>
+        <span class="o">...</span>
+</code></pre></div>
 <hr />
-<h2 id="7-padroes-de-codigo">7. Padrões de Código<a class="headerlink" href="#7-padroes-de-codigo" title="Permanent link">&para;</a></h2>
+<h2 id="7-usando-os-padroes-de-projeto">7. Usando os Padrões de Projeto<a class="headerlink" href="#7-usando-os-padroes-de-projeto" title="Permanent link">&para;</a></h2>
+<p>Os cinco padrões GoF são infraestrutura do pipeline. Seguir as regras abaixo garante que o sistema permaneça extensível sem violar o contrato entre os filtros. Veja <a href="../padroes_projeto/">Padrões de Projeto</a> para a especificação completa.</p>
+<h3 id="regra-geral-nao-modifique-srcshared-sem-revisao-da-equipe">Regra geral: não modifique <code>src/shared/</code> sem revisão da equipe<a class="headerlink" href="#regra-geral-nao-modifique-srcshared-sem-revisao-da-equipe" title="Permanent link">&para;</a></h3>
+<p>PRs que alteram qualquer arquivo em <code>src/shared/</code> requerem aprovação de <strong>todos os membros da equipe</strong> antes do merge — esses arquivos afetam todos os filtros simultaneamente.</p>
+<h3 id="template-method-como-usar-abstractfilter">Template Method — como usar <code>AbstractFilter</code><a class="headerlink" href="#template-method-como-usar-abstractfilter" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Faça</th>
+<th>Não faça</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Herde <code>AbstractFilter</code> em todo filtro concreto</td>
+<td>Implementar I/O de JSON manualmente no filtro</td>
+</tr>
+<tr>
+<td>Implemente apenas <code>process(data)</code></td>
+<td>Sobrescrever <code>execute()</code>, <code>_load_input()</code> ou <code>_write_output()</code></td>
+</tr>
+<tr>
+<td>Declare <code>name</code>, <code>input_key</code>, <code>output_key</code> como atributos de classe</td>
+<td>Definir esses atributos no <code>__init__</code></td>
+</tr>
+<tr>
+<td>Chame <code>super().__init__()</code> se adicionar um <code>__init__</code> próprio</td>
+<td>Duplicar a lógica de cache em <code>process()</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="chain-of-responsibility-como-registrar-filtros">Chain of Responsibility — como registrar filtros<a class="headerlink" href="#chain-of-responsibility-como-registrar-filtros" title="Permanent link">&para;</a></h3>
+<p>O único lugar onde filtros são instanciados e encadeados é <code>src/main.py</code>. A ordem da lista é a ordem de execução.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src/main.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.pipeline</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterChain</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.preprocessing</span><span class="w"> </span><span class="kn">import</span> <span class="n">PreprocessingFilter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.word_graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">WordGraphFilter</span>
+
+<span class="n">chain</span> <span class="o">=</span> <span class="n">FilterChain</span><span class="p">(</span>
+    <span class="n">filters</span><span class="o">=</span><span class="p">[</span>
+        <span class="n">PreprocessingFilter</span><span class="p">(),</span>
+        <span class="n">WordGraphFilter</span><span class="p">(),</span>
+        <span class="c1"># ... demais filtros em ordem</span>
+    <span class="p">],</span>
+    <span class="n">observers</span><span class="o">=</span><span class="p">[</span><span class="n">LoggingObserver</span><span class="p">()],</span>
+<span class="p">)</span>
+<span class="n">chain</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">from_filter</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">from_filter</span><span class="p">)</span>
+</code></pre></div>
+<p>Nunca instancie um filtro fora de <code>main.py</code> a não ser em testes.</p>
+<h3 id="observer-como-adicionar-um-listener">Observer — como adicionar um listener<a class="headerlink" href="#observer-como-adicionar-um-listener" title="Permanent link">&para;</a></h3>
+<p>Crie uma subclasse de <code>PipelineObserver</code> em <code>src/shared/observers.py</code> e registre-a na <code>FilterChain</code> em <code>main.py</code>. Não modifique <code>FilterChain._notify_*</code> para adicionar comportamentos novos.</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">MetricsObserver</span><span class="p">(</span><span class="n">PipelineObserver</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Record per-filter elapsed times for benchmarking.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_start</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_complete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filter_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">elapsed</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_skip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filter_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">pass</span>
+</code></pre></div>
+<h3 id="strategy-quando-criar-uma-nova-estrategia">Strategy — quando criar uma nova estratégia<a class="headerlink" href="#strategy-quando-criar-uma-nova-estrategia" title="Permanent link">&para;</a></h3>
+<p>Crie uma subclasse de <code>CommunityDetectionStrategy</code> em <code>src/shared/strategies.py</code> apenas para algoritmos de detecção de comunidades alternativos ao corte progressivo de arestas. Injete a estratégia no construtor de <code>CommunityDetectionFilter</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># src/community_detection.py</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">CommunityDetectionFilter</span><span class="p">(</span><span class="n">AbstractFilter</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">strategy</span><span class="p">:</span> <span class="n">CommunityDetectionStrategy</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_strategy</span> <span class="o">=</span> <span class="n">strategy</span> <span class="ow">or</span> <span class="n">ProgressiveEdgeCuttingStrategy</span><span class="p">()</span>
+</code></pre></div>
+<p>Não use <code>Strategy</code> para outros tipos de variação algorítmica — crie funções auxiliares privadas dentro do filtro correspondente.</p>
+<hr />
+<h2 id="9-padroes-de-codigo">9. Padrões de Código<a class="headerlink" href="#9-padroes-de-codigo" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
@@ -1030,8 +1536,8 @@ make<span class="w"> </span>test-cov<span class="w">  </span><span class="c1"># 
 <td>Ordem: stdlib → third-party → local; separados por linha em branco</td>
 </tr>
 <tr>
-<td><strong>Caminhos</strong></td>
-<td>Sempre <code>pathlib.Path</code>; nunca strings hardcoded com <code>/</code> ou <code>\\</code></td>
+<td><strong>Chaves S3/Redis</strong></td>
+<td>Use <code>S3_KEYS</code> de <code>src/config.py</code>; nunca hardcode nomes de artefatos ou chaves Redis</td>
 </tr>
 <tr>
 <td><strong>Idioma</strong></td>
@@ -1048,16 +1554,20 @@ make<span class="w"> </span>test-cov<span class="w">  </span><span class="c1"># 
 </tbody>
 </table>
 <hr />
-<h2 id="8-definition-of-done-por-modulo">8. Definition of Done (por módulo)<a class="headerlink" href="#8-definition-of-done-por-modulo" title="Permanent link">&para;</a></h2>
+<h2 id="10-definition-of-done-por-modulo">10. Definition of Done (por módulo)<a class="headerlink" href="#10-definition-of-done-por-modulo" title="Permanent link">&para;</a></h2>
 <p>Um módulo está concluído quando <strong>todos</strong> os critérios abaixo são verdadeiros:</p>
 <ul>
-<li>[ ] Executa sem erros via <code>make &lt;nome-do-filtro&gt;</code></li>
+<li>[ ] Executa sem erros via <code>make &lt;nome-do-filtro&gt;</code> (dentro de Docker)</li>
 <li>[ ] <code>make test</code> passa sem falhas (todos os <code>test_placeholder</code> substituídos por testes reais)</li>
-<li>[ ] Grava o arquivo JSON de saída correto em <code>data/</code></li>
+<li>[ ] Artefato JSON de saída gravado corretamente no MinIO (verificável em <code>http://localhost:9001</code>)</li>
 <li>[ ] Saída consistente com os exemplos documentados em <code>docs/arquitetura.md</code></li>
 <li>[ ] Toda função pública tem type hints e docstring</li>
+<li>[ ] Filtro concreto herda <code>AbstractFilter</code> e implementa apenas <code>process()</code></li>
+<li>[ ] Filtro registrado na <code>FilterChain</code> em <code>src/main.py</code></li>
+<li>[ ] Nenhuma importação direta entre filtros de domínio (somente <code>src/shared/</code>, <code>src/config.py</code>, <code>src/types.py</code>)</li>
 <li>[ ] Código commitado em branch própria e PR aberto para <code>main</code> ou <code>dev</code></li>
 <li>[ ] PR aprovado por ao menos 1 outro membro da equipe e CI verde</li>
+<li>[ ] PRs em <code>src/shared/</code> aprovados por <strong>todos</strong> os membros da equipe</li>
 </ul>
 <hr />
 <h2 id="historico-de-revisao">Histórico de Revisão<a class="headerlink" href="#historico-de-revisao" title="Permanent link">&para;</a></h2>
@@ -1075,6 +1585,24 @@ make<span class="w"> </span>test-cov<span class="w">  </span><span class="c1"># 
 <td>12/06/2026</td>
 <td>1.0</td>
 <td>Criação inicial do documento</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>12/06/2026</td>
+<td>1.1</td>
+<td>Seções de padrões GoF, template de filtro concreto, DoD atualizado</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>12/06/2026</td>
+<td>1.2</td>
+<td>Migração para Docker + MinIO + Redis: seções 2, 3, 4 e DoD atualizados</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>12/06/2026</td>
+<td>1.3</td>
+<td>Fixtures de teste (mock_storage, mock_cache, clustered_graph, make_graph); template multi-input com extra_input_keys</td>
 <td>Lucas Antunes</td>
 </tr>
 </tbody>

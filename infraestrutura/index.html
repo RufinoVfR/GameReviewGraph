@@ -8,9 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://rufinovfr.github.io/GameReviewGraph/CLAUDE/">
+        <link rel="canonical" href="https://rufinovfr.github.io/GameReviewGraph/infraestrutura/">
       
       
+        <link rel="prev" href="../padroes_projeto/">
+      
+      
+        <link rel="next" href="../contributing/">
       
       
         
@@ -21,7 +25,7 @@
     
     
       
-        <title>docs/ — Context for Claude - GameReviewGraph</title>
+        <title>Infraestrutura - GameReviewGraph</title>
       
     
     
@@ -72,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#docs-context-for-claude" class="md-skip">
+        <a href="#infraestrutura" class="md-skip">
           Ir para o conteúdo
         </a>
       
@@ -106,7 +110,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              docs/ — Context for Claude
+              Infraestrutura
             
           </span>
         </div>
@@ -369,9 +373,11 @@
   
   
   
+    
   
-    <li class="md-tabs__item">
-      <a href="../infraestrutura/" class="md-tabs__link">
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
         
   
   
@@ -668,10 +674,37 @@
       
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../infraestrutura/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -687,6 +720,175 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#visao-geral" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visão Geral
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#servicos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Serviços
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#s3-estrutura-do-bucket" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        S3 — Estrutura do Bucket
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#redis-convencao-de-chaves" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Redis — Convenção de Chaves
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#variaveis-de-ambiente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Variáveis de Ambiente
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executando-localmente" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Executando Localmente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Executando Localmente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#primeira-vez" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primeira vez
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execucoes-subsequentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execuções subsequentes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#console-minio-inspecao-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Console MinIO (inspeção visual)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cicd-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI/CD — GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitetura-de-camadas-srcshared" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura de Camadas (src/shared/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico-de-revisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico de Revisão
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -745,10 +947,10 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#what-this-directory-is" class="md-nav__link">
+  <a href="#visao-geral" class="md-nav__link">
     <span class="md-ellipsis">
       
-        What this directory is
+        Visão Geral
       
     </span>
   </a>
@@ -756,10 +958,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#file-map" class="md-nav__link">
+  <a href="#servicos" class="md-nav__link">
     <span class="md-ellipsis">
       
-        File map
+        Serviços
       
     </span>
   </a>
@@ -767,10 +969,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#mkdocs-nav-mkdocsyml" class="md-nav__link">
+  <a href="#s3-estrutura-do-bucket" class="md-nav__link">
     <span class="md-ellipsis">
       
-        MkDocs nav (mkdocs.yml)
+        S3 — Estrutura do Bucket
       
     </span>
   </a>
@@ -778,10 +980,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#content-ownership-and-update-rules" class="md-nav__link">
+  <a href="#redis-convencao-de-chaves" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Content ownership and update rules
+        Redis — Convenção de Chaves
       
     </span>
   </a>
@@ -789,10 +991,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#writing-conventions" class="md-nav__link">
+  <a href="#variaveis-de-ambiente" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Writing conventions
+        Variáveis de Ambiente
       
     </span>
   </a>
@@ -800,10 +1002,93 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#critical-constraints-inherited-from-root" class="md-nav__link">
+  <a href="#executando-localmente" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Critical constraints inherited from root
+        Executando Localmente
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Executando Localmente">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pre-requisitos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-requisitos
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#primeira-vez" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Primeira vez
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#execucoes-subsequentes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Execuções subsequentes
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#console-minio-inspecao-visual" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Console MinIO (inspeção visual)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cicd-github-actions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        CI/CD — GitHub Actions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#arquitetura-de-camadas-srcshared" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arquitetura de Camadas (src/shared/)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico-de-revisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico de Revisão
       
     </span>
   </a>
@@ -830,100 +1115,324 @@
   
 
 
-<h1 id="docs-context-for-claude">docs/ — Context for Claude<a class="headerlink" href="#docs-context-for-claude" title="Permanent link">&para;</a></h1>
-<blockquote>
-<p><strong>Tree position:</strong> <code>/ (root) → docs/</code>
-Parent context: see <a href="../CLAUDE.md"><code>../CLAUDE.md</code></a> for project-wide rules and architecture.</p>
-</blockquote>
+<h1 id="infraestrutura">Infraestrutura<a class="headerlink" href="#infraestrutura" title="Permanent link">&para;</a></h1>
+<p>O <strong>GameReviewGraph</strong> é executado inteiramente via Docker. A orquestração combina três serviços: a aplicação Python, um armazenamento S3-compatível (MinIO) para os artefatos do pipeline, e um cache Redis para os resultados dos filtros.</p>
 <hr />
-<h2 id="what-this-directory-is">What this directory is<a class="headerlink" href="#what-this-directory-is" title="Permanent link">&para;</a></h2>
-<p><code>docs/</code> is the MkDocs source tree, published via GitHub Actions to GitHub Pages.
-Every <code>.md</code> file here maps 1:1 to a page in the site via <code>mkdocs.yml</code>.</p>
+<h2 id="visao-geral">Visão Geral<a class="headerlink" href="#visao-geral" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart TD
+    DEV["Desenvolvedor\nmake run"]
+
+    subgraph Docker["docker-compose"]
+        APP["app\n(Python 3.11)"]
+        MINIO["minio\n(MinIO — S3-compatível)"]
+        REDIS["redis\n(Redis 7)"]
+    end
+
+    BUCKET["Bucket: game-review-graph\npipeline/comments.json\npipeline/preprocessed.json\npipeline/tree.json\n..."]
+    RKEYS["Chaves Redis\nfilter:preprocessing\nfilter:tree\nfilter:word_graph\n..."]
+
+    DEV --&gt; APP
+    APP --&gt; MINIO --&gt; BUCKET
+    APP --&gt; REDIS --&gt; RKEYS</code></pre>
 <hr />
-<h2 id="file-map">File map<a class="headerlink" href="#file-map" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>docs/
-├── CLAUDE.md                ← this file (not published — excluded from mkdocs nav)
-├── index.md                 ← landing page: pipeline overview + topic list
-├── visao_produto_projeto.md ← full product/project vision (stakeholders, objectives, SE strategy)
-├── requisitos.md            ← functional (RF01–RF10) and non-functional (RNF01–RNF07) requirements
-├── backlog.md               ← user stories (US01–US14), prioritization, MVP, acceptance criteria
-├── cronograma.md            ← 4-wave schedule with milestones and risk notes
-├── arquitetura.md           ← pipe-and-filter diagram, filter contracts, I/O file map, design decisions
-├── padroes_projeto.md       ← five GoF patterns: Template Method, Chain of Responsibility, Facade, Observer, Strategy
-├── grafos.md                ← graph utility sub-package: ops, metrics, traversal, validate; increase_weight vs add_edge
-├── infraestrutura.md        ← Docker, MinIO, Redis: services, env vars, S3 key map, CI/CD
-└── contributing.md          ← git workflow, running filters, coding standards, definition of done
-</code></pre></div>
-<hr />
-<h2 id="mkdocs-nav-mkdocsyml">MkDocs nav (mkdocs.yml)<a class="headerlink" href="#mkdocs-nav-mkdocsyml" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><span class="nt">nav</span><span class="p">:</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Início</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">index.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Visão do Produto e Projeto</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">visao_produto_projeto.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Requisitos</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">requisitos.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Backlog</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backlog.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Cronograma</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cronograma.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Arquitetura</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arquitetura.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Padrões de Projeto</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">padroes_projeto.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Utilitários de Grafos</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">grafos.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Infraestrutura</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">infraestrutura.md</span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Contribuição</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">contributing.md</span>
-</code></pre></div>
-<p>Do not rename files without updating the nav. Do not add pages without adding a nav entry.</p>
-<hr />
-<h2 id="content-ownership-and-update-rules">Content ownership and update rules<a class="headerlink" href="#content-ownership-and-update-rules" title="Permanent link">&para;</a></h2>
+<h2 id="servicos">Serviços<a class="headerlink" href="#servicos" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>File</th>
-<th>Owner trigger</th>
-<th>When to update</th>
+<th>Serviço</th>
+<th>Imagem</th>
+<th>Porta local</th>
+<th>Papel</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>index.md</code></td>
-<td>Any pipeline change</td>
-<td>When a module is added, renamed, or reordered</td>
+<td><code>app</code></td>
+<td>build local (<code>Dockerfile</code>)</td>
+<td>—</td>
+<td>Executa os 9 filtros do pipeline</td>
 </tr>
 <tr>
-<td><code>visao_produto_projeto.md</code></td>
-<td>Strategic or team decisions</td>
-<td>When scope, team, or SE strategy changes</td>
+<td><code>minio</code></td>
+<td><code>minio/minio:latest</code></td>
+<td><code>9000</code> (API), <code>9001</code> (console)</td>
+<td>Armazena artefatos JSON e <code>report.txt</code></td>
 </tr>
 <tr>
-<td><code>requisitos.md</code></td>
-<td>Requirement changes</td>
-<td>When RF/RNF are added, removed, or revised</td>
-</tr>
-<tr>
-<td><code>backlog.md</code></td>
-<td>Sprint / wave planning</td>
-<td>When user stories are added, split, or acceptance criteria change</td>
-</tr>
-<tr>
-<td><code>cronograma.md</code></td>
-<td>Timeline changes</td>
-<td>When wave dates shift, milestones are added, or completion status changes</td>
+<td><code>redis</code></td>
+<td><code>redis:7-alpine</code></td>
+<td><code>6379</code></td>
+<td>Cache pickle dos resultados dos filtros</td>
 </tr>
 </tbody>
 </table>
 <hr />
-<h2 id="writing-conventions">Writing conventions<a class="headerlink" href="#writing-conventions" title="Permanent link">&para;</a></h2>
-<ul>
-<li>Language: <strong>Portuguese</strong> — all user-facing content (headings, tables, prose)</li>
-<li>File names: <strong>snake_case</strong>, <code>.md</code> extension</li>
-<li>Every page must have a single <code>#</code> H1 matching the nav label</li>
-<li>Revision history table at the bottom of each page: <code>| Data | Versão | Descrição | Autor |</code></li>
-<li>Do not use emojis</li>
-<li>Do not add <code>CLAUDE.md</code> to the mkdocs nav</li>
-</ul>
+<h2 id="s3-estrutura-do-bucket">S3 — Estrutura do Bucket<a class="headerlink" href="#s3-estrutura-do-bucket" title="Permanent link">&para;</a></h2>
+<p>O bucket <code>game-review-graph</code> contém todos os artefatos do pipeline sob o prefixo <code>pipeline/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Chave S3</th>
+<th>Equivalente anterior</th>
+<th>Filtro que grava</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>pipeline/comments.json</code></td>
+<td><code>data/comments.json</code></td>
+<td>entrada bruta (upload via <code>make init-data</code>)</td>
+</tr>
+<tr>
+<td><code>pipeline/preprocessed.json</code></td>
+<td><code>data/preprocessed.json</code></td>
+<td>Filtro 1</td>
+</tr>
+<tr>
+<td><code>pipeline/tree.json</code></td>
+<td><code>data/tree.json</code></td>
+<td>Filtro 2</td>
+</tr>
+<tr>
+<td><code>pipeline/word_graph.json</code></td>
+<td><code>data/word_graph.json</code></td>
+<td>Filtro 3</td>
+</tr>
+<tr>
+<td><code>pipeline/sentence_graph.json</code></td>
+<td><code>data/sentence_graph.json</code></td>
+<td>Filtro 4</td>
+</tr>
+<tr>
+<td><code>pipeline/comment_graph.json</code></td>
+<td><code>data/comment_graph.json</code></td>
+<td>Filtro 5</td>
+</tr>
+<tr>
+<td><code>pipeline/final_graph.json</code></td>
+<td><code>data/final_graph.json</code></td>
+<td>Filtro 6</td>
+</tr>
+<tr>
+<td><code>pipeline/communities.json</code></td>
+<td><code>data/communities.json</code></td>
+<td>Filtro 7</td>
+</tr>
+<tr>
+<td><code>pipeline/metrics.json</code></td>
+<td><code>data/metrics.json</code></td>
+<td>Filtro 8</td>
+</tr>
+<tr>
+<td><code>pipeline/report.txt</code></td>
+<td><code>data/report.txt</code></td>
+<td>Filtro 9</td>
+</tr>
+</tbody>
+</table>
+<p>O bucket é criado automaticamente na primeira execução se não existir.</p>
 <hr />
-<h2 id="critical-constraints-inherited-from-root">Critical constraints inherited from root<a class="headerlink" href="#critical-constraints-inherited-from-root" title="Permanent link">&para;</a></h2>
+<h2 id="redis-convencao-de-chaves">Redis — Convenção de Chaves<a class="headerlink" href="#redis-convencao-de-chaves" title="Permanent link">&para;</a></h2>
+<p>Cada filtro armazena seu resultado serializado em pickle com a chave <code>filter:&lt;nome&gt;</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Chave Redis</th>
+<th>Filtro</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>filter:preprocessing</code></td>
+<td>Filtro 1</td>
+</tr>
+<tr>
+<td><code>filter:tree</code></td>
+<td>Filtro 2</td>
+</tr>
+<tr>
+<td><code>filter:word_graph</code></td>
+<td>Filtro 3</td>
+</tr>
+<tr>
+<td><code>filter:sentence_graph</code></td>
+<td>Filtro 4</td>
+</tr>
+<tr>
+<td><code>filter:comment_graph</code></td>
+<td>Filtro 5</td>
+</tr>
+<tr>
+<td><code>filter:final_graph</code></td>
+<td>Filtro 6</td>
+</tr>
+<tr>
+<td><code>filter:community_detection</code></td>
+<td>Filtro 7</td>
+</tr>
+<tr>
+<td><code>filter:metrics</code></td>
+<td>Filtro 8</td>
+</tr>
+<tr>
+<td><code>filter:analysis</code></td>
+<td>Filtro 9</td>
+</tr>
+</tbody>
+</table>
+<p>Em um cache hit, <code>AbstractFilter.execute()</code> pula <code>process()</code> e retorna o resultado em Redis diretamente para S3 sem reprocessar.</p>
+<hr />
+<h2 id="variaveis-de-ambiente">Variáveis de Ambiente<a class="headerlink" href="#variaveis-de-ambiente" title="Permanent link">&para;</a></h2>
+<p>Todas as variáveis são lidas pelo <code>src/config.py</code> via <code>os.environ</code>. Copie <code>.env.example</code> para <code>.env</code> e ajuste os valores:</p>
+<div class="highlight"><pre><span></span><code>cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Variável</th>
+<th>Padrão</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>S3_BUCKET</code></td>
+<td><code>game-review-graph</code></td>
+<td>Nome do bucket MinIO/S3</td>
+</tr>
+<tr>
+<td><code>S3_ENDPOINT_URL</code></td>
+<td><code>http://minio:9000</code></td>
+<td>URL da API S3 (MinIO em dev)</td>
+</tr>
+<tr>
+<td><code>AWS_ACCESS_KEY_ID</code></td>
+<td><code>minioadmin</code></td>
+<td>Usuário MinIO (ou chave AWS em prod)</td>
+</tr>
+<tr>
+<td><code>AWS_SECRET_ACCESS_KEY</code></td>
+<td><code>minioadmin</code></td>
+<td>Senha MinIO (ou segredo AWS em prod)</td>
+</tr>
+<tr>
+<td><code>MINIO_ROOT_USER</code></td>
+<td><code>minioadmin</code></td>
+<td>Usuário root do container MinIO</td>
+</tr>
+<tr>
+<td><code>MINIO_ROOT_PASSWORD</code></td>
+<td><code>minioadmin</code></td>
+<td>Senha root do container MinIO</td>
+</tr>
+<tr>
+<td><code>REDIS_URL</code></td>
+<td><code>redis://redis:6379/0</code></td>
+<td>URL de conexão com Redis</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="executando-localmente">Executando Localmente<a class="headerlink" href="#executando-localmente" title="Permanent link">&para;</a></h2>
+<h3 id="pre-requisitos">Pré-requisitos<a class="headerlink" href="#pre-requisitos" title="Permanent link">&para;</a></h3>
 <ul>
-<li>Deadline for last GitHub commit: <strong>22/06/2026</strong></li>
-<li>Do not commit directly to <code>main</code> — use branches and PRs</li>
-<li>All doc filenames use relative paths; never hardcode absolute paths in links</li>
+<li>Docker Engine 24+</li>
+<li>Docker Compose v2 (<code>docker compose</code> sem hífen)</li>
 </ul>
+<h3 id="primeira-vez">Primeira vez<a class="headerlink" href="#primeira-vez" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Copie as variáveis de ambiente</span>
+cp<span class="w"> </span>.env.example<span class="w"> </span>.env
+
+<span class="c1"># 2. Suba os serviços em background</span>
+make<span class="w"> </span>docker-up
+
+<span class="c1"># 3. Faça upload do arquivo de entrada bruta para MinIO</span>
+make<span class="w"> </span>init-data
+
+<span class="c1"># 4. Execute o pipeline completo</span>
+make<span class="w"> </span>run
+</code></pre></div>
+<h3 id="execucoes-subsequentes">Execuções subsequentes<a class="headerlink" href="#execucoes-subsequentes" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="c1"># Infraestrutura</span>
+make<span class="w"> </span>docker-status<span class="w">           </span><span class="c1"># ver containers e estado de saúde</span>
+make<span class="w"> </span>docker-logs<span class="w">             </span><span class="c1"># acompanhar logs em tempo real</span>
+make<span class="w"> </span>docker-down<span class="w">             </span><span class="c1"># parar todos os containers</span>
+make<span class="w"> </span>docker-restart<span class="w">          </span><span class="c1"># rebuild + restart completo</span>
+
+<span class="c1"># Pipeline</span>
+make<span class="w"> </span>run<span class="w">                     </span><span class="c1"># pipeline completo</span>
+make<span class="w"> </span>preprocessing<span class="w">           </span><span class="c1"># filtro 1 isolado</span>
+make<span class="w"> </span>word-graph<span class="w">              </span><span class="c1"># filtro 3 isolado</span>
+make<span class="w"> </span>clean<span class="w">                   </span><span class="c1"># apaga cache Redis + artefatos S3 (preserva comments.json)</span>
+</code></pre></div>
+<h3 id="console-minio-inspecao-visual">Console MinIO (inspeção visual)<a class="headerlink" href="#console-minio-inspecao-visual" title="Permanent link">&para;</a></h3>
+<p>Acesse <code>http://localhost:9001</code> com usuário <code>minioadmin</code> / senha <code>minioadmin</code> para inspecionar os artefatos no bucket.</p>
+<hr />
+<h2 id="cicd-github-actions">CI/CD — GitHub Actions<a class="headerlink" href="#cicd-github-actions" title="Permanent link">&para;</a></h2>
+<p>O pipeline de CI usa <code>docker-compose.ci.yml</code> sobreposto ao <code>docker-compose.yml</code>. As diferenças:</p>
+<ul>
+<li>Serviços <code>minio</code> e <code>redis</code> expõem <strong>health checks</strong> — o <code>app</code> só inicia após ambos estarem saudáveis</li>
+<li>Nenhuma porta é exposta ao host (sem conflito em runners compartilhados)</li>
+<li>Credenciais via GitHub Secrets: <code>S3_BUCKET</code>, <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>REDIS_URL</code></li>
+</ul>
+<p><strong>Workflow de CI (<code>.github/workflows/ci.yml</code>):</strong></p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Subir serviços</span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker compose -f docker-compose.yml -f docker-compose.ci.yml up -d minio redis</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Aguardar serviços saudáveis</span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker compose -f docker-compose.yml -f docker-compose.ci.yml up --wait minio redis</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload dados de entrada</span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker compose -f docker-compose.yml -f docker-compose.ci.yml run --rm app uv run python scripts/init_data.py</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Executar testes</span>
+<span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">docker compose -f docker-compose.yml -f docker-compose.ci.yml run --rm app uv run pytest</span>
+</code></pre></div>
+<hr />
+<h2 id="arquitetura-de-camadas-srcshared">Arquitetura de Camadas (<code>src/shared/</code>)<a class="headerlink" href="#arquitetura-de-camadas-srcshared" title="Permanent link">&para;</a></h2>
+<p>A infraestrutura de armazenamento e cache é implementada em dois módulos de <code>src/shared/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Módulo</th>
+<th>Padrão GoF relacionado</th>
+<th>Papel</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>storage.py</code></td>
+<td>— (adaptador de I/O)</td>
+<td>Leitura e escrita de artefatos no MinIO via <code>boto3</code></td>
+</tr>
+<tr>
+<td><code>cache.py</code></td>
+<td>— (adaptador de cache)</td>
+<td>Armazenamento e recuperação de resultados no Redis</td>
+</tr>
+</tbody>
+</table>
+<p><code>AbstractFilter</code> (Template Method) usa esses dois adaptadores em <code>execute()</code>. Nenhum filtro de domínio importa <code>storage.py</code> ou <code>cache.py</code> diretamente.</p>
+<hr />
+<h2 id="historico-de-revisao">Histórico de Revisão<a class="headerlink" href="#historico-de-revisao" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Versão</th>
+<th>Descrição</th>
+<th>Autor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12/06/2026</td>
+<td>1.0</td>
+<td>Criação do documento com Docker, MinIO, Redis</td>
+<td>Lucas Antunes</td>
+</tr>
+</tbody>
+</table>
 
 
 

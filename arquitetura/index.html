@@ -14,7 +14,7 @@
         <link rel="prev" href="../cronograma/">
       
       
-        <link rel="next" href="../contributing/">
+        <link rel="next" href="../padroes_projeto/">
       
       
         
@@ -339,6 +339,63 @@
   
   
     <li class="md-tabs__item">
+      <a href="../padroes_projeto/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Padrões de Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../grafos.md" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../infraestrutura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
       <a href="../contributing/" class="md-tabs__link">
         
   
@@ -632,10 +689,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#estrutura-de-arquivos-em-disco" class="md-nav__link">
+  <a href="#estrutura-de-artefatos-minio" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Estrutura de Arquivos em Disco
+        Estrutura de Artefatos (MinIO)
       
     </span>
   </a>
@@ -668,6 +725,87 @@
   
 </nav>
       
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../padroes_projeto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Padrões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grafos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infraestrutura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
     </li>
   
 
@@ -759,10 +897,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#estrutura-de-arquivos-em-disco" class="md-nav__link">
+  <a href="#estrutura-de-artefatos-minio" class="md-nav__link">
     <span class="md-ellipsis">
       
-        Estrutura de Arquivos em Disco
+        Estrutura de Artefatos (MinIO)
       
     </span>
   </a>
@@ -812,11 +950,11 @@
 
 
 <h1 id="arquitetura-pipe-and-filter">Arquitetura — Pipe and Filter<a class="headerlink" href="#arquitetura-pipe-and-filter" title="Permanent link">&para;</a></h1>
-<p>O <strong>GameReviewGraph</strong> é estruturado como um pipeline de <strong>Pipe and Filter</strong>: cada módulo é um filtro independente que lê uma entrada bem definida, aplica uma transformação e escreve uma saída serializada. Os filtros se comunicam exclusivamente por arquivos intermediários — nenhum filtro importa diretamente funções internas de outro.</p>
+<p>O <strong>GameReviewGraph</strong> é estruturado como um pipeline de <strong>Pipe and Filter</strong>: cada módulo é um filtro independente que lê uma entrada bem definida, aplica uma transformação e escreve uma saída serializada. Os filtros se comunicam exclusivamente por artefatos JSON armazenados no <strong>MinIO S3</strong> — nenhum filtro importa diretamente funções internas de outro. Resultados intermediários são mantidos no <strong>Redis</strong> para evitar reprocessamento.</p>
 <hr />
 <h2 id="pipeline-completo">Pipeline Completo<a class="headerlink" href="#pipeline-completo" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
-    RAW["data/comments.json\n(entrada bruta)"]
+    RAW["MinIO\npipeline/comments.json\n(entrada bruta)"]
 
     subgraph F1["Filtro 1"]
         PP["preprocessing.py"]
@@ -846,15 +984,15 @@
         AN["analysis.py"]
     end
 
-    PRE["preprocessed.json"]
-    TREE["tree.json"]
-    WGJ["word_graph.json"]
-    SGJ["sentence_graph.json"]
-    CGJ["comment_graph.json"]
-    FGJ["final_graph.json"]
-    COM["communities.json"]
-    MET["metrics.json"]
-    REP["report.txt"]
+    PRE["pipeline/preprocessed.json"]
+    TREE["pipeline/tree.json"]
+    WGJ["pipeline/word_graph.json"]
+    SGJ["pipeline/sentence_graph.json"]
+    CGJ["pipeline/comment_graph.json"]
+    FGJ["pipeline/final_graph.json"]
+    COM["pipeline/communities.json"]
+    MET["pipeline/metrics.json"]
+    REP["pipeline/report.txt"]
 
     RAW --&gt; F1 --&gt; PRE --&gt; F2 --&gt; TREE
     TREE --&gt; F3 --&gt; WGJ
@@ -870,6 +1008,9 @@
     FGJ --&gt; F8
     COM --&gt; F8 --&gt; MET
     MET --&gt; F9 --&gt; REP</code></pre>
+<blockquote>
+<p>Todos os artefatos intermediários residem no bucket <code>game-review-graph</code> do MinIO sob o prefixo <code>pipeline/</code>. O Redis mantém os resultados em cache com a chave <code>filter:&lt;nome&gt;</code> — em um cache hit, <code>AbstractFilter.execute()</code> pula <code>process()</code> e regrava o artefato no S3 sem reprocessar.</p>
+</blockquote>
 <hr />
 <h2 id="tabela-de-filtros">Tabela de Filtros<a class="headerlink" href="#tabela-de-filtros" title="Permanent link">&para;</a></h2>
 <table>
@@ -877,8 +1018,8 @@
 <tr>
 <th>#</th>
 <th>Filtro</th>
-<th>Entradas</th>
-<th>Saída</th>
+<th>Entradas (S3)</th>
+<th>Saída (S3)</th>
 <th>Responsabilidade</th>
 </tr>
 </thead>
@@ -943,20 +1084,20 @@
 <td>9</td>
 <td><code>analysis.py</code></td>
 <td><code>metrics.json</code></td>
-<td><code>report.txt</code> + stdout</td>
+<td><code>report.txt</code></td>
 <td>Geração do relatório final com tópicos e métricas</td>
 </tr>
 </tbody>
 </table>
 <hr />
 <h2 id="contratos-de-interface-tipos-python">Contratos de Interface (Tipos Python)<a class="headerlink" href="#contratos-de-interface-tipos-python" title="Permanent link">&para;</a></h2>
-<p>Cada filtro expõe uma função principal com assinatura tipada. O <code>main.py</code> chama os filtros em sequência, passando objetos Python em memória (o I/O em disco é para persistência e execução isolada).</p>
+<p>Cada filtro concreto herda <code>AbstractFilter</code> e implementa apenas <code>process()</code>. O <code>main.py</code> instancia os filtros e os encadeia via <code>FilterChain</code> — o I/O com MinIO e o cache Redis são gerenciados automaticamente por <code>AbstractFilter.execute()</code>.</p>
 <table>
 <thead>
 <tr>
 <th>Filtro</th>
-<th>Tipo de entrada (Python)</th>
-<th>Tipo de saída (Python)</th>
+<th>Tipo de entrada (<code>process</code>)</th>
+<th>Tipo de saída (<code>process</code>)</th>
 </tr>
 </thead>
 <tbody>
@@ -1008,37 +1149,29 @@
 </tbody>
 </table>
 <p><strong>Aliases de tipo</strong> (definidos em <code>src/types.py</code>):</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># tipos canônicos do projeto</span>
-<span class="n">RawComment</span>      <span class="o">=</span> <span class="nb">dict</span>                            <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;text&quot;: str}</span>
-<span class="n">ProcessedComment</span> <span class="o">=</span> <span class="nb">dict</span>                           <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;sentences&quot;: list[list[str]]}</span>
-<span class="n">Graph</span>           <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span>     <span class="c1"># adjacency list; keys prefixed w_, s_, c_</span>
-<span class="n">Communities</span>     <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>            <span class="c1"># community_id → [node_key, ...]</span>
-<span class="n">Metrics</span>         <span class="o">=</span> <span class="nb">dict</span>                            <span class="c1"># ver schema em metrics.py</span>
+<div class="highlight"><pre><span></span><code><span class="n">RawComment</span>       <span class="o">=</span> <span class="nb">dict</span>                        <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;text&quot;: str}</span>
+<span class="n">ProcessedComment</span> <span class="o">=</span> <span class="nb">dict</span>                        <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;sentences&quot;: list[list[str]]}</span>
+<span class="n">Graph</span>            <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="c1"># adjacency list; keys prefixed w_, s_, c_</span>
+<span class="n">Communities</span>      <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>        <span class="c1"># community_id → [node_key, ...]</span>
+<span class="n">Metrics</span>          <span class="o">=</span> <span class="nb">dict</span>                        <span class="c1"># ver schema em metrics.py</span>
 </code></pre></div>
 <hr />
-<h2 id="estrutura-de-arquivos-em-disco">Estrutura de Arquivos em Disco<a class="headerlink" href="#estrutura-de-arquivos-em-disco" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>data/
-├── comments.json           # entrada bruta — NUNCA modificar
-├── preprocessed.json       # saída do Filtro 1
-├── tree.json               # saída do Filtro 2
-├── word_graph.json         # saída do Filtro 3
-├── sentence_graph.json     # saída do Filtro 4
-├── comment_graph.json      # saída do Filtro 5
-├── final_graph.json        # saída do Filtro 6
-├── communities.json        # saída do Filtro 7
-├── metrics.json            # saída do Filtro 8
-├── report.txt              # saída do Filtro 9 (legível por humanos)
-└── cache/
-    ├── preprocessed.pkl    # cache pickle (opcional, aceleração)
-    ├── tree.pkl
-    ├── word_graph.pkl
-    ├── sentence_graph.pkl
-    ├── comment_graph.pkl
-    ├── final_graph.pkl
-    ├── communities.pkl
-    └── metrics.pkl
+<h2 id="estrutura-de-artefatos-minio">Estrutura de Artefatos (MinIO)<a class="headerlink" href="#estrutura-de-artefatos-minio" title="Permanent link">&para;</a></h2>
+<p>Todos os artefatos vivem no bucket <code>game-review-graph</code> sob o prefixo <code>pipeline/</code>. O mapeamento entre chave lógica e objeto S3 é definido em <code>src/config.py</code> (<code>S3_KEYS</code>):</p>
+<div class="highlight"><pre><span></span><code>s3://game-review-graph/
+└── pipeline/
+    ├── comments.json           # entrada bruta — carregada via make init-data
+    ├── preprocessed.json       # saída do Filtro 1
+    ├── tree.json               # saída do Filtro 2
+    ├── word_graph.json         # saída do Filtro 3
+    ├── sentence_graph.json     # saída do Filtro 4
+    ├── comment_graph.json      # saída do Filtro 5
+    ├── final_graph.json        # saída do Filtro 6
+    ├── communities.json        # saída do Filtro 7
+    ├── metrics.json            # saída do Filtro 8
+    └── report.txt              # saída do Filtro 9 (legível por humanos)
 </code></pre></div>
-<p><strong>Regra de cache:</strong> cada filtro verifica <code>data/cache/&lt;nome&gt;.pkl</code> antes de processar. Se existir e o JSON de entrada não tiver sido modificado (por mtime), carrega o pickle. Caso contrário, processa e salva ambos (JSON + pickle).</p>
+<p><strong>Cache Redis:</strong> cada filtro armazena seu resultado serializado com pickle sob a chave <code>filter:&lt;nome&gt;</code> (ex.: <code>filter:word_graph</code>). <code>make clean</code> apaga todas as chaves <code>filter:*</code> e os artefatos S3 (exceto <code>comments.json</code>).</p>
 <hr />
 <h2 id="decisoes-de-design">Decisões de Design<a class="headerlink" href="#decisoes-de-design" title="Permanent link">&para;</a></h2>
 <table>
@@ -1052,23 +1185,43 @@
 <tbody>
 <tr>
 <td>Comunicação entre filtros</td>
-<td>Arquivos intermediários (JSON oficial + pickle opcional)</td>
-<td>Permite executar qualquer filtro de forma isolada sem reprocessar o pipeline inteiro; JSON é versionável e legível para inspeção manual</td>
+<td>Artefatos JSON no MinIO S3</td>
+<td>Permite executar qualquer filtro isoladamente; artefatos são inspecionáveis via console MinIO (<code>localhost:9001</code>)</td>
+</tr>
+<tr>
+<td>Cache de resultados</td>
+<td>Redis com pickle</td>
+<td>Evita reprocessamento em execuções parciais; <code>make clean</code> invalida o cache sem destruir os artefatos S3</td>
 </tr>
 <tr>
 <td>Execução isolada</td>
-<td>Cada módulo tem bloco <code>if __name__ == "__main__"</code></td>
-<td>Facilita debug por etapa durante o desenvolvimento em ondas</td>
+<td><code>make &lt;filtro&gt;</code> via <code>docker compose run</code></td>
+<td>Debug por etapa sem reprocessar o pipeline inteiro</td>
 </tr>
 <tr>
 <td>Prefixos de nó (<code>w_</code>, <code>s_</code>, <code>c_</code>)</td>
 <td>Convenção no <code>final_graph.json</code></td>
-<td>Permite identificar o tipo de um nó sem tabela auxiliar; evita colisão de chaves entre os três níveis</td>
+<td>Identifica o tipo de um nó sem tabela auxiliar; evita colisão de chaves entre os três níveis</td>
 </tr>
 <tr>
-<td>Organização do código</td>
-<td>Tudo em <code>src/</code></td>
-<td>Separa código de <code>docs/</code>, <code>data/</code> e arquivos de configuração na raiz</td>
+<td>Infraestrutura de padrões GoF</td>
+<td><code>src/shared/</code> isolado dos filtros de domínio</td>
+<td>Filtros de domínio não importam uns dos outros; <code>shared/</code> é a única dependência cruzada permitida</td>
+</tr>
+<tr>
+<td>Padrões GoF aplicados</td>
+<td>Template Method, Chain of Responsibility, Facade, Observer, Strategy</td>
+<td>Ver <a href="../padroes_projeto/">Padrões de Projeto</a> para especificação completa</td>
+</tr>
+<tr>
+<td>Execução containerizada</td>
+<td>Docker obrigatório</td>
+<td>Garante paridade entre dev, CI e entrega; elimina "funciona na minha máquina"</td>
+</tr>
+<tr>
+<td>S3 local em dev</td>
+<td>MinIO</td>
+<td>API 100% compatível com AWS S3; zero custo; console visual para inspeção</td>
 </tr>
 <tr>
 <td>Sem bibliotecas de grafos</td>
@@ -1098,6 +1251,12 @@
 <td>12/06/2026</td>
 <td>1.0</td>
 <td>Criação inicial do documento</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>12/06/2026</td>
+<td>2.0</td>
+<td>Migração para MinIO S3 + Redis; atualização do diagrama, tabela de filtros e estrutura de artefatos</td>
 <td>Lucas Antunes</td>
 </tr>
 </tbody>

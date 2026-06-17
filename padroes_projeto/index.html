@@ -1,0 +1,1823 @@
+
+<!doctype html>
+<html lang="pt" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://rufinovfr.github.io/GameReviewGraph/padroes_projeto/">
+      
+      
+        <link rel="prev" href="../arquitetura/">
+      
+      
+        <link rel="next" href="../infraestrutura/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Padrões de Projeto - GameReviewGraph</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#padroes-de-projeto" class="md-skip">
+          Ir para o conteúdo
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Cabeçalho">
+    <a href=".." title="GameReviewGraph" class="md-header__button md-logo" aria-label="GameReviewGraph" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            GameReviewGraph
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Padrões de Projeto
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo escuro"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Modo escuro" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Modo claro"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Modo claro" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Buscar" placeholder="Buscar" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Pesquisar">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Limpar" aria-label="Limpar" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Inicializando a pesquisa
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/RufinoVfR/GameReviewGraph" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    RufinoVfR/GameReviewGraph
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Abas" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href=".." class="md-tabs__link">
+        
+  
+  
+    
+  
+  Início
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../visao_produto_projeto/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Visão do Produto e Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../requisitos/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Requisitos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../backlog/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Backlog
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../cronograma/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Cronograma
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../arquitetura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Arquitetura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Padrões de Projeto
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../grafos.md" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Utilitários de Grafos
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../infraestrutura/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Infraestrutura
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../contributing/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  Contribuição
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navegação" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="GameReviewGraph" class="md-nav__button md-logo" aria-label="GameReviewGraph" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    GameReviewGraph
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/RufinoVfR/GameReviewGraph" title="Ir ao repositório" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    RufinoVfR/GameReviewGraph
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Início
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visao_produto_projeto/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visão do Produto e Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../requisitos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Requisitos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../backlog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Backlog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cronograma/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Cronograma
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arquitetura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Arquitetura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Padrões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Padrões de Projeto
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mapa-de-padroes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapa de Padrões
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#template-method-abstractfilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template Method — AbstractFilter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Method — AbstractFilter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-do-metodo-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo do método-template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-com-multiplas-entradas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtros com múltiplas entradas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chain-of-responsibility-filterchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chain of Responsibility — FilterChain
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Chain of Responsibility — FilterChain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemplo-de-execucao-com-from" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemplo de execução com --from
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#facade-filterchain-mainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Facade — FilterChain + main.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Facade — FilterChain + main.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observer-pipelineobserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observer — PipelineObserver
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Observer — PipelineObserver">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eventos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-communitydetectionstrategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy — CommunityDetectionStrategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Strategy — CommunityDetectionStrategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura-de-arquivos-dos-padroes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura de Arquivos dos Padrões
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estrutura de Arquivos dos Padrões">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regra-de-importacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regra de importação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico-de-revisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico de Revisão
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../grafos.md" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Utilitários de Grafos
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../infraestrutura/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Infraestrutura
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contribuição
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Índice">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Índice
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#mapa-de-padroes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mapa de Padrões
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#template-method-abstractfilter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Template Method — AbstractFilter
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Template Method — AbstractFilter">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fluxo-do-metodo-template" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Fluxo do método-template
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#filtros-com-multiplas-entradas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtros com múltiplas entradas
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#chain-of-responsibility-filterchain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Chain of Responsibility — FilterChain
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Chain of Responsibility — FilterChain">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#exemplo-de-execucao-com-from" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Exemplo de execução com --from
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#facade-filterchain-mainpy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Facade — FilterChain + main.py
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Facade — FilterChain + main.py">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#observer-pipelineobserver" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Observer — PipelineObserver
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Observer — PipelineObserver">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#eventos" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Eventos
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#strategy-communitydetectionstrategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Strategy — CommunityDetectionStrategy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Strategy — CommunityDetectionStrategy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#intencao_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Intenção
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aplicacao_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplicação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estrutura-de-arquivos-dos-padroes" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura de Arquivos dos Padrões
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Estrutura de Arquivos dos Padrões">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#regra-de-importacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regra de importação
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#historico-de-revisao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Histórico de Revisão
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="padroes-de-projeto">Padrões de Projeto<a class="headerlink" href="#padroes-de-projeto" title="Permanent link">&para;</a></h1>
+<p>O <strong>GameReviewGraph</strong> aplica cinco padrões GoF para formalizar o contrato entre os filtros do pipeline, centralizar o boilerplate de I/O, e permitir extensão sem modificação dos módulos existentes.</p>
+<hr />
+<h2 id="mapa-de-padroes">Mapa de Padrões<a class="headerlink" href="#mapa-de-padroes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Padrão GoF</th>
+<th>Categoria</th>
+<th>Arquivo(s)</th>
+<th>Papel no sistema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Template Method</td>
+<td>Comportamental</td>
+<td><code>filter_base.py</code></td>
+<td>Define o esqueleto de execução de cada filtro</td>
+</tr>
+<tr>
+<td>Chain of Responsibility</td>
+<td>Comportamental</td>
+<td><code>pipeline.py</code></td>
+<td>Encadeia os filtros e gerencia o fluxo de controle</td>
+</tr>
+<tr>
+<td>Facade</td>
+<td>Estrutural</td>
+<td><code>pipeline.py</code> + <code>main.py</code></td>
+<td>Expõe interface única sobre os 9 filtros</td>
+</tr>
+<tr>
+<td>Observer</td>
+<td>Comportamental</td>
+<td><code>observers.py</code></td>
+<td>Notifica listeners sobre eventos do pipeline</td>
+</tr>
+<tr>
+<td>Strategy</td>
+<td>Comportamental</td>
+<td><code>strategies.py</code></td>
+<td>Isola o algoritmo de detecção de comunidades</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="template-method-abstractfilter">Template Method — <code>AbstractFilter</code><a class="headerlink" href="#template-method-abstractfilter" title="Permanent link">&para;</a></h2>
+<h3 id="intencao">Intenção<a class="headerlink" href="#intencao" title="Permanent link">&para;</a></h3>
+<p>Definir o esqueleto de um algoritmo em uma operação, adiando a implementação de alguns passos para subclasses. As subclasses podem redefinir certos passos sem alterar a estrutura geral.</p>
+<h3 id="aplicacao">Aplicação<a class="headerlink" href="#aplicacao" title="Permanent link">&para;</a></h3>
+<p><code>AbstractFilter</code> define <code>execute()</code> como o método-template. O fluxo é sempre: carregar entrada → transformar → salvar saída. Apenas <code>process()</code> é abstrato — cada <code>ConcreteFilter</code> implementa somente a lógica de transformação.</p>
+<pre class="mermaid"><code>classDiagram
+    class AbstractFilter {
+        &lt;&lt;abstract&gt;&gt;
+        +name: str
+        +input_key: str
+        +output_key: str
+        +extra_input_keys: list[str]
+        +execute() None
+        #_load_input() Any
+        #_write_output(result) None
+        #_load_cache(name) object
+        #_save_cache(name, obj) None
+        #process(data)* Any
+    }
+
+    class PreprocessingFilter {
+        +name = "preprocessing"
+        +input_key = "raw"
+        +output_key = "preprocessed"
+        +process(data) list[ProcessedComment]
+    }
+
+    class TreeFilter {
+        +name = "tree"
+        +input_key = "preprocessed"
+        +output_key = "tree"
+        +process(data) NaryTree
+    }
+
+    class WordGraphFilter {
+        +name = "word_graph"
+        +input_key = "tree"
+        +output_key = "word_graph"
+        +process(data) Graph
+    }
+
+    class CommunityDetectionFilter {
+        +name = "community_detection"
+        +input_key = "final_graph"
+        +output_key = "communities"
+        -_strategy: CommunityDetectionStrategy
+        +process(data) Communities
+    }
+
+    AbstractFilter &lt;|-- PreprocessingFilter
+    AbstractFilter &lt;|-- TreeFilter
+    AbstractFilter &lt;|-- WordGraphFilter
+    AbstractFilter &lt;|-- CommunityDetectionFilter</code></pre>
+<h3 id="fluxo-do-metodo-template">Fluxo do método-template<a class="headerlink" href="#fluxo-do-metodo-template" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>AbstractFilter.execute()
+    ├── _load_cache(name)         → retorna objeto cacheado ou None
+    ├── [cache miss] _load_input()
+    │       ├── extra_input_keys == []  → retorna primary artifact (objeto simples)
+    │       └── extra_input_keys != []  → retorna {&quot;primary&quot;: ..., &quot;&lt;key&gt;&quot;: ..., ...}
+    ├── process(data)             → implementado pela subclasse  ← único método abstrato
+    ├── _write_output(result)     → grava em MinIO via S3_KEYS[output_key]
+    └── _save_cache(name, obj)    → persiste no Redis sob filter:&lt;name&gt;
+</code></pre></div>
+<h3 id="filtros-com-multiplas-entradas">Filtros com múltiplas entradas<a class="headerlink" href="#filtros-com-multiplas-entradas" title="Permanent link">&para;</a></h3>
+<p>Filtros que precisam de mais de um artefato declaram <code>extra_input_keys</code> e recebem um <code>dict</code> em <code>process()</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">SentenceGraphFilter</span><span class="p">(</span><span class="n">AbstractFilter</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s2">&quot;sentence_graph&quot;</span>
+    <span class="n">input_key</span> <span class="o">=</span> <span class="s2">&quot;word_graph&quot;</span>       <span class="c1"># artefato primário</span>
+    <span class="n">extra_input_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;tree&quot;</span><span class="p">]</span>    <span class="c1"># artefatos secundários</span>
+    <span class="n">output_key</span> <span class="o">=</span> <span class="s2">&quot;sentence_graph&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Graph</span><span class="p">:</span>
+        <span class="n">word_graph</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;primary&quot;</span><span class="p">]</span>
+        <span class="n">tree</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;tree&quot;</span><span class="p">]</span>
+        <span class="o">...</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Filtro</th>
+<th><code>input_key</code></th>
+<th><code>extra_input_keys</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sentence_graph</code></td>
+<td><code>"word_graph"</code></td>
+<td><code>["tree"]</code></td>
+</tr>
+<tr>
+<td><code>comment_graph</code></td>
+<td><code>"sentence_graph"</code></td>
+<td><code>["preprocessed"]</code></td>
+</tr>
+<tr>
+<td><code>final_graph</code></td>
+<td><code>"comment_graph"</code></td>
+<td><code>["word_graph", "sentence_graph"]</code></td>
+</tr>
+<tr>
+<td><code>metrics</code></td>
+<td><code>"communities"</code></td>
+<td><code>["final_graph"]</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="chain-of-responsibility-filterchain">Chain of Responsibility — <code>FilterChain</code><a class="headerlink" href="#chain-of-responsibility-filterchain" title="Permanent link">&para;</a></h2>
+<h3 id="intencao_1">Intenção<a class="headerlink" href="#intencao_1" title="Permanent link">&para;</a></h3>
+<p>Evitar acoplamento entre remetente de uma requisição e seus receptores, dando a mais de um objeto a chance de tratar a requisição. Os objetos receptores são encadeados e a requisição passa ao longo da cadeia até ser tratada.</p>
+<h3 id="aplicacao_1">Aplicação<a class="headerlink" href="#aplicacao_1" title="Permanent link">&para;</a></h3>
+<p><code>FilterChain</code> mantém uma lista ordenada de <code>AbstractFilter</code>. O método <code>run()</code> percorre a cadeia em sequência. A flag <code>--from</code> permite entrar na cadeia a partir de um filtro específico, pulando os anteriores.</p>
+<pre class="mermaid"><code>classDiagram
+    class FilterChain {
+        -_filters: list[AbstractFilter]
+        -_observers: list[PipelineObserver]
+        +run(from_filter: str | None) None
+        +add_filter(f: AbstractFilter) None
+        +add_observer(o: PipelineObserver) None
+        -_should_skip(f, from_filter) bool
+    }
+
+    class AbstractFilter {
+        &lt;&lt;abstract&gt;&gt;
+        +name: str
+        +execute() None
+    }
+
+    FilterChain o-- AbstractFilter : contém 1..*</code></pre>
+<h3 id="exemplo-de-execucao-com-from">Exemplo de execução com <code>--from</code><a class="headerlink" href="#exemplo-de-execucao-com-from" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>FilterChain.run(from_filter=&quot;word_graph&quot;)
+
+  [skip]  PreprocessingFilter   ← _should_skip() == True
+  [skip]  TreeFilter            ← _should_skip() == True
+  [exec]  WordGraphFilter       ← ponto de entrada
+  [exec]  SentenceGraphFilter
+  [exec]  CommentGraphFilter
+  [exec]  FinalGraphFilter
+  [exec]  CommunityDetectionFilter
+  [exec]  MetricsFilter
+  [exec]  AnalysisFilter
+</code></pre></div>
+<hr />
+<h2 id="facade-filterchain-mainpy">Facade — <code>FilterChain</code> + <code>main.py</code><a class="headerlink" href="#facade-filterchain-mainpy" title="Permanent link">&para;</a></h2>
+<h3 id="intencao_2">Intenção<a class="headerlink" href="#intencao_2" title="Permanent link">&para;</a></h3>
+<p>Fornecer uma interface simplificada para um conjunto de interfaces em um subsistema. A Facade define uma interface de nível mais alto que facilita o uso do subsistema.</p>
+<h3 id="aplicacao_2">Aplicação<a class="headerlink" href="#aplicacao_2" title="Permanent link">&para;</a></h3>
+<p><code>FilterChain.run()</code> é a Facade: o chamador em <code>main.py</code> não conhece nenhum filtro individualmente. A complexidade de instanciação, encadeamento e notificação fica encapsulada.</p>
+<pre class="mermaid"><code>classDiagram
+    class main {
+        +main(args) None
+    }
+
+    class FilterChain {
+        +run(from_filter) None
+    }
+
+    class PreprocessingFilter
+    class TreeFilter
+    class WordGraphFilter
+    class CommunityDetectionFilter
+
+    main --&gt; FilterChain : usa apenas run()
+    FilterChain --&gt; PreprocessingFilter
+    FilterChain --&gt; TreeFilter
+    FilterChain --&gt; WordGraphFilter
+    FilterChain --&gt; CommunityDetectionFilter</code></pre>
+<hr />
+<h2 id="observer-pipelineobserver">Observer — <code>PipelineObserver</code><a class="headerlink" href="#observer-pipelineobserver" title="Permanent link">&para;</a></h2>
+<h3 id="intencao_3">Intenção<a class="headerlink" href="#intencao_3" title="Permanent link">&para;</a></h3>
+<p>Definir uma dependência um-para-muitos entre objetos, de modo que, quando um objeto muda de estado, todos os seus dependentes são notificados e atualizados automaticamente.</p>
+<h3 id="aplicacao_3">Aplicação<a class="headerlink" href="#aplicacao_3" title="Permanent link">&para;</a></h3>
+<p><code>FilterChain</code> é o sujeito (Subject). A cada transição de estado de um filtro, notifica todos os <code>PipelineObserver</code> registrados. <code>LoggingObserver</code> é o observer concreto padrão; outros podem ser adicionados sem alterar o pipeline.</p>
+<pre class="mermaid"><code>classDiagram
+    class PipelineObserver {
+        &lt;&lt;abstract&gt;&gt;
+        +on_start(filter_name: str) None
+        +on_complete(filter_name: str, elapsed: float) None
+        +on_skip(filter_name: str) None
+    }
+
+    class LoggingObserver {
+        +on_start(filter_name) None
+        +on_complete(filter_name, elapsed) None
+        +on_skip(filter_name) None
+    }
+
+    class FilterChain {
+        -_observers: list[PipelineObserver]
+        -_notify_start(name) None
+        -_notify_complete(name, elapsed) None
+        -_notify_skip(name) None
+    }
+
+    PipelineObserver &lt;|-- LoggingObserver
+    FilterChain o-- PipelineObserver : notifica *</code></pre>
+<h3 id="eventos">Eventos<a class="headerlink" href="#eventos" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Evento</th>
+<th>Quando dispara</th>
+<th>Dados</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>on_start</code></td>
+<td>Antes de <code>filter.execute()</code></td>
+<td><code>filter_name: str</code></td>
+</tr>
+<tr>
+<td><code>on_complete</code></td>
+<td>Após <code>filter.execute()</code> com sucesso</td>
+<td><code>filter_name: str</code>, <code>elapsed: float</code> (segundos)</td>
+</tr>
+<tr>
+<td><code>on_skip</code></td>
+<td>Quando <code>_should_skip()</code> retorna <code>True</code></td>
+<td><code>filter_name: str</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="strategy-communitydetectionstrategy">Strategy — <code>CommunityDetectionStrategy</code><a class="headerlink" href="#strategy-communitydetectionstrategy" title="Permanent link">&para;</a></h2>
+<h3 id="intencao_4">Intenção<a class="headerlink" href="#intencao_4" title="Permanent link">&para;</a></h3>
+<p>Definir uma família de algoritmos, encapsular cada um deles e torná-los intercambiáveis. O Strategy permite que o algoritmo varie independentemente dos clientes que o utilizam.</p>
+<h3 id="aplicacao_4">Aplicação<a class="headerlink" href="#aplicacao_4" title="Permanent link">&para;</a></h3>
+<p><code>CommunityDetectionFilter</code> delega o algoritmo de corte de arestas para uma <code>CommunityDetectionStrategy</code>. A implementação padrão é <code>ProgressiveEdgeCuttingStrategy</code>. Trocar o algoritmo não exige modificar o filtro.</p>
+<pre class="mermaid"><code>classDiagram
+    class CommunityDetectionStrategy {
+        &lt;&lt;abstract&gt;&gt;
+        +detect(graph: Graph, k: int) Communities
+    }
+
+    class ProgressiveEdgeCuttingStrategy {
+        +detect(graph: Graph, k: int) Communities
+    }
+
+    class src_shared_graph {
+        &lt;&lt;utility&gt;&gt;
+        copy_graph()
+        iter_edges()
+        has_edge()
+        degree()
+        remove_edge()
+        count_components()
+        connected_components()
+    }
+
+    class CommunityDetectionFilter {
+        -_strategy: CommunityDetectionStrategy
+        +process(data: Graph) Communities
+    }
+
+    CommunityDetectionStrategy &lt;|-- ProgressiveEdgeCuttingStrategy
+    CommunityDetectionFilter o-- CommunityDetectionStrategy : delega detect()
+    ProgressiveEdgeCuttingStrategy --&gt; src_shared_graph : delega travessia</code></pre>
+<p><code>ProgressiveEdgeCuttingStrategy</code> não possui métodos privados de travessia — toda lógica de BFS, contagem de componentes e iteração de arestas é delegada para <code>src.shared.graph</code>.</p>
+<hr />
+<h2 id="estrutura-de-arquivos-dos-padroes">Estrutura de Arquivos dos Padrões<a class="headerlink" href="#estrutura-de-arquivos-dos-padroes" title="Permanent link">&para;</a></h2>
+<p>Os arquivos de infraestrutura de pipeline ficam isolados em <code>src/shared/</code>, separados dos filtros de domínio:</p>
+<div class="highlight"><pre><span></span><code>src/
+├── shared/
+│   ├── __init__.py
+│   ├── filter_base.py   ← Template Method  (AbstractFilter)
+│   ├── pipeline.py      ← Chain of Responsibility + Facade  (FilterChain)
+│   ├── observers.py     ← Observer  (PipelineObserver, LoggingObserver)
+│   └── strategies.py    ← Strategy  (CommunityDetectionStrategy, ProgressiveEdgeCuttingStrategy)
+│
+├── preprocessing.py     ← ConcreteFilter 1  (herda AbstractFilter)
+├── tree.py              ← ConcreteFilter 2
+├── word_graph.py        ← ConcreteFilter 3
+├── sentence_graph.py    ← ConcreteFilter 4
+├── comment_graph.py     ← ConcreteFilter 5
+├── final_graph.py       ← ConcreteFilter 6
+├── community_detection.py ← ConcreteFilter 7  (usa Strategy)
+├── metrics.py           ← ConcreteFilter 8
+├── analysis.py          ← ConcreteFilter 9
+├── config.py            ← constantes globais
+├── types.py             ← type aliases
+└── main.py              ← ponto de entrada
+</code></pre></div>
+<p>A separação <code>src/shared/</code> deixa claro que esses arquivos são infraestrutura reutilizável — nenhum filtro de domínio importa de outro filtro, mas todos podem importar de <code>src/shared/</code>.</p>
+<h3 id="regra-de-importacao">Regra de importação<a class="headerlink" href="#regra-de-importacao" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>src/shared/  →  pode ser importado por qualquer filtro
+src/*.py     →  NÃO podem importar uns dos outros (regra do pipeline)
+src/config.py e src/types.py  →  permitidos em qualquer lugar
+</code></pre></div>
+<hr />
+<h2 id="historico-de-revisao">Histórico de Revisão<a class="headerlink" href="#historico-de-revisao" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Versão</th>
+<th>Descrição</th>
+<th>Autor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12/06/2026</td>
+<td>1.0</td>
+<td>Criação do documento com cinco padrões GoF</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>12/06/2026</td>
+<td>1.1</td>
+<td>Template Method: extra_input_keys e filtros multi-input; Strategy: delegação para src.shared.graph</td>
+<td>Lucas Antunes</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Voltar ao topo
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.tables"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copiado para \u00e1rea de transfer\u00eancia", "clipboard.copy": "Copiar para \u00e1rea de transfer\u00eancia", "search.result.more.one": "Mais 1 nesta p\u00e1gina", "search.result.more.other": "Mais # nesta p\u00e1gina", "search.result.none": "Nenhum resultado encontrado", "search.result.one": "1 resultado encontrado", "search.result.other": "# resultados encontrados", "search.result.placeholder": "Digite para iniciar a busca", "search.result.term.missing": "Ausente", "select.version": "Selecione a vers\u00e3o"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+    
+  </body>
+</html>
