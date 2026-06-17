@@ -55,11 +55,14 @@ class PreprocessingFilter(AbstractFilter):
         stopwords = load_stopwords()
 
         # Pass 1 — clean, keeping the comment → sentences → tokens hierarchy.
+        # Segment before stripping punctuation: removing punctuation first would
+        # delete the .!? terminators and collapse everything into one sentence.
         cleaned: list[list[list[str]]] = []
         for comment in data:
             sentences: list[list[str]] = []
-            for sentence in segment_sentences(remove_punctuation(to_lowercase(comment["text"]))):
-                tokens = remove_stopwords(drop_noise(tokenize(sentence)), stopwords)
+            for sentence in segment_sentences(to_lowercase(comment["text"])):
+                tokens = tokenize(remove_punctuation(sentence))
+                tokens = remove_stopwords(drop_noise(tokens), stopwords)
                 sentences.append(tokens)
             cleaned.append(sentences)
 

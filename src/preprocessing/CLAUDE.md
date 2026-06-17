@@ -51,8 +51,10 @@ attributes. `MIN_FREQ` comes from `src/config.py` — never hardcode the thresho
 ## Pipeline inside `process(data)`
 
 1. **Pass 1 — clean, keeping the comment→sentences→tokens hierarchy:** per comment,
-   `to_lowercase` → `remove_punctuation` → `segment_sentences`; per sentence
+   `to_lowercase` → `segment_sentences`; per sentence `remove_punctuation` →
    `tokenize` → `drop_noise` → `remove_stopwords`. Surface tokens (with accents) are kept.
+   Segmentation runs **before** punctuation removal — stripping punctuation first would
+   delete the `.!?` terminators and collapse the comment into a single sentence.
 2. **Corpus pass:** flatten all surviving tokens and call `build_representatives(flat, MIN_FREQ)`.
 3. **Pass 2 — apply:** re-walk the hierarchy; each token becomes
    `representatives[group_key(tok)]` if its group survived, otherwise it is dropped.

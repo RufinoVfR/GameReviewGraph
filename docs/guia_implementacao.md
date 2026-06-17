@@ -297,7 +297,7 @@ Para **cada** filtro, o passo a passo é o mesmo:
 
 ### Filtro 1 — `preprocessing/` (pacote)
 - **In:** `raw` → **Out:** `preprocessed`. NLP permitido aqui (e só aqui). É um **pacote** (`filter.py`, `clean.py`, `normalize.py`, `__main__.py`), não um arquivo — ver `src/preprocessing/CLAUDE.md` para o design completo.
-- `process(data: list[RawComment]) -> list[ProcessedComment]`: caixa-baixa → remover pontuação (preservando acento) → segmentar frases (regex `[.!?]+`) → tokenizar (`\w+`) → dropar numéricos e `len<3` → remover stopwords PT (NLTK).
+- `process(data: list[RawComment]) -> list[ProcessedComment]`: caixa-baixa → **segmentar frases** (regex `[.!?]+`) → por frase: remover pontuação (preservando acento) → tokenizar (`\w+`) → dropar numéricos e `len<3` → remover stopwords PT (NLTK). A segmentação vem **antes** da remoção de pontuação — remover pontuação primeiro apagaria os terminadores `.!?` e colapsaria tudo numa única frase.
 - **Normalização A1'** (decisão fechada — ver `docs/decisions.md`): o radical RSLP é só **chave de agrupamento**; emite-se a **forma de superfície mais frequente do grupo, com acento** (`{atualização, atualizações}` → nó `w_atualização`). O mapa radical→representante é montado numa passada de corpus dentro do `process()` e **não** sai do filtro. Corte por `MIN_FREQ` (de `src/config.py`) é por grupo.
 - Frase vazia após filtragem é descartada; o comentário é mantido (com `id`/`topic`).
 - **Infra:** o `Dockerfile` precisa baixar os corpora NLTK `stopwords` e `rslp` em build.

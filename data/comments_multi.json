@@ -1,0 +1,22 @@
+[
+  {"id": 1, "topic": "desempenho", "text": "O jogo trava muito depois da atualização. Os fps caem demais durante as partidas. A otimização precisa melhorar bastante."},
+  {"id": 2, "topic": "desempenho", "text": "O desempenho do jogo melhorou após o patch. Agora os fps ficaram estáveis. A otimização finalmente ficou aceitável."},
+  {"id": 3, "topic": "narrativa", "text": "A história é envolvente do começo ao fim. Os personagens têm muita profundidade. A campanha principal merece atenção."},
+  {"id": 4, "topic": "narrativa", "text": "O enredo começa fraco mas evolui bem. Os personagens crescem ao longo da campanha. A história final surpreende bastante."},
+  {"id": 5, "topic": "multiplayer", "text": "O modo online está cheio de bugs. A conexão cai durante as partidas. Os servidores precisam de manutenção urgente."},
+  {"id": 6, "topic": "multiplayer", "text": "As partidas online são divertidas com amigos. A conexão melhorou após o último ajuste. Os servidores ainda ficam instáveis às vezes."},
+  {"id": 7, "topic": "interface", "text": "O menu principal é confuso demais. A interface tem botões mal posicionados. As configurações ficam escondidas em submenus."},
+  {"id": 8, "topic": "interface", "text": "A interface ficou mais limpa nesta versão. O menu agora responde rápido. As configurações estão fáceis de encontrar."},
+  {"id": 9, "topic": "progressão", "text": "A progressão de nível parece lenta demais. As recompensas não valem o esforço. A experiência acumulada some entre sessões."},
+  {"id": 10, "topic": "progressão", "text": "A progressão ficou mais equilibrada agora. Cada nível entrega recompensas relevantes. A experiência flui de forma natural."},
+  {"id": 11, "topic": "áudio", "text": "A trilha sonora é simplesmente incrível. Os efeitos de áudio têm muita qualidade. A dublagem em português ficou excelente."},
+  {"id": 12, "topic": "áudio", "text": "O áudio desbalanceado atrapalha a imersão. A trilha sonora repete demais. Os efeitos às vezes somem sem motivo."},
+  {"id": 13, "topic": "gráficos", "text": "Os gráficos impressionam pela iluminação realista. As texturas têm muito detalhe. A resolução suportada agrada bastante."},
+  {"id": 14, "topic": "gráficos", "text": "As texturas demoram para carregar direito. A iluminação fica estranha em ambientes fechados. Os gráficos no geral decepcionam um pouco."},
+  {"id": 15, "topic": "controles", "text": "Os controles respondem com precisão. Os comandos são intuitivos desde o início. A sensibilidade pode ser ajustada livremente."},
+  {"id": 16, "topic": "controles", "text": "Os controles travam em momentos críticos. Os comandos exigem combinações difíceis. A sensibilidade padrão atrapalha a mira."},
+  {"id": 17, "topic": "conteúdo pós-lançamento", "text": "O conteúdo pós-lançamento chega devagar. Cada atualização traz poucas novidades. A expansão prometida ainda não saiu."},
+  {"id": 18, "topic": "conteúdo pós-lançamento", "text": "A expansão recente adicionou bastante conteúdo. A atualização trouxe novidades interessantes. O suporte ao jogo continua ativo."},
+  {"id": 19, "topic": "suporte técnico", "text": "O suporte demora muito para responder. O atendimento não resolve o problema. A solução proposta raramente funciona."},
+  {"id": 20, "topic": "suporte técnico", "text": "O suporte resolveu meu problema rápido. O atendimento foi educado e atencioso. A solução enviada funcionou de primeira."}
+]
