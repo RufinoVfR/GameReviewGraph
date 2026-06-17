@@ -1,5 +1,6 @@
 """Graph traversal: BFS, DFS, connected components, and MST (Prim)."""
 
+from src.shared.graph.ops import add_edge, add_node, new_graph
 from src.types import Graph, Queue
 
 
@@ -149,8 +150,6 @@ def minimum_spanning_tree(graph: Graph) -> Graph:
         A new Graph with the nodes reachable from graph.nodes[0] and
         exactly n-1 weighted edges (n = number of reachable nodes).
     """
-    from src.shared.graph.ops import add_edge, add_node, new_graph
-
     mst = new_graph()
     if not graph.nodes:
         return mst

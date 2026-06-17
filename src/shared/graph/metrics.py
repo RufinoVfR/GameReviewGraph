@@ -1,5 +1,6 @@
 """Graph properties: degree, density, and weight statistics."""
 
+from src.shared.graph.ops import iter_edges
 from src.types import Graph
 
 
@@ -52,8 +53,6 @@ def edge_count(graph: Graph) -> int:
     Returns:
         Number of edges with non-zero weight.
     """
-    from src.shared.graph.ops import iter_edges
-
     return sum(1 for _ in iter_edges(graph))
 
 
@@ -83,8 +82,6 @@ def average_edge_weight(graph: Graph) -> float:
     Returns:
         Mean weight, or 0.0 for graphs with no edges.
     """
-    from src.shared.graph.ops import iter_edges
-
     weights = [weight for _, _, weight in iter_edges(graph)]
     if not weights:
         return 0.0

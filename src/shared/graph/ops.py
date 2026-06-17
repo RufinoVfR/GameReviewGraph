@@ -1,6 +1,6 @@
 """CRUD operations on Graph (adjacency matrix + name-to-index mapping)."""
 
-from typing import Iterator
+from typing import Iterable, Iterator
 
 from src.types import Graph
 
@@ -152,4 +152,68 @@ def copy_graph(graph: Graph) -> Graph:
         nodes=list(graph.nodes),
         index=dict(graph.index),
         matrix=[list(row) for row in graph.matrix],
+    )
+
+
+def build_graph_from_deltas(deltas: Iterable[tuple[str, str, float]]) -> Graph:
+    """Build a new Graph by accumulating (node_key1, node_key2, delta) triples.
+
+    Common envelope for the three co-occurrence graph levels (word, sentence,
+    comment): each filter supplies its own delta-generating logic (e.g. the
+    positional weight formula, or a pre-normalized pair weight) and this
+    function only handles the accumulation into a Graph via increase_edge.
+
+    Args:
+        deltas: Iterable of (node_key1, node_key2, delta) triples. The same
+            pair may appear multiple times — each occurrence's delta is
+            accumulated via increase_edge.
+
+    Returns:
+        A new Graph with every node touched by deltas and accumulated weights.
+    """
+    graph = new_graph()
+    for node_key1, node_key2, delta in deltas:
+        increase_edge(graph, node_key1, node_key2, delta)
+    return graph
+
+
+def serialize_graph(graph: Graph) -> dict:
+    """Return a JSON-serializable dict representation of graph.
+
+    The Graph dataclass is not directly JSON-serializable; every filter that
+    outputs a graph must call this in process() so AbstractFilter.execute()
+    can write_json the result (and cache it). The inverse is deserialize_graph.
+
+    Args:
+        graph: Graph to serialize.
+
+    Returns:
+        Dict with keys "nodes" (list[str]), "index" (dict[str, int]), and
+        "matrix" (list[list[float]]) — all JSON-native.
+    """
+    return {
+        "nodes": list(graph.nodes),
+        "index": dict(graph.index),
+        "matrix": [list(row) for row in graph.matrix],
+    }
+
+
+def deserialize_graph(data: dict) -> Graph:
+    """Reconstruct a Graph from the dict produced by serialize_graph.
+
+    Every filter that consumes a graph artifact loaded from S3 must call this
+    on the raw dict before using any graph utility, since execute() hands
+    process() the parsed JSON (a plain dict), not a Graph instance.
+
+    Args:
+        data: Dict with "nodes", "index", and "matrix" keys (the output of
+            serialize_graph, round-tripped through JSON).
+
+    Returns:
+        A Graph instance equivalent to the one originally serialized.
+    """
+    return Graph(
+        nodes=list(data["nodes"]),
+        index={name: int(i) for name, i in data["index"].items()},
+        matrix=[[float(w) for w in row] for row in data["matrix"]],
     )

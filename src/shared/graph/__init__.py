@@ -16,13 +16,16 @@ from src.shared.graph.metrics import (
 from src.shared.graph.ops import (
     add_edge,
     add_node,
+    build_graph_from_deltas,
     copy_graph,
+    deserialize_graph,
     get_edge_weight,
     has_edge,
     increase_edge,
     iter_edges,
     new_graph,
     remove_edge,
+    serialize_graph,
 )
 from src.shared.graph.traversal import (
     bfs,
@@ -33,22 +36,34 @@ from src.shared.graph.traversal import (
     minimum_spanning_tree,
     reachable,
 )
+from src.shared.graph.validate import (
+    assert_valid,
+    invalid_prefixes,
+    is_symmetric,
+    isolated_nodes,
+)
 
 __all__ = [
     "add_edge",
     "add_node",
+    "assert_valid",
     "average_edge_weight",
     "bfs",
+    "build_graph_from_deltas",
     "connected_components",
     "copy_graph",
     "count_components",
     "density",
+    "deserialize_graph",
     "dfs",
     "edge_count",
     "get_edge_weight",
     "has_edge",
     "increase_edge",
+    "invalid_prefixes",
     "is_connected",
+    "is_symmetric",
+    "isolated_nodes",
     "iter_edges",
     "minimum_spanning_tree",
     "neighbor_count",
@@ -56,5 +71,6 @@ __all__ = [
     "node_count",
     "reachable",
     "remove_edge",
+    "serialize_graph",
     "total_edge_weight",
 ]

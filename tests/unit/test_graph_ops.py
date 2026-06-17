@@ -1,15 +1,20 @@
 """Unit tests for src/shared/graph/ops.py."""
 
+import json
+
 from src.shared.graph.ops import (
     add_edge,
     add_node,
+    build_graph_from_deltas,
     copy_graph,
+    deserialize_graph,
     get_edge_weight,
     has_edge,
     increase_edge,
     iter_edges,
     new_graph,
     remove_edge,
+    serialize_graph,
 )
 
 
@@ -196,3 +201,79 @@ class TestCopyGraph:
         remove_edge(graph, "w_a", "w_b")
 
         assert has_edge(copy, "w_a", "w_b")
+
+
+class TestBuildGraphFromDeltas:
+    def test_accumulates_repeated_pairs(self):
+        deltas = [
+            ("w_a", "w_b", 0.5),
+            ("w_a", "w_b", 0.25),
+            ("w_b", "w_c", 1.0),
+        ]
+        graph = build_graph_from_deltas(deltas)
+        assert get_edge_weight(graph, "w_a", "w_b") == 0.75
+        assert get_edge_weight(graph, "w_b", "w_c") == 1.0
+
+    def test_empty_deltas_yields_empty_graph(self):
+        graph = build_graph_from_deltas([])
+        assert graph.nodes == []
+        assert graph.matrix == []
+
+    def test_accepts_a_generator(self):
+        def gen():
+            yield ("w_a", "w_b", 1.0)
+            yield ("w_a", "w_c", 2.0)
+
+        graph = build_graph_from_deltas(gen())
+        assert get_edge_weight(graph, "w_a", "w_b") == 1.0
+        assert get_edge_weight(graph, "w_a", "w_c") == 2.0
+
+
+class TestSerializeGraph:
+    def test_serialized_dict_has_expected_shape(self):
+        graph = new_graph()
+        add_edge(graph, "w_a", "w_b", 1.5)
+        data = serialize_graph(graph)
+        assert data["nodes"] == ["w_a", "w_b"]
+        assert data["index"] == {"w_a": 0, "w_b": 1}
+        assert data["matrix"] == [[0.0, 1.5], [1.5, 0.0]]
+
+    def test_serialized_dict_is_json_dumpable(self):
+        graph = new_graph()
+        add_edge(graph, "w_a", "w_b", 1.5)
+        json.dumps(serialize_graph(graph))  # must not raise
+
+    def test_serialize_does_not_alias_original(self):
+        graph = new_graph()
+        add_edge(graph, "w_a", "w_b", 1.0)
+        data = serialize_graph(graph)
+        data["matrix"][0][1] = 99.0
+        data["nodes"].append("w_x")
+        assert get_edge_weight(graph, "w_a", "w_b") == 1.0
+        assert "w_x" not in graph.nodes
+
+
+class TestDeserializeGraph:
+    def test_round_trip_through_json_preserves_graph(self):
+        graph = new_graph()
+        add_edge(graph, "w_a", "w_b", 1.5)
+        add_edge(graph, "w_b", "w_c", 2.0)
+
+        restored = deserialize_graph(json.loads(json.dumps(serialize_graph(graph))))
+
+        assert restored.nodes == graph.nodes
+        assert restored.index == graph.index
+        assert restored.matrix == graph.matrix
+
+    def test_empty_graph_round_trip(self):
+        restored = deserialize_graph(serialize_graph(new_graph()))
+        assert restored.nodes == []
+        assert restored.index == {}
+        assert restored.matrix == []
+
+    def test_restored_graph_is_usable_by_ops(self):
+        graph = new_graph()
+        add_edge(graph, "w_a", "w_b", 1.0)
+        restored = deserialize_graph(serialize_graph(graph))
+        increase_edge(restored, "w_a", "w_c", 3.0)  # must mutate cleanly
+        assert get_edge_weight(restored, "w_a", "w_c") == 3.0
