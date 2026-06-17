@@ -257,6 +257,14 @@ posicional do `word_graph`):
 }
 ```
 
+> **Leitura do `tree.json` é compartilhada, não duplicada.** Os filtros de grafo
+> (3–6) **não** importam `src/tree/` nem reconstroem um `NaryTree`: leem o dict
+> aninhado pelos *readers* de `src/shared/tree.py` (`iter_comments`,
+> `iter_sentences`, `iter_words`, `hierarchical_edges`), do mesmo modo que a
+> (de)serialização do grafo vive em `src/shared/graph`. A escrita (`serialize`)
+> fica só no produtor (filtro `tree`); a leitura fica só em `src/shared/tree.py`.
+> As **fórmulas de peso continuam em cada filtro** — os readers são estruturais.
+
 **`metrics.json` — métricas por comunidade + Q global:**
 
 ```json
@@ -311,8 +319,8 @@ Para **cada** filtro, o passo a passo é o mesmo:
 - **Infra:** o `Dockerfile` precisa baixar os corpora NLTK `stopwords` e `rslp` em build.
 - Testes: usar `raw_comments`; verificar shape, `id` preservado, `topic` ausente, remoção de stopwords/ruído, agrupamento e representante (com acento).
 
-### Filtro 2 — `tree.py`
-- **In:** `preprocessed` → **Out:** `tree`. Árvore N-ária: Dataset → Comentário → Frase → Palavra.
+### Filtro 2 — `tree/` (pacote)
+- **In:** `preprocessed` → **Out:** `tree`. Árvore N-ária: Dataset → Comentário → Frase → Palavra. É um **pacote** (modelo do Filtro 1): `filter.py` (orquestra `process()`), `structure.py` (`TreeNode`/`NaryTree` + navegação bidirecional), `build.py` (`build_from_corpus`: índice global de frase + `position` na frase), `serialize.py` (`serialize`/`from_dict`, religando `parent` na leitura) — ver `src/tree/CLAUDE.md`.
 - O formato de `tree.json` **já está fechado** no bloco "Contrato de artefatos" (C.1): nó uniforme `{"type", "children"}`, folhas `word` com `value` + `position`, `sentence.index` global, `comment.id`. Implemente exatamente esse formato — a Trilha 2 consome `position`/`index`/`id` dele.
 - Testes: usar `processed_comments`; verificar hierarquia, contagem de nós por nível e que cada palavra carrega `position`.
 
@@ -321,6 +329,7 @@ Para **cada** filtro, o passo a passo é o mesmo:
 - Fórmula posicional, acumulada por co-ocorrência:
   ```python
   from src.shared.graph import build_graph_from_deltas, serialize_graph, assert_valid
+  from src.shared.tree import iter_sentences, iter_words   # readers compartilhados
 
   def _word_pair_deltas(tree):
       for sentence in iter_sentences(tree):          # palavras com posição
@@ -360,6 +369,7 @@ Para **cada** filtro, o passo a passo é o mesmo:
 ### Filtro 6 — `final_graph.py`
 - **In:** `comment_graph` (+ `word_graph`, `sentence_graph`) → **Out:** `final_graph`.
 - Unir os três níveis num só grafo + arestas hierárquicas (palavra↔frase↔comentário).
+- As arestas hierárquicas vêm de `from src.shared.tree import hierarchical_edges` — `(w_<value>, s_<index>)` e `(s_<index>, c_<id>)`. **Não** se reimplementa a derivação de chaves aqui nem se importa `src/tree/`.
 - `merge_graphs` é **helper privado deste arquivo** — não vai para `shared/graph`.
 - Testes: nós dos três prefixos presentes; `assert_valid`.
 
@@ -461,3 +471,5 @@ make clean          # limpa cache Redis + artefatos S3 (force reprocessamento)
 | 2026-06-16 | 1.1 | Remove back-references ("idem"/"mesmo que"); fecha os contratos de `tree.json` e `metrics.json` sem deferir ao dono do módulo | Equipe |
 | 2026-06-16 | 1.2 | Filtro 1 reescrito: pacote `preprocessing/`, pipeline por regex, normalização A1', descarte de ruído e requisito de dados NLTK no Docker | Equipe |
 | 2026-06-16 | 1.3 | `topic` removido de `preprocessed.json` e `tree.json` (rótulo-ouro fica só no raw, reconciliado por `id` na validação) | Equipe |
+| 2026-06-17 | 1.4 | Filtro 2 reescrito como pacote `tree/` (`filter.py`, `structure.py`, `build.py`, `serialize.py`), modelo do Filtro 1 | Lucas Antunes |
+| 2026-06-17 | 1.5 | Leitura de `tree.json` centralizada em `src/shared/tree.py` (`iter_comments`/`iter_sentences`/`iter_words`/`hierarchical_edges`); filtros 3–6 importam de lá em vez de reimplementar; `from_dict` vira test-only | Lucas Antunes |
