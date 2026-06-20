@@ -958,6 +958,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pre-processamento-filtro-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-processamento (Filtro 1)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pré-processamento (Filtro 1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalização A1': radical como chave de agrupamento, emitindo a forma de superfície
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segmentacao-e-tokenizacao-por-regex-nao-por-punkt-do-nltk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Segmentação e tokenização por regex, não por punkt do NLTK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dados-do-nltk-provisionados-no-build-do-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dados do NLTK provisionados no build do Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preprocessing-como-pacote-demais-filtros-como-modulo-unico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preprocessing como pacote, demais filtros como módulo único
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descarte-de-ruido-tokens-numericos-e-com-menos-de-3-caracteres" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descarte de ruído: tokens numéricos e com menos de 3 caracteres
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#topic-nao-circula-no-pipeline-rotulo-ouro-reservado-a-validacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        topic não circula no pipeline (rótulo-ouro reservado à validação)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#convencoes-de-linguagem-e-execucao" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1317,6 +1400,89 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#pre-processamento-filtro-1" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pré-processamento (Filtro 1)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Pré-processamento (Filtro 1)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Normalização A1': radical como chave de agrupamento, emitindo a forma de superfície
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#segmentacao-e-tokenizacao-por-regex-nao-por-punkt-do-nltk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Segmentação e tokenização por regex, não por punkt do NLTK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#dados-do-nltk-provisionados-no-build-do-docker" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Dados do NLTK provisionados no build do Docker
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#preprocessing-como-pacote-demais-filtros-como-modulo-unico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        preprocessing como pacote, demais filtros como módulo único
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#descarte-de-ruido-tokens-numericos-e-com-menos-de-3-caracteres" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Descarte de ruído: tokens numéricos e com menos de 3 caracteres
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#topic-nao-circula-no-pipeline-rotulo-ouro-reservado-a-validacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        topic não circula no pipeline (rótulo-ouro reservado à validação)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#convencoes-de-linguagem-e-execucao" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1442,6 +1608,26 @@
 <p><strong>Decisão:</strong> <code>K=10</code> é uma constante global em <code>src/config.py</code>, não hardcoded nos filtros.</p>
 <p><strong>Por quê:</strong> corresponde exatamente ao número de tópicos do dataset (desempenho, narrativa, multiplayer, etc.) — o objetivo é que a detecção de comunidades recupere esses 10 tópicos a partir da estrutura do grafo, sem que o algoritmo "veja" os rótulos de tópico originais. Mantê-lo como constante (em vez de espalhado pelo código) facilita ajustar o experimento sem alterar lógica de filtro.</p>
 <hr />
+<h2 id="pre-processamento-filtro-1">Pré-processamento (Filtro 1)<a class="headerlink" href="#pre-processamento-filtro-1" title="Permanent link">&para;</a></h2>
+<h3 id="normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie">Normalização A1': radical como chave de agrupamento, emitindo a forma de superfície<a class="headerlink" href="#normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> o <code>preprocessing</code> aplica o stemmer RSLP (NLTK) apenas como <strong>chave interna de agrupamento</strong>. O token efetivamente emitido em <code>preprocessed.json</code> (e que vira o nó <code>w_&lt;token&gt;</code>) é a <strong>forma de superfície mais frequente do grupo, com acento</strong> (ex.: o grupo <code>{atualização, atualizações}</code> → radical <code>atualiz</code> → emite <code>"atualização"</code>). O mapa <code>radical → representante</code> é construído numa passada de corpus dentro do próprio <code>process()</code> e nunca sai do filtro.</p>
+<p><strong>Por quê:</strong> o stemming agrupa variações morfológicas (densifica o grafo e melhora a coesão das comunidades), mas radicais crus (<code>trav</code>, <code>histór</code>) poluem o relatório final, que lista os termos centrais por comunidade. A alternativa "mostrar a forma bonita só no <code>analysis.py</code>" foi <strong>rejeitada</strong> porque exigiria carregar o mapa radical→forma através dos artefatos (ou dar ao último filtro acesso ao primeiro artefato via <code>extra_input_keys</code>) — acoplamento entre camadas que viola o princípio pipe-and-filter. Separar <em>chave de agrupamento</em> de <em>token emitido</em> resolve os dois: agrupa como stemming, exibe palavra real, e mantém o RSLP 100% confinado ao <code>preprocessing</code>. Lematização real (formas de dicionário) foi descartada porque o NLTK não tem lematizador PT decente — exigiria spaCy + modelo <code>pt_core_news</code>, uma dependência pesada fora do escopo. A forma é emitida <strong>com acento</strong> porque o agrupamento já unifica grafias (a chave faz fold de acento antes do RSLP), então preservar o acento no representante só aumenta a legibilidade sem custo de fragmentação.</p>
+<h3 id="segmentacao-e-tokenizacao-por-regex-nao-por-punkt-do-nltk">Segmentação e tokenização por regex, não por <code>punkt</code> do NLTK<a class="headerlink" href="#segmentacao-e-tokenizacao-por-regex-nao-por-punkt-do-nltk" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> frases são segmentadas com <code>re.split(r"[.!?]+", ...)</code> e tokens extraídos com <code>re.findall(r"\w+", ...)</code>. O NLTK é usado só onde é genuinamente linguístico: lista de stopwords PT e stemmer RSLP.</p>
+<p><strong>Por quê:</strong> o corpus são ~200 comentários fictícios curtos e bem-comportados (sem abreviações ambíguas), onde o tokenizador treinado <code>punkt</code> não traz ganho sobre regex. Evitar o <code>punkt</code> mantém a imagem Docker mais leve (não precisa baixar <code>punkt_tab</code>, renomeado no NLTK ≥3.9) e torna a segmentação determinística e trivial de testar offline.</p>
+<h3 id="dados-do-nltk-provisionados-no-build-do-docker">Dados do NLTK provisionados no build do Docker<a class="headerlink" href="#dados-do-nltk-provisionados-no-build-do-docker" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> o <code>Dockerfile</code> baixa os corpora <code>stopwords</code> e <code>rslp</code> em build (<code>python -m nltk.downloader -d /usr/local/nltk_data ...</code> + <code>ENV NLTK_DATA</code>), em vez de baixá-los em runtime.</p>
+<p><strong>Por quê:</strong> o NLTK não embute corpora — sem o download o filtro quebra com <code>LookupError</code> na primeira execução. Fazer no build (com <code>NLTK_DATA</code> apontando para um diretório no path de busca do NLTK) garante que toda execução e todo teste encontrem os dados, sem rede em runtime e sem estado mutável fora da imagem.</p>
+<h3 id="preprocessing-como-pacote-demais-filtros-como-modulo-unico"><code>preprocessing</code> como pacote, demais filtros como módulo único<a class="headerlink" href="#preprocessing-como-pacote-demais-filtros-como-modulo-unico" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> <code>preprocessing</code> é um pacote (<code>src/preprocessing/</code> com <code>filter.py</code>, <code>clean.py</code>, <code>normalize.py</code>, <code>__main__.py</code>), não um único <code>preprocessing.py</code>. Os outros oito filtros seguem como arquivo único.</p>
+<p><strong>Por quê:</strong> é o filtro com mais lógica interna (limpeza por-token + a passada de corpus do A1' + integração com NLTK), e separar por responsabilidade mantém cada submódulo pequeno e testável. Não há violação da regra "um módulo por filtro" — imports internos ao pacote são do mesmo filtro; a regra proíbe um filtro importar de <strong>outro</strong> filtro. O <code>__main__.py</code> preserva o contrato externo (<code>make preprocessing</code> → <code>python -m src.preprocessing</code>).</p>
+<h3 id="descarte-de-ruido-tokens-numericos-e-com-menos-de-3-caracteres">Descarte de ruído: tokens numéricos e com menos de 3 caracteres<a class="headerlink" href="#descarte-de-ruido-tokens-numericos-e-com-menos-de-3-caracteres" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> após a tokenização, tokens puramente numéricos e com <code>len &lt; 3</code> são removidos; o corte por baixa frequência (<code>MIN_FREQ</code> de <code>src/config.py</code>) opera por grupo (radical) no corpus inteiro.</p>
+<p><strong>Por quê:</strong> números soltos e tokens muito curtos raramente carregam semântica de tópico e só adicionam nós de ruído ao grafo. Aplicar o corte de frequência no grupo (não na forma de superfície) é coerente com o A1' — a unidade de significado é o grupo, não cada flexão. Uma frase que esvazia após a filtragem é descartada, mas o comentário é mantido (pelo <code>id</code>) para preservar seu nó <code>c_&lt;id&gt;</code> no pipeline.</p>
+<h3 id="topic-nao-circula-no-pipeline-rotulo-ouro-reservado-a-validacao"><code>topic</code> não circula no pipeline (rótulo-ouro reservado à validação)<a class="headerlink" href="#topic-nao-circula-no-pipeline-rotulo-ouro-reservado-a-validacao" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> o <code>topic</code> de cada comentário <strong>não</strong> aparece em <code>preprocessed.json</code> nem em nenhum artefato a jusante (<code>tree.json</code>, grafos). Ele fica apenas em <code>comments.json</code> (entrada) e é reconciliado por <code>id</code> somente na etapa final de validação. O <code>topic</code> que aparece em <code>metrics.json</code> é o tópico que <strong>o sistema atribui</strong> à comunidade detectada, não o de entrada.</p>
+<p><strong>Por quê:</strong> a detecção de comunidades é <strong>não supervisionada</strong> — o objetivo do projeto é <em>descobrir</em> os tópicos a partir da estrutura do grafo. Se o rótulo-ouro fluísse pelo pipeline, haveria vazamento do gabarito: o sistema estaria "vendo a resposta" e a avaliação (Análise de Resultados, peso 2.0) perderia o sentido. Manter o <code>topic</code> só na entrada e juntá-lo por <code>id</code> no fim preserva a separação entre <em>o que o sistema infere</em> e <em>o que era esperado</em>, sem acoplar a detecção ao gabarito. O <code>id</code> continua circulando (vira <code>c_&lt;id&gt;</code>), então o join na validação é trivial e sem custo de acoplamento.</p>
+<hr />
 <h2 id="convencoes-de-linguagem-e-execucao">Convenções de linguagem e execução<a class="headerlink" href="#convencoes-de-linguagem-e-execucao" title="Permanent link">&para;</a></h2>
 <h3 id="codigo-em-ingles-dadosrelatorios-em-portugues">Código em inglês, dados/relatórios em português<a class="headerlink" href="#codigo-em-ingles-dadosrelatorios-em-portugues" title="Permanent link">&para;</a></h3>
 <p><strong>Decisão:</strong> todo código, docstring e mensagem de commit é em inglês; os dados de entrada e os relatórios gerados (<code>report.txt</code>) são em português.</p>
@@ -1475,6 +1661,18 @@
 <td>1.1</td>
 <td><code>traversal.py</code> implementado (BFS, DFS, componentes conectados, MST); adicionada <code>Queue</code> própria em <code>src/types/queue.py</code>; justificada a marcação de visitado no <code>pop</code> da DFS</td>
 <td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>1.2</td>
+<td>Decisões do pré-processamento (Filtro 1): normalização A1', segmentação por regex, dados NLTK no Docker, pacote <code>preprocessing/</code>, descarte de ruído</td>
+<td>Equipe</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>1.3</td>
+<td><code>topic</code> não circula no pipeline: removido de <code>preprocessed.json</code>/grafos, reservado à validação por <code>id</code></td>
+<td>Equipe</td>
 </tr>
 </tbody>
 </table>

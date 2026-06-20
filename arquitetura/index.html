@@ -1049,7 +1049,7 @@
     RAW["MinIO\npipeline/comments.json\n(entrada bruta)"]
 
     subgraph F1["Filtro 1"]
-        PP["preprocessing.py"]
+        PP["preprocessing/"]
     end
     subgraph F2["Filtro 2"]
         TR["tree.py"]
@@ -1118,10 +1118,10 @@
 <tbody>
 <tr>
 <td>1</td>
-<td><code>preprocessing.py</code></td>
+<td><code>preprocessing/</code></td>
 <td><code>comments.json</code></td>
 <td><code>preprocessed.json</code></td>
-<td>Lowercase, remoção de pontuação, tokenização, stopwords, stemming/lematização</td>
+<td>Lowercase, remoção de pontuação, segmentação e tokenização por regex, stopwords PT (NLTK), normalização A1' (radical RSLP como chave de agrupamento; emite a forma de superfície mais frequente do grupo, com acento)</td>
 </tr>
 <tr>
 <td>2</td>
@@ -1194,7 +1194,7 @@
 </thead>
 <tbody>
 <tr>
-<td><code>preprocessing.py</code></td>
+<td><code>preprocessing/</code></td>
 <td><code>list[RawComment]</code></td>
 <td><code>list[ProcessedComment]</code></td>
 </tr>
@@ -1242,7 +1242,7 @@
 </table>
 <p><strong>Tipos</strong> (pacote <code>src/types/</code>, um módulo por grupo semântico — ver <a href="../grafos/"><code>grafos.md</code></a> para o detalhe de <code>Graph</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="n">RawComment</span>       <span class="o">=</span> <span class="nb">dict</span>                                          <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;text&quot;: str}</span>
-<span class="n">ProcessedComment</span> <span class="o">=</span> <span class="nb">dict</span>                                          <span class="c1"># {&quot;id&quot;: int, &quot;topic&quot;: str, &quot;sentences&quot;: list[list[str]]}</span>
+<span class="n">ProcessedComment</span> <span class="o">=</span> <span class="nb">dict</span>                                          <span class="c1"># {&quot;id&quot;: int, &quot;sentences&quot;: list[list[str]]}  (sem &quot;topic&quot;: rótulo-ouro fica só no raw)</span>
 <span class="n">NodeKey</span>          <span class="o">=</span> <span class="nb">str</span>                                           <span class="c1"># &quot;w_word&quot;, &quot;s_12&quot;, &quot;c_3&quot;</span>
 <span class="n">Graph</span>            <span class="o">=</span> <span class="n">dataclass</span><span class="p">(</span><span class="n">nodes</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">matrix</span><span class="p">)</span>                <span class="c1"># matriz de adjacência + mapeamento nome→índice</span>
 <span class="n">Communities</span>      <span class="o">=</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>                          <span class="c1"># community_id → [node_key, ...]</span>
@@ -1352,6 +1352,18 @@
 <td>2.0</td>
 <td>Migração para MinIO S3 + Redis; atualização do diagrama, tabela de filtros e estrutura de artefatos</td>
 <td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>2.1</td>
+<td>Filtro 1 vira pacote <code>preprocessing/</code>; descrição reflete normalização A1' (radical RSLP como chave; emite forma de superfície com acento)</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>16/06/2026</td>
+<td>2.2</td>
+<td><code>ProcessedComment</code> sem <code>topic</code> (rótulo-ouro reservado à validação por <code>id</code>)</td>
+<td>Equipe</td>
 </tr>
 </tbody>
 </table>
