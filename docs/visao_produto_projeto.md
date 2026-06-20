@@ -10,13 +10,12 @@
 
 ## Sumário
 
-1. [Cenário Atual e Contexto do Problema](#1-cenário-atual-e-contexto-do-problema)
-2. [Solução Proposta](#2-solução-proposta)
-3. [Estratégias de Engenharia de Software](#3-estratégias-de-engenharia-de-software)
+1. [Cenário Atual e Contexto do Problema](#1-cenario-atual-e-contexto-do-problema)
+2. [Solução Proposta](#2-solucao-proposta)
+3. [Estratégias de Engenharia de Software](#3-estrategias-de-engenharia-de-software)
 4. [Cronograma e Entregas](#4-cronograma-e-entregas)
-5. [Interação entre Equipe](#5-interação-entre-equipe)
-6. [Lições Aprendidas](#6-lições-aprendidas)
-7. [Referências Bibliográficas](#7-referências-bibliográficas)
+5. [Interação entre Equipe](#5-interacao-entre-equipe)
+6. [Referências Bibliográficas](#6-referencias-bibliograficas)
 
 ---
 

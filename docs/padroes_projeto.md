@@ -304,7 +304,7 @@ src/
 │   ├── observers.py     ← Observer  (PipelineObserver, LoggingObserver)
 │   └── strategies.py    ← Strategy  (CommunityDetectionStrategy, ProgressiveEdgeCuttingStrategy)
 │
-├── preprocessing.py     ← ConcreteFilter 1  (herda AbstractFilter)
+├── preprocessing/       ← ConcreteFilter 1 (pacote; filter.py herda AbstractFilter)
 ├── tree.py              ← ConcreteFilter 2
 ├── word_graph.py        ← ConcreteFilter 3
 ├── sentence_graph.py    ← ConcreteFilter 4
@@ -336,3 +336,4 @@ src/config.py e src/types.py  →  permitidos em qualquer lugar
 |------|--------|-----------|-------|
 | 12/06/2026 | 1.0 | Criação do documento com cinco padrões GoF | Lucas Antunes |
 | 12/06/2026 | 1.1 | Template Method: extra_input_keys e filtros multi-input; Strategy: delegação para src.shared.graph | Lucas Antunes |
+| 16/06/2026 | 1.2 | Filtro 1 (`preprocessing/`) passa a ser pacote no diagrama de módulos | Equipe |

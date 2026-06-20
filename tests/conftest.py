@@ -40,12 +40,19 @@ def raw_comments() -> list[dict]:
 
 @pytest.fixture
 def processed_comments() -> list[dict]:
-    """Pre-tokenized comments matching the output contract of preprocessing.py."""
+    """Pre-tokenized comments matching the output contract of the preprocessing/ package.
+
+    No ``topic``: topic detection is unsupervised, so the gold label is dropped
+    after ingestion (it stays in the raw dataset, re-joined by ``id`` only at
+    validation). Tokens are accented surface forms (decision A1'): the RSLP stem
+    only groups variants internally, while the emitted token is the most frequent
+    surface form of the group, with its accent preserved.
+    """
     return [
-        {"id": 1, "topic": "desempenho", "sentences": [["jogo", "trav", "atualizacao"]]},
-        {"id": 2, "topic": "desempenho", "sentences": [["fps", "cai", "patch"]]},
-        {"id": 3, "topic": "narrativa", "sentences": [["historia", "envolv", "personagem", "profundidad"]]},
-        {"id": 4, "topic": "narrativa", "sentences": [["campanha", "principal", "narrativ", "excelent"]]},
+        {"id": 1, "sentences": [["jogo", "trava", "atualização"]]},
+        {"id": 2, "sentences": [["fps", "caiu", "patch"]]},
+        {"id": 3, "sentences": [["história", "envolvente", "personagens", "profundidade"]]},
+        {"id": 4, "sentences": [["campanha", "principal", "narrativa", "excelente"]]},
     ]
 
 

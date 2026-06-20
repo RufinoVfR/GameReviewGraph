@@ -7,6 +7,7 @@
 > / (root)  ← you are here: project-wide rules, architecture, algorithms
 > ├── docs/CLAUDE.md           — MkDocs pages, nav map, content ownership
 > ├── src/CLAUDE.md            — filter contracts, S3/Redis I/O, implementation rules
+> ├── src/preprocessing/CLAUDE.md — Filtro 1 package: NLP, normalization A1', I/O contract
 > └── src/shared/CLAUDE.md     — GoF infrastructure: AbstractFilter, FilterChain, Observer, Strategy, storage, cache
 > ```
 >
@@ -24,7 +25,7 @@ Academic project for FGA0030 (Data Structures 2, UnB 2026/1). Transforms a corpu
 
 ```
 comments (text) [MinIO: pipeline/comments.json]
-    → preprocessing.py       # tokenization, stopwords, normalization
+    → preprocessing/         # package: tokenization, stopwords, normalization (decision A1')
     → tree.py                # N-ary Tree: Dataset → Comment → Sentence → Word
     → word_graph.py          # word co-occurrence graph (positional weight)
     → sentence_graph.py      # sentence graph (derived from word graph)

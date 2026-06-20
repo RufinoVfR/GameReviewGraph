@@ -11,7 +11,7 @@ flowchart TD
     RAW["MinIO\npipeline/comments.json\n(entrada bruta)"]
 
     subgraph F1["Filtro 1"]
-        PP["preprocessing.py"]
+        PP["preprocessing/"]
     end
     subgraph F2["Filtro 2"]
         TR["tree.py"]
@@ -72,7 +72,7 @@ flowchart TD
 
 | # | Filtro | Entradas (S3) | Saída (S3) | Responsabilidade |
 |---|--------|---------------|------------|-----------------|
-| 1 | `preprocessing.py` | `comments.json` | `preprocessed.json` | Lowercase, remoção de pontuação, tokenização, stopwords, stemming/lematização |
+| 1 | `preprocessing/` | `comments.json` | `preprocessed.json` | Lowercase, remoção de pontuação, segmentação e tokenização por regex, stopwords PT (NLTK), normalização A1' (radical RSLP como chave de agrupamento; emite a forma de superfície mais frequente do grupo, com acento) |
 | 2 | `tree.py` | `preprocessed.json` | `tree.json` | Constrói a Árvore N-ária: Dataset → Comentário → Frase → Palavra |
 | 3 | `word_graph.py` | `tree.json` | `word_graph.json` | Grafo de co-ocorrência de palavras com peso posicional |
 | 4 | `sentence_graph.py` | `word_graph.json` + `tree.json` | `sentence_graph.json` | Grafo de frases derivado das relações entre palavras |
@@ -90,7 +90,7 @@ Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `
 
 | Filtro | Tipo de entrada (`process`) | Tipo de saída (`process`) |
 |--------|-----------------------------|--------------------------|
-| `preprocessing.py` | `list[RawComment]` | `list[ProcessedComment]` |
+| `preprocessing/` | `list[RawComment]` | `list[ProcessedComment]` |
 | `tree.py` | `list[ProcessedComment]` | `NaryTree` |
 | `word_graph.py` | `NaryTree` | `Graph` |
 | `sentence_graph.py` | `Graph` (word) + `NaryTree` | `Graph` |
@@ -104,7 +104,7 @@ Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `
 
 ```python
 RawComment       = dict                                          # {"id": int, "topic": str, "text": str}
-ProcessedComment = dict                                          # {"id": int, "topic": str, "sentences": list[list[str]]}
+ProcessedComment = dict                                          # {"id": int, "sentences": list[list[str]]}  (sem "topic": rótulo-ouro fica só no raw)
 NodeKey          = str                                           # "w_word", "s_12", "c_3"
 Graph            = dataclass(nodes, index, matrix)                # matriz de adjacência + mapeamento nome→índice
 Communities      = dict[int, list[str]]                          # community_id → [node_key, ...]
@@ -161,3 +161,5 @@ s3://game-review-graph/
 |------|--------|-----------|-------|
 | 12/06/2026 | 1.0 | Criação inicial do documento | Lucas Antunes |
 | 12/06/2026 | 2.0 | Migração para MinIO S3 + Redis; atualização do diagrama, tabela de filtros e estrutura de artefatos | Lucas Antunes |
+| 16/06/2026 | 2.1 | Filtro 1 vira pacote `preprocessing/`; descrição reflete normalização A1' (radical RSLP como chave; emite forma de superfície com acento) | Lucas Antunes |
+| 16/06/2026 | 2.2 | `ProcessedComment` sem `topic` (rótulo-ouro reservado à validação por `id`) | Equipe |

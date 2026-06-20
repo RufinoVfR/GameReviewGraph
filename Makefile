@@ -27,12 +27,14 @@ help:
 	@echo "  docker-status        Show running containers and health"
 	@echo ""
 	@echo "Pipeline"
-	@echo "  init-data            Upload data/comments.json to MinIO (run once before first pipeline run)"
+	@echo "  init-data            Upload a dataset to MinIO as the raw input (default: data/comments.json)"
+	@echo "                       (choose another: make init-data ARGS=data/comments_multi.json)"
 	@echo "  run                  Run the full pipeline (all 9 filters) inside Docker"
 	@echo "  clean                Flush Redis cache + delete S3 pipeline artifacts (keeps comments.json)"
 	@echo ""
 	@echo "Individual filters (run inside Docker)"
 	@echo "  preprocessing        Filter 1 — tokenization, stopwords, normalization"
+	@echo "                       (force rerun: make preprocessing ARGS=--no-cache)"
 	@echo "  tree                 Filter 2 — N-ary tree construction"
 	@echo "  word-graph           Filter 3 — word co-occurrence graph"
 	@echo "  sentence-graph       Filter 4 — sentence graph"
@@ -98,7 +100,7 @@ docker-status:
 # ── Pipeline ───────────────────────────────────────────────────────────────────
 
 init-data:
-	docker compose run --rm app uv run python scripts/init_data.py
+	docker compose run --rm app uv run python -m scripts.init_data $(ARGS)
 
 run:
 	docker compose run --rm app uv run python -m src.main
@@ -108,8 +110,9 @@ clean:
 
 # ── Individual filters ─────────────────────────────────────────────────────────
 
+# Pass extra args via ARGS, e.g.: make preprocessing ARGS=--no-cache
 preprocessing:
-	docker compose run --rm app uv run python -m src.preprocessing
+	docker compose run --rm app uv run python -m src.preprocessing $(ARGS)
 
 tree:
 	docker compose run --rm app uv run python -m src.tree
