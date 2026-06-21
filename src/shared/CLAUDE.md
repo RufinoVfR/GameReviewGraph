@@ -28,6 +28,7 @@ src/shared/
 ├── strategies.py     ← Strategy  (CommunityDetectionStrategy, ProgressiveEdgeCuttingStrategy)
 ├── storage.py        ← S3 / MinIO adapter  (S3Storage, get_storage)
 ├── cache.py          ← Redis cache adapter  (RedisCache, get_cache)
+├── tree.py           ← tree.json readers  (iter_comments, iter_sentences, iter_words, hierarchical_edges)
 └── graph/            ← graph primitive utilities (see graph/CLAUDE.md)
     ├── __init__.py   ← public re-exports: add_edge, increase_edge, neighbor_count, connected_components, …
     ├── ops.py        ← CRUD: add_edge, increase_edge, remove_edge, iter_edges, copy_graph, build_graph_from_deltas, serialize_graph
@@ -93,7 +94,7 @@ Filters requiring multiple inputs in the pipeline:
 |--------|-------------|-------------------|
 | `sentence_graph` | `"word_graph"` | `["tree"]` |
 | `comment_graph` | `"sentence_graph"` | `["preprocessed"]` |
-| `final_graph` | `"comment_graph"` | `["word_graph", "sentence_graph"]` |
+| `final_graph` | `"comment_graph"` | `["word_graph", "sentence_graph", "tree"]` |
 | `metrics` | `"communities"` | `["final_graph"]` |
 
 ### Rules
@@ -305,6 +306,36 @@ class RedisCache:
 
 ---
 
+## `tree.py` — `tree.json` Readers
+
+Pure readers over the **deserialized `tree.json` dict** (the uniform-node format
+produced by the `tree` filter — see [`../tree/CLAUDE.md`](../tree/CLAUDE.md)).
+They exist here, not in `src/tree/`, because the graph filters that consume the
+tree must **not** import another filter — same reason graph (de)serialization
+lives in `graph/ops.py` rather than inside each graph filter.
+
+### Contract
+
+```python
+def iter_comments(tree: dict) -> Iterator[dict]: ...   # yields each "comment" node
+def iter_sentences(tree: dict) -> Iterator[dict]: ...   # yields each "sentence" node (across all comments)
+def iter_words(sentence: dict) -> Iterator[dict]: ...    # yields each "word" leaf of a sentence (value + position)
+def hierarchical_edges(tree: dict) -> list[tuple[NodeKey, NodeKey]]: ...
+    # (w_<value>, s_<index>) and (s_<index>, c_<id>) edges for final_graph
+```
+
+### Rules
+
+- **Structural only, no domain logic** — these walk the JSON shape and apply the
+  `w_`/`s_`/`c_` key convention. The positional weight formula and the
+  sentence/comment normalizations stay in their respective graph filters.
+- **Single source of truth for the key prefixes** — `word_graph`,
+  `sentence_graph`, and `final_graph` derive node keys through these helpers (or
+  the documented `w_`/`s_`/`c_` convention), never by ad-hoc string building.
+- Readers take the **plain dict** (post `read_json`), never a `NaryTree`.
+
+---
+
 ## `graph/` — Graph Utility Sub-package
 
 See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. Summary:
@@ -323,7 +354,7 @@ See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. S
 ## Non-negotiable rules
 
 - **No domain logic in `src/shared/`** — no graph algorithms, no NLP, no weight formulas.
-- **No imports of concrete filters** — `src/shared/*.py` must never import from `src/preprocessing/`, `src/tree.py`, etc.
+- **No imports of concrete filters** — `src/shared/*.py` must never import from `src/preprocessing/`, `src/tree/`, etc.
 - **No external graph libraries** — even here, NetworkX and equivalents are forbidden.
 - **Docstrings on every public class and method** — format: one-line summary, blank line, `Args:` and `Returns:` sections.
 - **Type hints on every signature** — no `Any` unless truly unavoidable (document why when used).

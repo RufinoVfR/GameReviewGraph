@@ -43,6 +43,7 @@ src/
 │   ├── strategies.py        ← Strategy  (CommunityDetectionStrategy)
 │   ├── storage.py           ← S3/MinIO adapter  (S3Storage, get_storage)
 │   ├── cache.py             ← Redis cache adapter  (RedisCache, get_cache)
+│   ├── tree.py              ← tree.json readers  (iter_comments, iter_sentences, iter_words, hierarchical_edges)
 │   └── graph/               ← graph primitive utilities (see shared/graph/CLAUDE.md)
 │       ├── ops.py           ← add_edge, increase_edge, remove_edge, iter_edges, copy_graph, build_graph_from_deltas, serialize_graph
 │       ├── metrics.py       ← neighbor_count, total_edge_weight, density, node_count, edge_count
@@ -63,7 +64,13 @@ src/
 │   ├── filter.py            ← PreprocessingFilter(AbstractFilter) — orchestrates process()
 │   ├── clean.py             ← pure text/token helpers (lowercase, punctuation, segment, tokenize, noise, stopwords)
 │   └── normalize.py         ← RSLP grouping key + surface-form representative (decision A1')
-├── tree.py                  ← ConcreteFilter 2: N-ary tree (Dataset → Comment → Sentence → Word)
+├── tree/                    ← ConcreteFilter 2 (package): N-ary tree (Dataset → Comment → Sentence → Word)
+│   ├── __init__.py          ← re-exports TreeFilter
+│   ├── __main__.py          ← TreeFilter().execute()  (target of `make tree`)
+│   ├── filter.py            ← TreeFilter(AbstractFilter) — orchestrates process()
+│   ├── structure.py         ← TreeNode + NaryTree (data structure, bidirectional navigation, get_* accessors)
+│   ├── build.py             ← build_from_corpus() — global sentence index + per-sentence word position
+│   └── serialize.py         ← serialize() / from_dict() — uniform-node tree.json, parent rebuilt on load
 ├── word_graph.py            ← ConcreteFilter 3: word co-occurrence graph (positional weight)
 ├── sentence_graph.py        ← ConcreteFilter 4: sentence graph (derived from word graph)
 ├── comment_graph.py         ← ConcreteFilter 5: comment graph (derived from sentence graph)

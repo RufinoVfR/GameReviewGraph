@@ -305,7 +305,7 @@ src/
 │   └── strategies.py    ← Strategy  (CommunityDetectionStrategy, ProgressiveEdgeCuttingStrategy)
 │
 ├── preprocessing/       ← ConcreteFilter 1 (pacote; filter.py herda AbstractFilter)
-├── tree.py              ← ConcreteFilter 2
+├── tree/                ← ConcreteFilter 2 (pacote; filter.py herda AbstractFilter)
 ├── word_graph.py        ← ConcreteFilter 3
 ├── sentence_graph.py    ← ConcreteFilter 4
 ├── comment_graph.py     ← ConcreteFilter 5
@@ -337,3 +337,4 @@ src/config.py e src/types.py  →  permitidos em qualquer lugar
 | 12/06/2026 | 1.0 | Criação do documento com cinco padrões GoF | Lucas Antunes |
 | 12/06/2026 | 1.1 | Template Method: extra_input_keys e filtros multi-input; Strategy: delegação para src.shared.graph | Lucas Antunes |
 | 16/06/2026 | 1.2 | Filtro 1 (`preprocessing/`) passa a ser pacote no diagrama de módulos | Equipe |
+| 17/06/2026 | 1.3 | Filtro 2 (`tree/`) passa a ser pacote no diagrama de módulos | Lucas Antunes |

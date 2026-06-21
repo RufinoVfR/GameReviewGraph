@@ -205,7 +205,7 @@ O projeto é organizado em **4 ondas de trabalho**, cada uma com escopo e entreg
 
 | Onda | Período | Foco | Entregáveis |
 |------|---------|------|-------------|
-| **Onda 1** | 11/06 – 13/06 | Infraestrutura e dados | Dataset gerado, módulo `preprocessing.py` funcional, `tree.py` (Árvore N-ária) implementado, repositório GitHub configurado, documentação inicial no GitPages |
+| **Onda 1** | 11/06 – 13/06 | Infraestrutura e dados | Dataset gerado, pacote `preprocessing/` funcional, pacote `tree/` (Árvore N-ária) implementado, repositório GitHub configurado, documentação inicial no GitPages |
 | **Onda 2** | 14/06 – 17/06 | Construção dos grafos | `word_graph.py`, `sentence_graph.py`, `comment_graph.py` e `final_graph.py` implementados e testados com o dataset gerado |
 | **Onda 3** | 18/06 – 20/06 | Algoritmos e métricas | `community_detection.py` (corte progressivo + BFS/DFS) e `metrics.py` (centralidade + modularidade) implementados, comunidades detectadas e validadas |
 | **Onda 4** | 21/06 – 22/06 | Análise, relatório e entrega | `analysis.py` e `main.py` finalizados, relatório de análise dos resultados, slides da apresentação, última atualização no GitHub até 22/06/2026 |
