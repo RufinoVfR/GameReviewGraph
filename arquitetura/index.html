@@ -1052,7 +1052,7 @@
         PP["preprocessing/"]
     end
     subgraph F2["Filtro 2"]
-        TR["tree.py"]
+        TR["tree/"]
     end
     subgraph F3["Filtro 3"]
         WG["word_graph.py"]
@@ -1125,7 +1125,7 @@
 </tr>
 <tr>
 <td>2</td>
-<td><code>tree.py</code></td>
+<td><code>tree/</code></td>
 <td><code>preprocessed.json</code></td>
 <td><code>tree.json</code></td>
 <td>Constrói a Árvore N-ária: Dataset → Comentário → Frase → Palavra</td>
@@ -1199,7 +1199,7 @@
 <td><code>list[ProcessedComment]</code></td>
 </tr>
 <tr>
-<td><code>tree.py</code></td>
+<td><code>tree/</code></td>
 <td><code>list[ProcessedComment]</code></td>
 <td><code>NaryTree</code></td>
 </tr>
@@ -1364,6 +1364,12 @@
 <td>2.2</td>
 <td><code>ProcessedComment</code> sem <code>topic</code> (rótulo-ouro reservado à validação por <code>id</code>)</td>
 <td>Equipe</td>
+</tr>
+<tr>
+<td>17/06/2026</td>
+<td>2.3</td>
+<td>Filtro 2 vira pacote <code>tree/</code> (modelo do Filtro 1: <code>filter.py</code>, <code>structure.py</code>, <code>build.py</code>, <code>serialize.py</code>); leitura de <code>tree.json</code> em <code>src/shared/tree.py</code></td>
+<td>Lucas Antunes</td>
 </tr>
 </tbody>
 </table>

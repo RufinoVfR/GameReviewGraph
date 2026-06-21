@@ -1353,6 +1353,15 @@ posicional do <code>word_graph</code>):</p>
 <span class="w">  </span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div>
+<blockquote>
+<p><strong>Leitura do <code>tree.json</code> é compartilhada, não duplicada.</strong> Os filtros de grafo
+(3–6) <strong>não</strong> importam <code>src/tree/</code> nem reconstroem um <code>NaryTree</code>: leem o dict
+aninhado pelos <em>readers</em> de <code>src/shared/tree.py</code> (<code>iter_comments</code>,
+<code>iter_sentences</code>, <code>iter_words</code>, <code>hierarchical_edges</code>), do mesmo modo que a
+(de)serialização do grafo vive em <code>src/shared/graph</code>. A escrita (<code>serialize</code>)
+fica só no produtor (filtro <code>tree</code>); a leitura fica só em <code>src/shared/tree.py</code>.
+As <strong>fórmulas de peso continuam em cada filtro</strong> — os readers são estruturais.</p>
+</blockquote>
 <p><strong><code>metrics.json</code> — métricas por comunidade + Q global:</strong></p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
 <span class="w">  </span><span class="nt">&quot;modularity&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">0.74</span><span class="p">,</span>
@@ -1401,9 +1410,9 @@ cada trilha é só a ordem de <strong>integração final</strong>, não de iníc
 <li><strong>Infra:</strong> o <code>Dockerfile</code> precisa baixar os corpora NLTK <code>stopwords</code> e <code>rslp</code> em build.</li>
 <li>Testes: usar <code>raw_comments</code>; verificar shape, <code>id</code> preservado, <code>topic</code> ausente, remoção de stopwords/ruído, agrupamento e representante (com acento).</li>
 </ul>
-<h3 id="filtro-2-treepy">Filtro 2 — <code>tree.py</code><a class="headerlink" href="#filtro-2-treepy" title="Permanent link">&para;</a></h3>
+<h3 id="filtro-2-tree-pacote">Filtro 2 — <code>tree/</code> (pacote)<a class="headerlink" href="#filtro-2-tree-pacote" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>In:</strong> <code>preprocessed</code> → <strong>Out:</strong> <code>tree</code>. Árvore N-ária: Dataset → Comentário → Frase → Palavra.</li>
+<li><strong>In:</strong> <code>preprocessed</code> → <strong>Out:</strong> <code>tree</code>. Árvore N-ária: Dataset → Comentário → Frase → Palavra. É um <strong>pacote</strong> (modelo do Filtro 1): <code>filter.py</code> (orquestra <code>process()</code>), <code>structure.py</code> (<code>TreeNode</code>/<code>NaryTree</code> + navegação bidirecional), <code>build.py</code> (<code>build_from_corpus</code>: índice global de frase + <code>position</code> na frase), <code>serialize.py</code> (<code>serialize</code>/<code>from_dict</code>, religando <code>parent</code> na leitura) — ver <code>src/tree/CLAUDE.md</code>.</li>
 <li>O formato de <code>tree.json</code> <strong>já está fechado</strong> no bloco "Contrato de artefatos" (C.1): nó uniforme <code>{"type", "children"}</code>, folhas <code>word</code> com <code>value</code> + <code>position</code>, <code>sentence.index</code> global, <code>comment.id</code>. Implemente exatamente esse formato — a Trilha 2 consome <code>position</code>/<code>index</code>/<code>id</code> dele.</li>
 <li>Testes: usar <code>processed_comments</code>; verificar hierarquia, contagem de nós por nível e que cada palavra carrega <code>position</code>.</li>
 </ul>
@@ -1412,6 +1421,7 @@ cada trilha é só a ordem de <strong>integração final</strong>, não de iníc
 <li><strong>In:</strong> <code>tree</code> → <strong>Out:</strong> <code>word_graph</code>.</li>
 <li>Fórmula posicional, acumulada por co-ocorrência:
   <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_graph_from_deltas</span><span class="p">,</span> <span class="n">serialize_graph</span><span class="p">,</span> <span class="n">assert_valid</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">iter_sentences</span><span class="p">,</span> <span class="n">iter_words</span>   <span class="c1"># readers compartilhados</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_word_pair_deltas</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">sentence</span> <span class="ow">in</span> <span class="n">iter_sentences</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>          <span class="c1"># palavras com posição</span>
@@ -1452,6 +1462,7 @@ cada trilha é só a ordem de <strong>integração final</strong>, não de iníc
 <ul>
 <li><strong>In:</strong> <code>comment_graph</code> (+ <code>word_graph</code>, <code>sentence_graph</code>) → <strong>Out:</strong> <code>final_graph</code>.</li>
 <li>Unir os três níveis num só grafo + arestas hierárquicas (palavra↔frase↔comentário).</li>
+<li>As arestas hierárquicas vêm de <code>from src.shared.tree import hierarchical_edges</code> — <code>(w_&lt;value&gt;, s_&lt;index&gt;)</code> e <code>(s_&lt;index&gt;, c_&lt;id&gt;)</code>. <strong>Não</strong> se reimplementa a derivação de chaves aqui nem se importa <code>src/tree/</code>.</li>
 <li><code>merge_graphs</code> é <strong>helper privado deste arquivo</strong> — não vai para <code>shared/graph</code>.</li>
 <li>Testes: nós dos três prefixos presentes; <code>assert_valid</code>.</li>
 </ul>
@@ -1572,6 +1583,18 @@ esvazia as chaves <code>filter:*</code> do Redis e força o reprocessamento.</p>
 <td>1.3</td>
 <td><code>topic</code> removido de <code>preprocessed.json</code> e <code>tree.json</code> (rótulo-ouro fica só no raw, reconciliado por <code>id</code> na validação)</td>
 <td>Equipe</td>
+</tr>
+<tr>
+<td>2026-06-17</td>
+<td>1.4</td>
+<td>Filtro 2 reescrito como pacote <code>tree/</code> (<code>filter.py</code>, <code>structure.py</code>, <code>build.py</code>, <code>serialize.py</code>), modelo do Filtro 1</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>2026-06-17</td>
+<td>1.5</td>
+<td>Leitura de <code>tree.json</code> centralizada em <code>src/shared/tree.py</code> (<code>iter_comments</code>/<code>iter_sentences</code>/<code>iter_words</code>/<code>hierarchical_edges</code>); filtros 3–6 importam de lá em vez de reimplementar; <code>from_dict</code> vira test-only</td>
+<td>Lucas Antunes</td>
 </tr>
 </tbody>
 </table>
