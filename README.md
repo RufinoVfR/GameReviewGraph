@@ -4,6 +4,8 @@ Este repositório contém o desenvolvimento de um projeto da disciplina de Estru
 
 O objetivo do projeto é transformar um corpus de ~200 reviews de jogos em português em uma estrutura de grafo hierárquica de três níveis (palavras → frases → comentários) e detectar comunidades semânticas (tópicos) por corte progressivo de arestas. Implementado em Python puro com Árvore N-ária, BFS/DFS e modularidade Q.
 
+O repositório também inclui uma camada de visualização em `frontend/`, implementada com Canvas 2D, React e TypeScript. Ela sobe com mocks quando os bundles reais ainda não existem e passa a consumir os artefatos compactos assim que forem gerados.
+
 *Consulte a [documentação completa do projeto](https://rufinovfr.github.io/GameReviewGraph/) para mais detalhes.*
 
 ## 🚀 Começando

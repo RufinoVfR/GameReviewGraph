@@ -1,0 +1,726 @@
+@import url("https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap");
+
+:root {
+  color-scheme: dark;
+  font-family: Rajdhani, system-ui, sans-serif;
+  background: #080b10;
+  color: #d6e4ff;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  --void: #080b10;
+  --surf: #111520;
+  --border: #1e2535;
+  --grid: #0f1319;
+  --text: #d6e4ff;
+  --dim: #4a5878;
+  --word: #00e5ff;
+  --sentence: #69ff47;
+  --comment: #d500f9;
+  --community: #4d7cff;
+  --contain: #ffd740;
+  --brush: #ff1744;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: #ffd740;
+  color: #080b10;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(0, 229, 255, 0.14), transparent 32%),
+    radial-gradient(circle at 80% 20%, rgba(77, 124, 255, 0.08), transparent 30%),
+    linear-gradient(180deg, #090d14 0%, #080b10 100%);
+  overflow: hidden;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+.shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.graphCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  z-index: 0;
+}
+
+.topbar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 16px;
+  background: rgba(8, 11, 16, 0.78);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  z-index: 30;
+}
+
+.brandMark {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.brandGlyph {
+  color: var(--word);
+  font-size: 15px;
+  line-height: 1;
+  transform: translateY(-1px);
+}
+
+.brandBlock {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.brand {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--word);
+}
+
+.subtitle {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.searchBox {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(280px, 40vw);
+  height: 28px;
+  padding: 0 10px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px);
+}
+
+.searchBox span,
+.sectionLabel,
+.breadcrumbLabel {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+.searchBox input {
+  width: 100%;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: 12px;
+}
+
+.searchGlyph {
+  color: var(--dim);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.iconButton {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  cursor: pointer;
+  clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.iconButton[data-active="true"] {
+  color: var(--word);
+  border-color: rgba(0, 229, 255, 0.45);
+}
+
+.breadcrumbBar {
+  position: absolute;
+  inset: 48px 0 auto 0;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-bottom: 1px solid #131826;
+  background: rgba(8, 11, 16, 0.62);
+  z-index: 25;
+  overflow: hidden;
+}
+
+.crumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.crumbChevron {
+  color: var(--border);
+  font-size: 12px;
+  line-height: 1;
+}
+
+.crumb:first-child .crumbChevron {
+  color: var(--word);
+  font-size: 13px;
+}
+
+.crumbLabel {
+  color: var(--dim);
+  font-weight: 400;
+}
+
+.crumb[data-active="true"] .crumbLabel {
+  color: var(--text);
+  font-weight: 600;
+  cursor: default;
+}
+
+.sidePane {
+  position: absolute;
+  top: 92px;
+  right: 12px;
+  bottom: 56px;
+  width: 336px;
+  overflow: auto;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-left: 2px solid var(--community);
+  clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px);
+  z-index: 25;
+  padding: 0;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4), -8px 0 32px rgba(0, 0, 0, 0.45);
+}
+
+.sidePane::-webkit-scrollbar {
+  width: 3px;
+}
+
+.sidePane::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidePane::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+.panelBody {
+  padding: 12px 14px 16px;
+}
+
+.panelHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--border);
+}
+
+.panelEyebrow {
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.panelClose {
+  color: var(--dim);
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1;
+}
+
+.panelClose:hover {
+  color: var(--text);
+}
+
+.panelTitle {
+  margin: 12px 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.panelTokens {
+  margin: 10px 0 14px;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--text);
+}
+
+.tokenKey {
+  cursor: pointer;
+  color: var(--text);
+  border-bottom: 1px dotted #2c3650;
+}
+
+.tokenKey[data-active="true"] {
+  background: rgba(255, 215, 64, 0.2);
+  color: var(--contain);
+}
+
+.panelMeta {
+  border-top: 1px solid var(--border);
+  padding-top: 12px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 7px 16px;
+}
+
+.metaKey {
+  color: var(--dim);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.metaVal {
+  color: var(--text);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-weight: 600;
+  text-align: right;
+}
+
+.panelHint {
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: var(--dim);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
+  line-height: 1.5;
+  letter-spacing: 0.02em;
+}
+
+.emptyPanel {
+  width: 100%;
+  height: 100%;
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 40px 24px;
+  text-align: center;
+}
+
+.emptyIcon {
+  color: var(--border);
+  font-size: 32px;
+  line-height: 1;
+}
+
+.emptyTitle {
+  color: #2c3650;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.emptyHint {
+  color: var(--dim);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+}
+
+.footerBar {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 0 16px;
+  background: var(--void);
+  border-top: 1px solid var(--border);
+  z-index: 30;
+}
+
+.filtersBlock {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.filterPill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 26px;
+  padding: 0 4px 0 10px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  clip-path: polygon(5px 0, 100% 0, 100% 100%, 0 100%, 0 5px);
+}
+
+.filterPill span {
+  color: var(--dim);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.filterPill select {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding-right: 4px;
+}
+
+.layerToggle {
+  height: 26px;
+  padding: 0 12px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  color: var(--dim);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  clip-path: polygon(5px 0, 100% 0, 100% 100%, 0 100%, 0 5px);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.layerToggle[data-active="true"] {
+  color: var(--word);
+  border-color: rgba(0, 229, 255, 0.45);
+}
+
+.footerInfo {
+  margin-left: auto;
+  color: var(--dim);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.backButton {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 14px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  color: var(--border);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px);
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.backButton[data-active="true"] {
+  border-color: var(--word);
+  color: var(--word);
+}
+
+.legend {
+  position: absolute;
+  left: 16px;
+  bottom: 96px;
+  display: flex;
+  gap: 16px;
+  z-index: 24;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  pointer-events: none;
+}
+
+.legendGlyph {
+  font-style: normal;
+}
+
+.legend span:nth-child(1) {
+  color: var(--community);
+}
+
+.legend span:nth-child(2) {
+  color: var(--comment);
+}
+
+.legend span:nth-child(3) {
+  color: var(--sentence);
+}
+
+.legend span:nth-child(4) {
+  color: var(--word);
+}
+
+.hintBlock {
+  position: absolute;
+  left: 16px;
+  bottom: 56px;
+  z-index: 24;
+  color: #2c3650;
+  font-family: "Share Tech Mono", monospace;
+  font-size: 10px;
+  line-height: 1.7;
+  letter-spacing: 0.02em;
+  pointer-events: none;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 40;
+  pointer-events: none;
+  transform: translate(-50%, -140%);
+  background: rgba(8, 11, 16, 0.92);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  color: var(--text);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  white-space: nowrap;
+  clip-path: polygon(5px 0, 100% 0, 100% 100%, 0 100%, 0 5px);
+}
+
+.loadingOverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  background: #080b10;
+}
+
+.loadingHeader {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 26px;
+}
+
+.loadingMark {
+  color: var(--word);
+  font-size: 30px;
+  line-height: 1;
+  animation: grgPulse 2.4s ease-in-out infinite;
+}
+
+.loadingBrand {
+  color: var(--word);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.loadingText {
+  color: var(--dim);
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+.loadingBarRow {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.loadingBar {
+  width: 300px;
+  height: 2px;
+  background: var(--border);
+}
+
+.loadingFill {
+  height: 100%;
+  background: var(--word);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+  transition: width 0.1s linear;
+}
+
+.loadingPct {
+  color: var(--word);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 13px;
+  width: 46px;
+}
+
+.loadingCounts {
+  color: var(--dim);
+  font-family: "Share Tech Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.errorToast {
+  position: absolute;
+  left: 50%;
+  bottom: 64px;
+  transform: translateX(-50%);
+  z-index: 45;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: var(--surf);
+  border: 1px solid var(--border);
+  border-top: 2px solid var(--brush);
+  clip-path: polygon(8px 0, 100% 0, 100% 100%, 0 100%, 0 8px);
+}
+
+.errorToast span {
+  color: var(--brush);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.errorToast button {
+  height: 26px;
+  padding: 0 12px;
+  background: transparent;
+  border: 1px solid var(--brush);
+  color: var(--brush);
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+@keyframes grgPulse {
+  0% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.45;
+  }
+}
+
+@media (max-width: 1080px) {
+  .sidePane {
+    width: min(336px, calc(100vw - 24px));
+  }
+}
+
+@media (max-width: 760px) {
+  .topbar {
+    gap: 12px;
+    padding: 0 12px;
+  }
+
+  .searchBox {
+    width: 44vw;
+  }
+
+  .sidePane {
+    top: 100px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    bottom: 112px;
+  }
+
+  .footerBar {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: 44px;
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .footerInfo {
+    margin-left: 0;
+  }
+
+  .legend {
+    bottom: 150px;
+  }
+
+  .hintBlock {
+    bottom: 110px;
+  }
+}

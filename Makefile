@@ -1,11 +1,35 @@
 .PHONY: help setup install \
         build docker-up docker-down docker-restart docker-logs docker-status \
-        init-data run clean \
+        frontend-build frontend frontend-logs frontend-bundle \
+        gen-data init-data run clean \
         preprocessing tree word-graph sentence-graph \
         comment-graph final-graph community-detection \
         metrics analysis \
         docs docs-build \
         test test-cov env-test
+
+# ── Datasets ───────────────────────────────────────────────────────────────────
+# Single source of truth for which corpus feeds the pipeline. `init-data` always
+# uploads the resolved file to MinIO as the raw input (S3_KEYS['raw'] =
+# comments.json), so the pipeline contract never changes — only the source does.
+#
+#   make init-data                 # canonical ~200-comment set (20 per topic)
+#   make init-data DATASET=large   # 2000-comment stress set
+#   make init-data DATASET=data/custom.json   # a raw path also works
+#
+# Presets (name → file). Add a new corpus by adding one DATASET_<name> line.
+DATASET ?= canonical
+DATASET_canonical := data/comments_200.json
+DATASET_small     := data/comments.json
+DATASET_multi     := data/comments_multi.json
+DATASET_large     := data/comments_2000.json
+
+# Resolve a preset name to its path; fall back to DATASET itself for raw paths.
+DATASET_PATH := $(or $(DATASET_$(DATASET)),$(DATASET))
+
+# Defaults for gen-data (override per invocation, e.g. make gen-data COUNT=2000).
+COUNT ?= 200
+SEED  ?= 42
 
 # ── Help ───────────────────────────────────────────────────────────────────────
 
@@ -20,15 +44,20 @@ help:
 	@echo ""
 	@echo "Infrastructure"
 	@echo "  build                Build the app Docker image"
-	@echo "  docker-up            Start all services in background (MinIO + Redis + app)"
+	@echo "  docker-up            Start all services in background (MinIO + Redis + app + frontend)"
 	@echo "  docker-down          Stop and remove all containers and networks"
 	@echo "  docker-restart       Rebuild image and restart all services"
 	@echo "  docker-logs          Follow logs from all services"
 	@echo "  docker-status        Show running containers and health"
+	@echo "  frontend-build       Build the frontend image"
+	@echo "  frontend             Start the frontend service"
+	@echo "  frontend-logs        Follow logs from the frontend service"
+	@echo "  frontend-bundle      Generate frontend bundles from pipeline artifacts"
 	@echo ""
 	@echo "Pipeline"
-	@echo "  init-data            Upload a dataset to MinIO as the raw input (default: data/comments.json)"
-	@echo "                       (choose another: make init-data ARGS=data/comments_multi.json)"
+	@echo "  gen-data             Generate a dataset locally (DATASET=, COUNT=, SEED=; default canonical/200)"
+	@echo "  init-data            Upload the selected dataset to MinIO as the raw input"
+	@echo "                       (presets: DATASET=canonical|small|multi|large; default canonical/~200)"
 	@echo "  run                  Run the full pipeline (all 9 filters) inside Docker"
 	@echo "  clean                Flush Redis cache + delete S3 pipeline artifacts (keeps comments.json)"
 	@echo ""
@@ -80,8 +109,14 @@ install:
 build:
 	docker compose build
 
+frontend-build:
+	docker compose build frontend
+
 docker-up:
 	docker compose up -d
+
+frontend:
+	docker compose up -d frontend
 
 docker-down:
 	docker compose down
@@ -91,6 +126,12 @@ docker-restart:
 	docker compose build
 	docker compose up -d
 
+frontend-logs:
+	docker compose logs -f frontend
+
+frontend-bundle:
+	S3_ENDPOINT_URL=$${S3_ENDPOINT_URL:-http://localhost:9000} uv run python -m scripts.build_bundle $(ARGS)
+
 docker-logs:
 	docker compose logs -f
 
@@ -99,8 +140,11 @@ docker-status:
 
 # ── Pipeline ───────────────────────────────────────────────────────────────────
 
+gen-data:
+	uv run python -m scripts.generate_comments --count $(COUNT) --seed $(SEED) --out $(DATASET_PATH)
+
 init-data:
-	docker compose run --rm app uv run python -m scripts.init_data $(ARGS)
+	docker compose run --rm app uv run python -m scripts.init_data $(DATASET_PATH)
 
 run:
 	docker compose run --rm app uv run python -m src.main

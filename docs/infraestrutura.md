@@ -1,6 +1,8 @@
 # Infraestrutura
 
-O **GameReviewGraph** é executado inteiramente via Docker. A orquestração combina três serviços: a aplicação Python, um armazenamento S3-compatível (MinIO) para os artefatos do pipeline, e um cache Redis para os resultados dos filtros.
+O **GameReviewGraph** é executado inteiramente via Docker. A orquestração combina quatro serviços: a aplicação Python, um frontend interativo em Canvas 2D, um armazenamento S3-compatível (MinIO) para os artefatos do pipeline, e um cache Redis para os resultados dos filtros.
+
+Para desenvolvimento da interface, o frontend pode ser iniciado isoladamente com `make frontend`.
 
 ---
 
@@ -12,6 +14,7 @@ flowchart TD
 
     subgraph Docker["docker-compose"]
         APP["app\n(Python 3.11)"]
+        FE["frontend\n(Vite + React + TS)"]
         MINIO["minio\n(MinIO — S3-compatível)"]
         REDIS["redis\n(Redis 7)"]
     end
@@ -20,6 +23,7 @@ flowchart TD
     RKEYS["Chaves Redis\nfilter:preprocessing\nfilter:tree\nfilter:word_graph\n..."]
 
     DEV --> APP
+    DEV --> FE
     APP --> MINIO --> BUCKET
     APP --> REDIS --> RKEYS
 ```
@@ -31,6 +35,7 @@ flowchart TD
 | Serviço | Imagem | Porta local | Papel |
 |---------|--------|-------------|-------|
 | `app` | build local (`Dockerfile`) | — | Executa os 9 filtros do pipeline |
+| `frontend` | build local (`frontend/Dockerfile`) | `5173` | Explorador multinível com fallback para mocks |
 | `minio` | `minio/minio:latest` | `9000` (API), `9001` (console) | Armazena artefatos JSON e `report.txt` |
 | `redis` | `redis:7-alpine` | `6379` | Cache pickle dos resultados dos filtros |
 
@@ -42,7 +47,7 @@ O bucket `game-review-graph` contém todos os artefatos do pipeline sob o prefix
 
 | Chave S3 | Equivalente anterior | Filtro que grava |
 |----------|---------------------|-----------------|
-| `pipeline/comments.json` | `data/comments.json` | entrada bruta (upload via `make init-data`) |
+| `pipeline/comments.json` | `data/comments_200.json` | entrada bruta (upload via `make init-data`; dataset selecionável via `DATASET=`) |
 | `pipeline/preprocessed.json` | `data/preprocessed.json` | Filtro 1 |
 | `pipeline/tree.json` | `data/tree.json` | Filtro 2 |
 | `pipeline/word_graph.json` | `data/word_graph.json` | Filtro 3 |
@@ -113,6 +118,9 @@ cp .env.example .env
 # 2. Suba os serviços em background
 make docker-up
 
+# 2.1 Suba apenas o frontend, se quiser validar a visualização isoladamente
+make frontend
+
 # 3. Faça upload do arquivo de entrada bruta para MinIO
 make init-data
 
@@ -147,6 +155,7 @@ Acesse `http://localhost:9001` com usuário `minioadmin` / senha `minioadmin` pa
 O pipeline de CI usa `docker-compose.ci.yml` sobreposto ao `docker-compose.yml`. As diferenças:
 
 - Serviços `minio` e `redis` expõem **health checks** — o `app` só inicia após ambos estarem saudáveis
+- O frontend pode subir de forma independente, usando mocks quando os bundles não existirem
 - Nenhuma porta é exposta ao host (sem conflito em runners compartilhados)
 - Credenciais via GitHub Secrets: `S3_BUCKET`, `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `REDIS_URL`
 

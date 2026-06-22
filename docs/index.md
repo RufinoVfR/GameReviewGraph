@@ -10,6 +10,10 @@ O **GameReviewGraph** transforma um corpus de ~200 reviews de jogos em portuguê
 
 Implementado em Python puro, sem bibliotecas externas de grafos. Disciplina **FGA0030 — Estruturas de Dados 2 / UnB 2026/1**.
 
+Além do pipeline analítico, o projeto inclui uma camada de visualização interativa em `frontend/`, alimentada por bundles compactos derivados do `final_graph.json`. Essa camada permite explorar comunidades, aprofundar comentários e inspecionar relações entre palavras sem carregar a matriz completa no navegador.
+
+Durante a implementação, a interface também pode iniciar com mocks ou fixtures locais, o que permite desenvolver e testar a UX antes da geração dos artefatos finais.
+
 ---
 
 ## Quick Start — por onde começar
@@ -39,6 +43,12 @@ Mantenha abertos como referência: `src/shared/graph/CLAUDE.md` (ferramentas de 
 | 8 | `metrics.py` | Centralidade de grau ponderada + Modularidade Q |
 | 9 | `analysis.py` | Geração do relatório final |
 
+## Visualização Interativa
+
+| Camada | Módulo | Descrição |
+|--------|--------|-----------|
+| 10 | `frontend/` | Explorador multinível em Canvas 2D, com bundles compactos, drill-down, busca, filtros e brushing cruzado |
+
 ---
 
 ## Tópicos detectados
@@ -54,3 +64,4 @@ Mantenha abertos como referência: `src/shared/graph/CLAUDE.md` (ferramentas de 
 - **BFS / DFS** — implementados do zero
 - **Modularidade Q** — implementada do zero
 - **Árvore N-ária** — implementada do zero
+- **Canvas 2D + JavaScript/TypeScript** — visualização interativa sem bibliotecas de grafo

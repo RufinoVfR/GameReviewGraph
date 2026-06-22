@@ -13,6 +13,7 @@ O backlog reúne todas as funcionalidades previstas para o **GameReviewGraph** n
 | TE01 | Processamento e Representação dos Dados Textuais |
 | TE02 | Construção e Integração dos Grafos Hierárquicos |
 | TE03 | Detecção de Comunidades e Análise de Resultados |
+| TE04 | Visualização Interativa dos Grafos e Navegação Semântica |
 
 ---
 
@@ -26,6 +27,7 @@ O backlog reúne todas as funcionalidades previstas para o **GameReviewGraph** n
 | TE02 | E04 | Integração em Grafo Final Unificado | Unificar os três grafos e as arestas hierárquicas da árvore em uma única estrutura, identificando vértices por tipo via prefixo. |
 | TE03 | E05 | Detecção de Comunidades | Implementar o algoritmo de corte progressivo de arestas com BFS/DFS para fragmentar o grafo final em K = 10 comunidades semânticas. |
 | TE03 | E06 | Métricas de Qualidade e Relatório | Calcular centralidade de grau ponderada e modularidade Q, e gerar o relatório final com os tópicos identificados e suas métricas. |
+| TE04 | E07 | Explorador Interativo Multinível | Construir a interface de visualização em Canvas 2D para explorar o grafo unificado em níveis, com drill-down, busca, filtros e brushing cruzado. |
 
 ---
 
@@ -47,6 +49,12 @@ O backlog reúne todas as funcionalidades previstas para o **GameReviewGraph** n
 | US12 | Como pesquisador, eu quero que o sistema calcule a centralidade de grau ponderada de cada vértice dentro de sua comunidade para que os termos mais representativos de cada tópico sejam identificados. | TE03 | E06 |
 | US13 | Como pesquisador, eu quero que o sistema calcule a modularidade Q ao final do processo de corte para que a qualidade dos agrupamentos possa ser avaliada objetivamente. | TE03 | E06 |
 | US14 | Como pesquisador, eu quero que o sistema gere um relatório de saída com os tópicos detectados, seus termos centrais, comentários associados e a modularidade Q para que os resultados sejam interpretáveis e documentáveis. | TE03 | E06 |
+| US15 | Como pesquisador, eu quero que o sistema abra em uma visão inicial de comunidades para que eu consiga entender a organização geral dos tópicos antes de aprofundar a análise. | TE04 | E07 |
+| US16 | Como pesquisador, eu quero que o sistema carregue bundles compactos derivados do grafo final para que a visualização funcione sem consumir a matriz bruta no navegador. | TE04 | E07 |
+| US17 | Como pesquisador, eu quero que eu possa dar zoom e clicar em uma comunidade, comentário ou sentença para navegar para o próximo nível sem perder o contexto da exploração. | TE04 | E07 |
+| US18 | Como pesquisador, eu quero que o sistema destaque automaticamente os nós relacionados a uma palavra selecionada para que eu identifique rapidamente onde o termo aparece no corpus. | TE04 | E07 |
+| US19 | Como pesquisador, eu quero que o sistema ofereça busca e filtros por tópico e nível para que eu localize focos específicos de interesse de forma rápida. | TE04 | E07 |
+| US20 | Como pesquisador, eu quero que o sistema mantenha a navegação responsiva, com breadcrumb e painel lateral persistentes, para que eu consiga voltar e comparar contextos sem me perder. | TE04 | E07 |
 
 ---
 
@@ -74,6 +82,12 @@ Histórias com maior dependência de outras foram posicionadas primeiro independ
 | US12 | Centralidade de grau ponderada | 4 | 4 | 2 | 2 | 8 | US10, US11 | 3 |
 | US13 | Modularidade Q | 4 | 4 | 3 | 3 | 6 | US10, US11 | 3 |
 | US14 | Relatório de saída com tópicos e métricas | 5 | 5 | 2 | 1 | 12 | US12, US13 | 4 |
+| US15 | Visão inicial de comunidades | 5 | 5 | 3 | 2 | 12 | US08, US10, US11, US12, US13 | 4 |
+| US16 | Bundles compactos da visualização | 5 | 5 | 3 | 2 | 12 | US08, US09, US10 | 4 |
+| US17 | Zoom e drill-down multinível | 5 | 5 | 4 | 3 | 8 | US15, US16 | 4 |
+| US18 | Brushing cruzado por palavra | 4 | 4 | 3 | 2 | 7 | US16, US17 | 4 |
+| US19 | Busca e filtros | 4 | 4 | 2 | 2 | 8 | US15, US16 | 4 |
+| US20 | Breadcrumb e painel persistentes | 4 | 4 | 2 | 1 | 9 | US17, US19 | 4 |
 
 ---
 
@@ -97,6 +111,12 @@ O MVP do **GameReviewGraph** corresponde ao pipeline completo e funcional — da
 | US12 | Centralidade de grau ponderada | 3 | ✅ |
 | US13 | Modularidade Q | 3 | ✅ |
 | US14 | Relatório de saída com tópicos e métricas | 4 | ✅ |
+| US15 | Visão inicial de comunidades | 4 | ✅ |
+| US16 | Bundles compactos da visualização | 4 | ✅ |
+| US17 | Zoom e drill-down multinível | 4 | ✅ |
+| US18 | Brushing cruzado por palavra | 4 | ✅ |
+| US19 | Busca e filtros | 4 | ✅ |
+| US20 | Breadcrumb e painel persistentes | 4 | ✅ |
 
 ---
 
@@ -188,6 +208,42 @@ O MVP do **GameReviewGraph** corresponde ao pipeline completo e funcional — da
 - Cada comunidade exibe seus termos centrais, os IDs dos comentários associados e o valor de Q
 - A saída é produzida no terminal e/ou em arquivo de texto conforme definido pelo grupo
 
+**US15 — Visão inicial de comunidades**
+
+- A interface abre em uma visão de entrada com as comunidades de comentário como super-nós
+- Cada comunidade mostra tamanho, tópico dominante e distinção visual consistente
+- O clique em uma comunidade inicia a navegação para o próximo nível
+
+**US16 — Bundles compactos da visualização**
+
+- O navegador carrega apenas bundles compactos quando eles estiverem disponíveis, nunca a matriz bruta completa
+- Na ausência dos bundles reais, a interface sobe com mocks, fixtures locais ou estados vazios
+- Os bundles incluem metadados, contenção, vizinhanças e índices invertidos, e a geração é feita em etapa offline e versionada junto ao projeto
+
+**US17 — Zoom e drill-down multinível**
+
+- O usuário pode ampliar e reduzir a visualização sem perder a seleção atual
+- O clique em um nó abre a decomposição do nível seguinte quando houver dados disponíveis
+- O breadcrumb reflete exatamente o caminho atual da navegação
+
+**US18 — Brushing cruzado por palavra**
+
+- Selecionar uma palavra destaca sentenças e comentários ligados a ela
+- O destaque é derivado do índice invertido dos blocos de contenção
+- O brushing não altera o estado estrutural da navegação
+
+**US19 — Busca e filtros**
+
+- O usuário pode buscar por palavras, comentários e tópicos
+- Filtros por nível e tópico reduzem a quantidade de nós e arestas visíveis
+- A aplicação preserva o estado da visualização ao alternar filtros
+
+**US20 — Breadcrumb e painel persistentes**
+
+- O breadcrumb acompanha a pilha de navegação em todas as mudanças de nível
+- O painel lateral mantém o texto bruto e os metadados do nó selecionado
+- A interface deve continuar utilizável em resoluções menores, sem colapsar a navegação
+
 ---
 
 ## Histórico de Revisão
@@ -195,3 +251,4 @@ O MVP do **GameReviewGraph** corresponde ao pipeline completo e funcional — da
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
 | 11/06/2026 | 1.0 | Criação inicial do documento | [Vinícius Rufino](https://github.com/RufinoVfR) |
+| 22/06/2026 | 1.1 | Inclusão da camada de visualização interativa, novos épicos/histórias e critérios de aceitação para o explorador multinível | Codex |
