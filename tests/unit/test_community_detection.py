@@ -2,7 +2,15 @@
 
 import pytest
 
-from src.community_detection import CommunityDetectionFilter, _cut_edges, _is_relational
+from src.community_detection import (
+    CommunityDetectionFilter,
+    _cut_edges,
+    _is_relational,
+    bfs,
+    dfs,
+    get_components,
+    count_components,
+)
 from src.shared.graph import add_edge, serialize_graph
 from src.types import Graph
 
@@ -39,6 +47,81 @@ def _caterpillar_tree() -> Graph:
     add_edge(g, "w_c", "s_3", 5.0)   # hierarchical — heavy, not cut
     return g
 
+
+# ── TestTask11Traversal (Novos testes do BFS/DFS) ─────────────────────────────
+
+class TestTraversal:
+    def test_bfs_visits_all_reachable_nodes(self):
+        """BFS marks all reachable nodes as visited."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0, "c": 1.0}, "c": {"b": 1.0}}
+        visited: set[str] = set()
+        bfs(graph, "a", visited)
+        assert visited == {"a", "b", "c"}
+
+    def test_bfs_does_not_cross_components(self):
+        """BFS stays within the reachable component."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0}, "c": {}}
+        visited: set[str] = set()
+        bfs(graph, "a", visited)
+        assert "c" not in visited
+
+    def test_bfs_returns_none(self):
+        """BFS modifies visited in-place and returns nothing."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0}}
+        visited: set[str] = set()
+        result = bfs(graph, "a", visited)
+        assert result is None
+        assert "a" in visited
+
+    def test_dfs_visits_all_reachable_nodes(self):
+        """DFS marks all reachable nodes as visited."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0, "c": 1.0}, "c": {"b": 1.0}}
+        visited: set[str] = set()
+        dfs(graph, "a", visited)
+        assert visited == {"a", "b", "c"}
+
+    def test_dfs_does_not_cross_components(self):
+        """DFS stays within the reachable component."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0}, "c": {}}
+        visited: set[str] = set()
+        dfs(graph, "a", visited)
+        assert "c" not in visited
+
+    def test_bfs_and_dfs_reach_same_nodes(self):
+        """BFS and DFS must visit the same set of nodes from the same start."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0, "c": 1.0}, "c": {"b": 1.0}}
+        visited_bfs: set[str] = set()
+        visited_dfs: set[str] = set()
+        bfs(graph, "a", visited_bfs)
+        dfs(graph, "a", visited_dfs)
+        assert visited_bfs == visited_dfs
+
+    def test_count_components_connected_graph(self):
+        """A fully connected graph has exactly one component."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0, "c": 1.0}, "c": {"b": 1.0}}
+        assert count_components(graph) == 1
+
+    def test_count_components_disconnected_graph(self):
+        """Isolated nodes each count as their own component."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0}, "c": {}, "d": {}}
+        assert count_components(graph) == 3
+
+    def test_count_components_empty_graph(self):
+        """Empty graph has zero components."""
+        assert count_components({}) == 0
+
+    def test_get_components_returns_sets(self):
+        """get_components returns list of sets, one per component."""
+        graph = {"a": {"b": 1.0}, "b": {"a": 1.0}, "c": {}}
+        components = get_components(graph)
+        assert {frozenset(c) for c in components} == {
+            frozenset({"a", "b"}),
+            frozenset({"c"}),
+        }
+
+    def test_get_components_empty_graph(self):
+        """Empty graph returns empty list."""
+        assert get_components({}) == []
 
 # ── TestIsRelational ──────────────────────────────────────────────────────────
 
@@ -147,8 +230,7 @@ class TestFilterContract:
     def test_no_extra_input_keys(self):
         assert not getattr(CommunityDetectionFilter, "extra_input_keys", [])
 
-
-# ── TestProcess ───────────────────────────────────────────────────────────────
+# ── TestProcess e Integração ──────────────────────────────────────────────────
 
 class TestProcess:
     def _small_graph_data(self) -> dict:
@@ -184,3 +266,20 @@ class TestProcess:
         result = CommunityDetectionFilter().process(data)
         all_nodes: list[str] = [n for nodes in result.values() for n in nodes]
         assert len(all_nodes) == len(set(all_nodes))
+
+    # Testes usando a fixture clustered_graph
+    def test_community_detection_filter_splits_clusters(self, clustered_graph):
+        """Test community detection using a graph with two dense clusters and a weak bridge."""
+        filt = CommunityDetectionFilter()
+        data_dict = serialize_graph(clustered_graph)
+        result = filt.process(data_dict)
+        assert len(result) == 2
+
+    def test_community_detection_filter_preserves_nodes(self, clustered_graph):
+        """Ensure no nodes from the original graph were lost during partitioning."""
+        filt = CommunityDetectionFilter()
+        data_dict = serialize_graph(clustered_graph)
+        result = filt.process(data_dict)
+        all_nodes_in_result = [node for nodes in result.values() for node in nodes]
+        assert len(all_nodes_in_result) == len(clustered_graph.nodes)
+        assert set(all_nodes_in_result) == set(clustered_graph.nodes)
