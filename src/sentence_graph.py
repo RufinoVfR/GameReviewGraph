@@ -7,13 +7,13 @@ Connections are based on shared related words, normalized by sentence lengths.
 from typing import Any, Iterator
 
 from src.shared.filter_base import AbstractFilter
-from src.shared.graph.ops import (
+from src.shared.graph import (
+    assert_valid,
     build_graph_from_deltas,
     deserialize_graph,
     get_edge_weight,
     serialize_graph,
 )
-from src.shared.graph.validate import assert_valid
 from src.shared.tree import iter_sentences, iter_words
 
 
@@ -31,22 +31,21 @@ def _sentence_pair_deltas(tree: dict[str, Any], word_graph: Any) -> Iterator[tup
     Yields:
         Tuples of (node_key_1, node_key_2, normalized_weight).
     """
-    # 1. Extrair as frases e suas respectivas palavras válidas
+    # Collect each sentence's word node keys.
     sentences: list[dict[str, Any]] = []
     for sentence_node in iter_sentences(tree):
-        idx = sentence_node.get("index", len(sentences))
-        s_id = f"s_{idx}"
+        s_id = f"s_{sentence_node['index']}"
         words = [f"w_{word_node['value']}" for word_node in iter_words(sentence_node)]
         if words:
             sentences.append({"id": s_id, "words": words, "size": len(words)})
 
-    # 2. Comparar todos os pares únicos de frases
+    # Compare every unique pair of sentences.
     for i in range(len(sentences)):
         sa = sentences[i]
         for j in range(i + 1, len(sentences)):
             sb = sentences[j]
 
-            # Somar os pesos das palavras que conectam as duas frases
+            # Sum the weights of the word pairs connecting the two sentences.
             raw_sum = 0.0
             for wi in sa["words"]:
                 for wj in sb["words"]:
@@ -54,7 +53,7 @@ def _sentence_pair_deltas(tree: dict[str, Any], word_graph: Any) -> Iterator[tup
                     if weight is not None:
                         raw_sum += weight
 
-            # 3. Aplicar normalização e gerar a aresta (apenas se > 0)
+            # Normalize and emit the edge only when the pair is actually related.
             if raw_sum > 0.0:
                 normalized_weight = raw_sum / (sa["size"] * sb["size"])
                 yield (sa["id"], sb["id"], normalized_weight)
