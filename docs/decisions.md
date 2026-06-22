@@ -92,11 +92,27 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** arestas hierárquicas representam **contenção estrutural** (uma palavra *pertence a* uma frase, uma frase *pertence a* um comentário), não similaridade semântica. Cortá-las quebraria os vínculos de pertencimento que ligam os três níveis do grafo: uma palavra poderia acabar em uma comunidade completamente separada da frase e do comentário ao qual pertence estruturalmente, tornando o resultado semanticamente ininterpretável. Como as arestas hierárquicas possuem peso em `(0, 1]` — tipicamente pequeno (ex.: `1/5 = 0.2` para uma frase de 5 palavras) — elas aparecem no topo da lista ordenada por peso ascendente e seriam as primeiras a ser cortadas se não fossem explicitamente excluídas. Ao mantê-las intactas na MST, elas funcionam como "esqueleto" de conectividade entre os níveis, garantindo que cada comunidade detectada possa conter nós de todos os três níveis (`w_`, `s_`, `c_`) relacionados tematicamente. A exclusão é implementada como um predicado `_is_relational(u, v)` em `community_detection.py` — retorna `True` quando ambos os nós compartilham o mesmo prefixo de nível — o que mantém a lógica de corte desacoplada da `ProgressiveEdgeCuttingStrategy` e isolada no filtro.
 
+### Comparação de 3 métodos de detecção de comunidades (problema de desbalanceamento)
+
+**Decisão:** o relatório final compara **três** algoritmos de detecção de comunidades sobre o `final_graph`, em vez de assumir o corte progressivo como única abordagem: (1) corte progressivo na MST (atual), (2) detecção restrita ao **subgrafo de comentários** (`c_↔c_`), e (3) **maximização gulosa da modularidade Q** (aglomerativo, estilo Louvain). A qualidade de cada partição é medida por modularidade Q e por balanceamento (nº de comunidades, distribuição de tamanhos, nº de comunidades de tamanho 1).
+
+**Por quê:** o método atual (MST mínima + corte ascendente) produz forte desbalanceamento medido no dataset canônico de 200 comentários: uma única comunidade absorve todas as 344 palavras e 279 frases (blob de ~700 nós), enquanto as demais recebem 0–1 palavra, e surgem comunidades de **1 comentário**. Distribuição observada: `[80, 47, 21, 20, 16, 8, 3, 3, 1, 1]`. A causa é estrutural: as palavras entram na MST quase só por arestas hierárquicas (não-cortáveis — ver decisão anterior), então nunca se separam do blob; o corte das arestas relacionais mais fracas apenas "descasca" fragmentos periféricos de 1–3 comentários. Em vez de trocar cegamente o algoritmo, optou-se por **comparar três abordagens no próprio relatório** e justificar objetivamente a escolhida — coerente com a Análise de Resultados (peso 2.0) e com o padrão Strategy já existente (`CommunityDetectionStrategy`), que permite trocar/justapor algoritmos sem alterar o filtro. O 3º método (maximização gulosa de Q) foi escolhido por otimizar diretamente a métrica de comparação, em vez de label propagation (resultado menos controlável) ou Girvan–Newman (recálculo de betweenness mais caro). O planejamento detalhado está em `planning/us14_final_report.md`.
+
 ### K = 10 comunidades
 
 **Decisão:** `K=10` é uma constante global em `src/config.py`, não hardcoded nos filtros.
 
 **Por quê:** corresponde exatamente ao número de tópicos do dataset (desempenho, narrativa, multiplayer, etc.) — o objetivo é que a detecção de comunidades recupere esses 10 tópicos a partir da estrutura do grafo, sem que o algoritmo "veja" os rótulos de tópico originais. Mantê-lo como constante (em vez de espalhado pelo código) facilita ajustar o experimento sem alterar lógica de filtro.
+
+---
+
+## Saída final (Filtro 9)
+
+### Relatório final em duas partes: `report.json` + página no frontend
+
+**Decisão:** o Filtro 9 (`analysis.py`) gera um **`report.json` estruturado** (além do `report.txt` legível da seção 14 do planejamento), e o frontend ganha uma **última página dedicada** que renderiza esse JSON — incluindo a comparação dos três métodos de detecção. O `report.txt` passa a ser uma **projeção** do mesmo `report.json`.
+
+**Por quê:** a entrega tem dois consumidores distintos: o avaliador acadêmico (texto formatado, seção 14) e a visualização interativa do frontend (que já consome bundles JSON do MinIO via `scripts/build_bundle.py`). Um `report.json` estruturado serve ambos sem duplicar lógica de formatação — o texto vira uma projeção do JSON, não um segundo formato mantido à mão. Renderizar no frontend, na mesma navegação que já mostra comunidades/comentários/frases/palavras, fecha o ciclo: o usuário vê tópicos detectados, termos centrais, Q e a comparação dos métodos lado a lado, em vez de só um arquivo `.txt`. Implica adicionar uma chave `report.json` ao `S3_KEYS` e estender o `build_bundle.py` + o loader do frontend para carregar o relatório. Detalhes e passos em `planning/us14_final_report.md`.
 
 ---
 
@@ -172,3 +188,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 16/06/2026 | 1.3 | `topic` não circula no pipeline: removido de `preprocessed.json`/grafos, reservado à validação por `id` | Equipe |
 | 22/06/2026 | 1.4 | Grafo final (Filtro 6): peso das arestas hierárquicas `Palavra→Frase` e `Frase→Comentário` definido por pertencimento (`1 / nº de filhos do pai`), estritamente positivo | Equipe |
 | 22/06/2026 | 1.5 | Detecção de comunidades (Filtro 7): arestas hierárquicas excluídas do corte progressivo — somente arestas relacionais (`w_↔w_`, `s_↔s_`, `c_↔c_`) são candidatas | Vinícius Rufino |
+| 22/06/2026 | 1.6 | Relatório final (Filtro 9) em duas partes (`report.json` + página no frontend); comparação de 3 métodos de detecção de comunidades motivada pelo desbalanceamento do corte progressivo | Lucas Antunes |

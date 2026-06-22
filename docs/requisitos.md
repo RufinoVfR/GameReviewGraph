@@ -32,7 +32,7 @@ Os requisitos funcionais descrevem as funcionalidades que o sistema deve impleme
 
 **RF09 — Calcular modularidade Q:** O sistema deve calcular a métrica de modularidade Q ao final do processo de corte, avaliando objetivamente a qualidade dos agrupamentos obtidos com base na fórmula `Q = (1/2m) × Σ [Aij − (ki × kj / 2m)] × δ(ci, cj)`.
 
-**RF10 — Gerar relatório de análise:** O sistema deve produzir uma saída estruturada listando cada comunidade detectada com seus termos centrais, comentários associados e o valor de modularidade Q, no formato definido no planejamento do projeto.
+**RF10 — Gerar relatório de análise:** O sistema deve produzir uma saída estruturada (`report.json`) listando cada comunidade detectada com seus termos centrais, comentários associados e o valor de modularidade Q, incluindo a comparação de três métodos de detecção de comunidades. O `report.json` é renderizado na última página do frontend; o `report.txt` legível (formato do planejamento) é uma projeção dele.
 
 ---
 
@@ -67,3 +67,4 @@ Os requisitos não funcionais definem restrições técnicas e de qualidade que 
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
 | 11/06/2026 | 1.0 | Criação inicial do documento | [Vinícius Rufino](https://github.com/RufinoVfR) |
+| 22/06/2026 | 1.1 | RF10 ampliado: `report.json` estruturado + comparação de 3 métodos de detecção + renderização no frontend | [Lucas Antunes](https://github.com/LucasGSAntunes) |

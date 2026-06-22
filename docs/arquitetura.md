@@ -46,7 +46,7 @@ flowchart TD
     FGJ["pipeline/final_graph.json"]
     COM["pipeline/communities.json"]
     MET["pipeline/metrics.json"]
-    REP["pipeline/report.txt"]
+    REP["pipeline/report.json\n(+ report.txt: projeção legível)"]
 
     RAW --> F1 --> PRE --> F2 --> TREE
     TREE --> F3 --> WGJ
@@ -80,7 +80,7 @@ flowchart TD
 | 6 | `final_graph.py` | `word_graph.json` + `sentence_graph.json` + `comment_graph.json` + `tree.json` | `final_graph.json` | Grafo unificado: 3 níveis + arestas hierárquicas da árvore |
 | 7 | `community_detection.py` | `final_graph.json` | `communities.json` | MST (Prim) + corte progressivo de arestas + BFS/DFS → K=10 comunidades |
 | 8 | `metrics.py` | `final_graph.json` + `communities.json` | `metrics.json` | Centralidade de grau ponderada + Modularidade Q |
-| 9 | `analysis.py` | `metrics.json` | `report.txt` | Geração do relatório final com tópicos e métricas |
+| 9 | `analysis.py` | `metrics.json` | `report.json` (+ `report.txt`) | Relatório final estruturado: tópicos, termos centrais, comentários, Q e comparação de 3 métodos de detecção. Renderizado também na última página do frontend. `report.txt` é projeção legível |
 
 ---
 
@@ -98,7 +98,7 @@ Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `
 | `final_graph.py` | `Graph` × 3 + `NaryTree` | `Graph` |
 | `community_detection.py` | `Graph` | `Communities` |
 | `metrics.py` | `Graph` + `Communities` | `Metrics` |
-| `analysis.py` | `Metrics` | `str` (relatório) |
+| `analysis.py` | `Metrics` | `dict` (`report.json`; `report.txt` é projeção) |
 
 **Tipos** (pacote `src/types/`, um módulo por grupo semântico — ver [`grafos.md`](grafos.md) para o detalhe de `Graph`):
 
@@ -131,7 +131,8 @@ s3://game-review-graph/
     ├── final_graph.json        # saída do Filtro 6
     ├── communities.json        # saída do Filtro 7
     ├── metrics.json            # saída do Filtro 8
-    └── report.txt              # saída do Filtro 9 (legível por humanos)
+    ├── report.json             # saída do Filtro 9 (estruturada; consumida pelo frontend)
+    └── report.txt              # projeção legível do report.json
 ```
 
 **Cache Redis:** cada filtro armazena seu resultado serializado com pickle sob a chave `filter:<nome>` (ex.: `filter:word_graph`). `make clean` apaga todas as chaves `filter:*` e os artefatos S3 (exceto `comments.json`).
@@ -165,3 +166,4 @@ s3://game-review-graph/
 | 16/06/2026 | 2.2 | `ProcessedComment` sem `topic` (rótulo-ouro reservado à validação por `id`) | Equipe |
 | 17/06/2026 | 2.3 | Filtro 2 vira pacote `tree/` (modelo do Filtro 1: `filter.py`, `structure.py`, `build.py`, `serialize.py`); leitura de `tree.json` em `src/shared/tree.py` | Lucas Antunes |
 | 17/06/2026 | 2.4 | Filtro 3 vira pacote `word_graph/` (`filter.py`, `cooccurrence.py`); entrada do `process` é o dict do `tree.json` | Lucas Antunes |
+| 22/06/2026 | 2.5 | Filtro 9 gera `report.json` estruturado (+ `report.txt` como projeção) com comparação de 3 métodos de detecção; saída renderizada na última página do frontend | Lucas Antunes |
