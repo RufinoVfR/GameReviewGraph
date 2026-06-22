@@ -8,14 +8,14 @@ Run with ``make run`` (delegates to ``docker compose run --rm app uv run
 python -m src.main``).
 """
 
+from src.comment_graph import CommentGraphFilter
 from src.preprocessing import PreprocessingFilter
+from src.sentence_graph import SentenceGraphFilter
 from src.shared.filter_base import AbstractFilter
 from src.shared.observers import LoggingObserver
 from src.shared.pipeline import FilterChain
 from src.tree import TreeFilter
 from src.word_graph import WordGraphFilter
-from src.sentence_graph import SentenceGraphFilter
-
 
 # Ordered list of pipeline filters. Extend as downstream filters land.
 FILTERS: list[AbstractFilter] = [
@@ -23,6 +23,7 @@ FILTERS: list[AbstractFilter] = [
     TreeFilter(),
     WordGraphFilter(),
     SentenceGraphFilter(),
+    CommentGraphFilter(),
 ]
 
 
