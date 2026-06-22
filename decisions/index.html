@@ -953,6 +953,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#arestas-hierarquicas-excluidas-do-corte-progressivo-apenas-arestas-relacionais-sao-cortaveis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arestas hierárquicas excluídas do corte progressivo (apenas arestas relacionais são cortáveis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#k-10-comunidades" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1406,6 +1417,17 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#arestas-hierarquicas-excluidas-do-corte-progressivo-apenas-arestas-relacionais-sao-cortaveis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Arestas hierárquicas excluídas do corte progressivo (apenas arestas relacionais são cortáveis)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#k-10-comunidades" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1629,6 +1651,9 @@
 <h3 id="mst-corte-progressivo-em-vez-de-corte-progressivo-direto-no-grafo-denso">MST + corte progressivo, em vez de corte progressivo direto no grafo denso<a class="headerlink" href="#mst-corte-progressivo-em-vez-de-corte-progressivo-direto-no-grafo-denso" title="Permanent link">&para;</a></h3>
 <p><strong>Decisão:</strong> <code>community_detection.py</code> primeiro reduz o <code>final_graph</code> a uma MST via Prim, e só então aplica o corte progressivo de arestas (ordenar por peso ascendente, cortar se <code>neighbor_count(u) &gt; 1 e neighbor_count(v) &gt; 1</code>, parar em K componentes) sobre essa árvore — em vez de cortar arestas direto no grafo completo.</p>
 <p><strong>Por quê:</strong> decisão de integrar os dois algoritmos: reduzir primeiro a V−1 arestas torna o corte progressivo mais barato (menos arestas para ordenar e avaliar) e mais previsível, já que a MST já captura as conexões de menor custo total entre os nós antes de qualquer corte. A condição <code>neighbor_count &gt; 1</code> foi mantida mesmo sobre uma árvore (onde cortar qualquer aresta sempre separa em exatamente 2 componentes) para proteger nós-folha (grau 1) de virarem comunidades de tamanho 1 prematuramente — preservando o comportamento já validado do corte progressivo original.</p>
+<h3 id="arestas-hierarquicas-excluidas-do-corte-progressivo-apenas-arestas-relacionais-sao-cortaveis">Arestas hierárquicas excluídas do corte progressivo (apenas arestas relacionais são cortáveis)<a class="headerlink" href="#arestas-hierarquicas-excluidas-do-corte-progressivo-apenas-arestas-relacionais-sao-cortaveis" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> em <code>community_detection.py</code>, somente arestas <strong>relacionais</strong> — que ligam nós do mesmo nível (<code>w_↔w_</code>, <code>s_↔s_</code>, <code>c_↔c_</code>) e representam similaridade semântica — são candidatas ao corte progressivo. Arestas <strong>hierárquicas</strong> (<code>w_→s_</code>, <code>s_→c_</code>) são sempre puladas no loop de corte, mesmo que satisfaçam a condição de grau &gt; 1 e tenham peso menor que qualquer aresta relacional da MST.</p>
+<p><strong>Por quê:</strong> arestas hierárquicas representam <strong>contenção estrutural</strong> (uma palavra <em>pertence a</em> uma frase, uma frase <em>pertence a</em> um comentário), não similaridade semântica. Cortá-las quebraria os vínculos de pertencimento que ligam os três níveis do grafo: uma palavra poderia acabar em uma comunidade completamente separada da frase e do comentário ao qual pertence estruturalmente, tornando o resultado semanticamente ininterpretável. Como as arestas hierárquicas possuem peso em <code>(0, 1]</code> — tipicamente pequeno (ex.: <code>1/5 = 0.2</code> para uma frase de 5 palavras) — elas aparecem no topo da lista ordenada por peso ascendente e seriam as primeiras a ser cortadas se não fossem explicitamente excluídas. Ao mantê-las intactas na MST, elas funcionam como "esqueleto" de conectividade entre os níveis, garantindo que cada comunidade detectada possa conter nós de todos os três níveis (<code>w_</code>, <code>s_</code>, <code>c_</code>) relacionados tematicamente. A exclusão é implementada como um predicado <code>_is_relational(u, v)</code> em <code>community_detection.py</code> — retorna <code>True</code> quando ambos os nós compartilham o mesmo prefixo de nível — o que mantém a lógica de corte desacoplada da <code>ProgressiveEdgeCuttingStrategy</code> e isolada no filtro.</p>
 <h3 id="k-10-comunidades">K = 10 comunidades<a class="headerlink" href="#k-10-comunidades" title="Permanent link">&para;</a></h3>
 <p><strong>Decisão:</strong> <code>K=10</code> é uma constante global em <code>src/config.py</code>, não hardcoded nos filtros.</p>
 <p><strong>Por quê:</strong> corresponde exatamente ao número de tópicos do dataset (desempenho, narrativa, multiplayer, etc.) — o objetivo é que a detecção de comunidades recupere esses 10 tópicos a partir da estrutura do grafo, sem que o algoritmo "veja" os rótulos de tópico originais. Mantê-lo como constante (em vez de espalhado pelo código) facilita ajustar o experimento sem alterar lógica de filtro.</p>
@@ -1704,6 +1729,12 @@
 <td>1.4</td>
 <td>Grafo final (Filtro 6): peso das arestas hierárquicas <code>Palavra→Frase</code> e <code>Frase→Comentário</code> definido por pertencimento (<code>1 / nº de filhos do pai</code>), estritamente positivo</td>
 <td>Equipe</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.5</td>
+<td>Detecção de comunidades (Filtro 7): arestas hierárquicas excluídas do corte progressivo — somente arestas relacionais (<code>w_↔w_</code>, <code>s_↔s_</code>, <code>c_↔c_</code>) são candidatas</td>
+<td>Vinícius Rufino</td>
 </tr>
 </tbody>
 </table>
