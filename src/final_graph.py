@@ -85,7 +85,10 @@ def _merge_graphs(*graphs: Graph) -> Graph:
 
     Relational edges only connect same-level nodes (``w↔w``, ``s↔s``, ``c↔c``)
     and the levels use disjoint key prefixes, so no edge of one graph collides
-    with an edge of another and ``add_edge`` never overwrites across inputs.
+    with an edge of another. The merged node set is collected first and the
+    adjacency matrix is allocated once at its final size, then each source's
+    edges are copied by mapped index — far cheaper than re-inserting the dense
+    word graph one ``add_edge`` (name→index resolution + grow) at a time.
 
     Args:
         graphs: Graphs to merge, in any order.
@@ -95,8 +98,20 @@ def _merge_graphs(*graphs: Graph) -> Graph:
     """
     merged = new_graph()
     for graph in graphs:
+        for name in graph.nodes:
+            if name not in merged.index:
+                merged.index[name] = len(merged.nodes)
+                merged.nodes.append(name)
+
+    size = len(merged.nodes)
+    matrix = [[0.0] * size for _ in range(size)]
+    merged.matrix = matrix
+
+    for graph in graphs:
         for node_a, node_b, weight in iter_edges(graph):
-            add_edge(merged, node_a, node_b, weight)
+            i, j = merged.index[node_a], merged.index[node_b]
+            matrix[i][j] = weight
+            matrix[j][i] = weight
     return merged
 
 
