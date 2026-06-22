@@ -1,6 +1,6 @@
 .PHONY: help setup install \
         build docker-up docker-down docker-restart docker-logs docker-status \
-        frontend-build frontend frontend-logs frontend-bundle \
+        frontend-build frontend frontend-logs frontend-bundle frontend-test \
         gen-data init-data run clean \
         preprocessing tree word-graph sentence-graph \
         comment-graph final-graph community-detection \
@@ -53,6 +53,7 @@ help:
 	@echo "  frontend             Start the frontend service"
 	@echo "  frontend-logs        Follow logs from the frontend service"
 	@echo "  frontend-bundle      Generate frontend bundles from pipeline artifacts"
+	@echo "  frontend-test        Run the frontend test suite (vitest) in the container"
 	@echo ""
 	@echo "Pipeline"
 	@echo "  gen-data             Generate a dataset locally (DATASET=, COUNT=, SEED=; default canonical/200)"
@@ -131,6 +132,9 @@ frontend-logs:
 
 frontend-bundle:
 	S3_ENDPOINT_URL=$${S3_ENDPOINT_URL:-http://localhost:9000} uv run python -m scripts.build_bundle $(ARGS)
+
+frontend-test:
+	docker compose exec -T frontend npm test
 
 docker-logs:
 	docker compose logs -f

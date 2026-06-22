@@ -11,7 +11,7 @@ async function fetchJson<T>(path: string): Promise<T> {
   return (await response.json()) as T;
 }
 
-function isUsableBundle(bundle: Omit<BundleData, "source">): boolean {
+export function isUsableBundle(bundle: Omit<BundleData, "source">): boolean {
   return (
     bundle.communities.length > 0 &&
     bundle.comments.length > 0 &&

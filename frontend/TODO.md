@@ -35,6 +35,6 @@
 
 ## Quality
 
-- [ ] Add tests for loader, schema validation, and navigation state.
-- [ ] Add a smoke test for the mock-only startup path.
+- [x] Add tests for loader, schema validation, and navigation state.
+- [x] Add a smoke test for the mock-only startup path.
 - [x] Validate the visual shell against the prototype.
