@@ -18,6 +18,7 @@ Inherits the Template Method ``AbstractFilter``: all S3/Redis I/O is handled by
 its normalization are domain logic and live here, not in ``src/shared``.
 """
 
+import argparse
 from collections.abc import Iterator
 
 from src.shared.filter_base import AbstractFilter
@@ -162,3 +163,19 @@ def _normalize(raw: Graph, sizes: dict[str, int]) -> Graph:
         if normalized > 0.0:
             add_edge(graph, comment_a, comment_b, normalized)
     return graph
+
+
+def main() -> None:
+    """Parse CLI flags and run the comment graph filter."""
+    parser = argparse.ArgumentParser(prog="python -m src.comment_graph")
+    parser.add_argument(
+        "--no-cache",
+        action="store_true",
+        help="Force reprocessing, ignoring any cached result in Redis.",
+    )
+    args = parser.parse_args()
+    CommentGraphFilter().execute(use_cache=not args.no_cache)
+
+
+if __name__ == "__main__":
+    main()
