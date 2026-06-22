@@ -9,6 +9,7 @@ python -m src.main``).
 """
 
 from src.comment_graph import CommentGraphFilter
+from src.community_detection import CommunityDetectionFilter
 from src.final_graph import FinalGraphFilter
 from src.preprocessing import PreprocessingFilter
 from src.sentence_graph import SentenceGraphFilter
@@ -26,6 +27,7 @@ FILTERS: list[AbstractFilter] = [
     SentenceGraphFilter(),
     CommentGraphFilter(),
     FinalGraphFilter(),
+    CommunityDetectionFilter(),
 ]
 
 

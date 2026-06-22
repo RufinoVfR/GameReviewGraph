@@ -86,6 +86,12 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** decisão de integrar os dois algoritmos: reduzir primeiro a V−1 arestas torna o corte progressivo mais barato (menos arestas para ordenar e avaliar) e mais previsível, já que a MST já captura as conexões de menor custo total entre os nós antes de qualquer corte. A condição `neighbor_count > 1` foi mantida mesmo sobre uma árvore (onde cortar qualquer aresta sempre separa em exatamente 2 componentes) para proteger nós-folha (grau 1) de virarem comunidades de tamanho 1 prematuramente — preservando o comportamento já validado do corte progressivo original.
 
+### Arestas hierárquicas excluídas do corte progressivo (apenas arestas relacionais são cortáveis)
+
+**Decisão:** em `community_detection.py`, somente arestas **relacionais** — que ligam nós do mesmo nível (`w_↔w_`, `s_↔s_`, `c_↔c_`) e representam similaridade semântica — são candidatas ao corte progressivo. Arestas **hierárquicas** (`w_→s_`, `s_→c_`) são sempre puladas no loop de corte, mesmo que satisfaçam a condição de grau > 1 e tenham peso menor que qualquer aresta relacional da MST.
+
+**Por quê:** arestas hierárquicas representam **contenção estrutural** (uma palavra *pertence a* uma frase, uma frase *pertence a* um comentário), não similaridade semântica. Cortá-las quebraria os vínculos de pertencimento que ligam os três níveis do grafo: uma palavra poderia acabar em uma comunidade completamente separada da frase e do comentário ao qual pertence estruturalmente, tornando o resultado semanticamente ininterpretável. Como as arestas hierárquicas possuem peso em `(0, 1]` — tipicamente pequeno (ex.: `1/5 = 0.2` para uma frase de 5 palavras) — elas aparecem no topo da lista ordenada por peso ascendente e seriam as primeiras a ser cortadas se não fossem explicitamente excluídas. Ao mantê-las intactas na MST, elas funcionam como "esqueleto" de conectividade entre os níveis, garantindo que cada comunidade detectada possa conter nós de todos os três níveis (`w_`, `s_`, `c_`) relacionados tematicamente. A exclusão é implementada como um predicado `_is_relational(u, v)` em `community_detection.py` — retorna `True` quando ambos os nós compartilham o mesmo prefixo de nível — o que mantém a lógica de corte desacoplada da `ProgressiveEdgeCuttingStrategy` e isolada no filtro.
+
 ### K = 10 comunidades
 
 **Decisão:** `K=10` é uma constante global em `src/config.py`, não hardcoded nos filtros.
@@ -165,3 +171,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 16/06/2026 | 1.2 | Decisões do pré-processamento (Filtro 1): normalização A1', segmentação por regex, dados NLTK no Docker, pacote `preprocessing/`, descarte de ruído | Equipe |
 | 16/06/2026 | 1.3 | `topic` não circula no pipeline: removido de `preprocessed.json`/grafos, reservado à validação por `id` | Equipe |
 | 22/06/2026 | 1.4 | Grafo final (Filtro 6): peso das arestas hierárquicas `Palavra→Frase` e `Frase→Comentário` definido por pertencimento (`1 / nº de filhos do pai`), estritamente positivo | Equipe |
+| 22/06/2026 | 1.5 | Detecção de comunidades (Filtro 7): arestas hierárquicas excluídas do corte progressivo — somente arestas relacionais (`w_↔w_`, `s_↔s_`, `c_↔c_`) são candidatas | Vinícius Rufino |
