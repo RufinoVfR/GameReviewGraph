@@ -109,20 +109,26 @@ class TestCutEdges:
         assert g.matrix[g.index["w_y"]][g.index["s_2"]] > 0.0
 
     def test_leaf_nodes_protected_by_degree_guard(self):
-        """Nodes with degree 1 must never be isolated by the cut."""
+        """Leaf nodes (degree 1) must never be isolated by the cut.
+
+        Chain: w_x - w_a - w_b - w_y
+        w_x and w_y are leaves (degree 1); only w_a–w_b can be cut.
+        Result: 2 components {w_x, w_a} and {w_b, w_y} — leaves stay attached.
+        """
         g = _empty_graph()
-        for n in ("w_a", "w_b", "w_c"):
+        for n in ("w_x", "w_a", "w_b", "w_y"):
             g.nodes.append(n)
             g.index[n] = len(g.nodes) - 1
             for row in g.matrix:
                 row.append(0.0)
             g.matrix.append([0.0] * len(g.nodes))
 
-        add_edge(g, "w_a", "w_b", 0.1)  # w_a is a leaf (degree 1)
-        add_edge(g, "w_b", "w_c", 0.2)
+        add_edge(g, "w_x", "w_a", 0.1)  # w_x is a leaf — edge protected
+        add_edge(g, "w_a", "w_b", 0.2)  # both have degree 2 — cuttable
+        add_edge(g, "w_b", "w_y", 0.3)  # w_y is a leaf — edge protected
 
         communities = _cut_edges(g, k=3)
-        # Only w_b–w_c can be cut (w_a has degree 1); max split is 2.
+        # Only w_a–w_b can be cut; leaves w_x and w_y stay in their components.
         assert len(communities) == 2
 
 
