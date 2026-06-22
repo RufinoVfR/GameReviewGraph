@@ -19,7 +19,7 @@ Os 7 clusters semânticos visíveis (Áudio/Efeitos, Otimização/Final, Partida
 
 <div style="width:100%; height:680px; border:1px solid #2a2d3a; border-radius:6px; overflow:hidden; margin-top: 1rem;">
   <iframe
-    src="word_graph_vis.html"
+    src="../word_graph_vis.html"
     style="width:100%; height:100%; border:none;"
     title="Grafo de Co-ocorrência de Palavras — GameReviewGraph"
   ></iframe>
@@ -32,3 +32,4 @@ Os 7 clusters semânticos visíveis (Áudio/Efeitos, Otimização/Final, Partida
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
 | 22/06/2026 | 1.0 | Criação da página com visualização interativa D3.js do grafo de co-ocorrência (57 nós, 7 clusters semânticos, busca e inspeção de nó) | [Vinícius Rufino](https://github.com/RufinoVfR) |
+| 22/06/2026 | 1.1 | Correção do caminho do iframe (`../word_graph_vis.html`) para resolver corretamente após build do MkDocs | [Vinícius Rufino](https://github.com/RufinoVfR) |

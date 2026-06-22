@@ -6,82 +6,7 @@ O **GameReviewGraph** é estruturado como um pipeline de **Pipe and Filter**: ca
 
 ## Pipeline Completo
 
-### Diagrama Simplificado (ASCII)
-
-```
-data/comments.json  (Entrada bruta)
-        │
-        ▼
-┌────────────────────┐
-│ Filtro 1            │
-│ preprocessing/       │
-└────────────────────┘
-        │
-        ▼
-preprocessed.json  (Artefato intermediário)
-        │
-        ▼
-┌────────────────────┐
-│ Filtro 2            │
-│ tree/                │
-└────────────────────┘
-        │
-        ▼
-tree.json ★  (Hub — alimenta os Filtros 3, 4, 5 e 6)
-        │
-        ├──────────────┬──────────────┐
-        ▼              ▼              ▼
-┌──────────────┐ ┌──────────────┐ ┌──────────────┐
-│ Filtro 3      │ │ Filtro 4      │ │ Filtro 5      │
-│ word_graph/   │ │sentence_graph│ │comment_graph │
-└──────────────┘ └──────────────┘ └──────────────┘
-        │              │              │
-        ▼              ▼              ▼
-word_graph.json  sentence_graph.json  comment_graph.json
-        │              │              │
-        └──────────────┴──────────────┘
-                        ▼
-              ┌────────────────────┐
-              │ Filtro 6            │
-              │ final_graph.py       │
-              └────────────────────┘
-                        │
-                        ▼
-              final_graph.json ★  (Hub — alimenta os Filtros 7 e 8)
-                        │
-                        ▼
-              ┌────────────────────┐
-              │ Filtro 7            │
-              │ community_detection │
-              └────────────────────┘
-                        │
-                        ▼
-              communities.json
-                        │
-                        ▼
-              ┌────────────────────┐
-              │ Filtro 8            │
-              │ metrics.py           │
-              └────────────────────┘
-                        │
-                        ▼
-              metrics.json
-                        │
-                        ▼
-              ┌────────────────────┐
-              │ Filtro 9            │
-              │ analysis.py          │
-              └────────────────────┘
-                        │
-                        ▼
-              report.txt ★  (Saída final legível)
-```
-
-**Legenda:** ★ = artefato hub (alimenta múltiplos filtros ou é a saída final).
-
----
-
-### Diagrama Detalhado (Mermaid)
+### Diagrama (Mermaid)
 
 ```mermaid
 flowchart TD
@@ -242,4 +167,4 @@ s3://game-review-graph/
 | 16/06/2026 | 2.2 | `ProcessedComment` sem `topic` (rótulo-ouro reservado à validação por `id`) | Equipe |
 | 17/06/2026 | 2.3 | Filtro 2 vira pacote `tree/` (modelo do Filtro 1: `filter.py`, `structure.py`, `build.py`, `serialize.py`); leitura de `tree.json` em `src/shared/tree.py` | Lucas Antunes |
 | 17/06/2026 | 2.4 | Filtro 3 vira pacote `word_graph/` (`filter.py`, `cooccurrence.py`); entrada do `process` é o dict do `tree.json` | Lucas Antunes |
-| 22/06/2026 | 2.5 | Adição do diagrama ASCII do pipeline completo (Filtros 1–9 com artefatos intermediários) | [Vinícius Rufino](https://github.com/RufinoVfR) |
+| 22/06/2026 | 2.5 | Remoção do diagrama ASCII redundante; diagrama Mermaid existente já cobre o pipeline completo | [Vinícius Rufino](https://github.com/RufinoVfR) |
