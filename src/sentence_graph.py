@@ -34,7 +34,8 @@ def _sentence_pair_deltas(tree: dict[str, Any], word_graph: Any) -> Iterator[tup
     # 1. Extrair as frases e suas respectivas palavras válidas
     sentences: list[dict[str, Any]] = []
     for sentence_node in iter_sentences(tree):
-        s_id = f"s_{sentence_node['index']}"
+        idx = sentence_node.get("index", len(sentences))
+        s_id = f"s_{idx}"
         words = [f"w_{word_node['value']}" for word_node in iter_words(sentence_node)]
         if words:
             sentences.append({"id": s_id, "words": words, "size": len(words)})
