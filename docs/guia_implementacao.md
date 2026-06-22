@@ -324,8 +324,8 @@ Para **cada** filtro, o passo a passo é o mesmo:
 - O formato de `tree.json` **já está fechado** no bloco "Contrato de artefatos" (C.1): nó uniforme `{"type", "children"}`, folhas `word` com `value` + `position`, `sentence.index` global, `comment.id`. Implemente exatamente esse formato — a Trilha 2 consome `position`/`index`/`id` dele.
 - Testes: usar `processed_comments`; verificar hierarquia, contagem de nós por nível e que cada palavra carrega `position`.
 
-### Filtro 3 — `word_graph.py`
-- **In:** `tree` → **Out:** `word_graph`.
+### Filtro 3 — `word_graph/` (pacote)
+- **In:** `tree` → **Out:** `word_graph`. É um **pacote**: `filter.py` (orquestra `process()`) e `cooccurrence.py` (`word_pair_deltas`: pares dentro da frase + peso posicional, lógica de domínio). O pareamento é feito à mão (laço `j > i`), não com `itertools.combinations`. Ver `src/word_graph/CLAUDE.md`.
 - Fórmula posicional, acumulada por co-ocorrência:
   ```python
   from src.shared.graph import build_graph_from_deltas, serialize_graph, assert_valid
@@ -473,3 +473,4 @@ make clean          # limpa cache Redis + artefatos S3 (force reprocessamento)
 | 2026-06-16 | 1.3 | `topic` removido de `preprocessed.json` e `tree.json` (rótulo-ouro fica só no raw, reconciliado por `id` na validação) | Equipe |
 | 2026-06-17 | 1.4 | Filtro 2 reescrito como pacote `tree/` (`filter.py`, `structure.py`, `build.py`, `serialize.py`), modelo do Filtro 1 | Lucas Antunes |
 | 2026-06-17 | 1.5 | Leitura de `tree.json` centralizada em `src/shared/tree.py` (`iter_comments`/`iter_sentences`/`iter_words`/`hierarchical_edges`); filtros 3–6 importam de lá em vez de reimplementar; `from_dict` vira test-only | Lucas Antunes |
+| 2026-06-17 | 1.6 | Filtro 3 vira pacote `word_graph/` (`filter.py`, `cooccurrence.py`); pareamento à mão (`j > i`), sem `itertools.combinations` | Lucas Antunes |

@@ -31,7 +31,7 @@ Mantenha abertos como referência: `src/shared/graph/CLAUDE.md` (ferramentas de 
 |-------|--------|-----------|
 | 1 | `preprocessing/` | Tokenização, stopwords, normalização |
 | 2 | `tree/` | Árvore N-ária: Dataset → Comentário → Frase → Palavra |
-| 3 | `word_graph.py` | Grafo de co-ocorrência posicional de palavras |
+| 3 | `word_graph/` | Grafo de co-ocorrência posicional de palavras |
 | 4 | `sentence_graph.py` | Grafo de frases derivado do grafo de palavras |
 | 5 | `comment_graph.py` | Grafo de comentários derivado do grafo de frases |
 | 6 | `final_graph.py` | Grafo unificado com os 3 níveis + arestas hierárquicas |

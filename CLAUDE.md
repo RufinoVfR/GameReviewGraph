@@ -9,6 +9,7 @@
 > ├── src/CLAUDE.md            — filter contracts, S3/Redis I/O, implementation rules
 > ├── src/preprocessing/CLAUDE.md — Filtro 1 package: NLP, normalization A1', I/O contract
 > ├── src/tree/CLAUDE.md         — Filtro 2 package: N-ary tree, tree.json contract, navigation
+> ├── src/word_graph/CLAUDE.md   — Filtro 3 package: positional co-occurrence weight, deltas
 > └── src/shared/CLAUDE.md     — GoF infrastructure: AbstractFilter, FilterChain, Observer, Strategy, storage, cache
 > ```
 >
@@ -28,7 +29,7 @@ Academic project for FGA0030 (Data Structures 2, UnB 2026/1). Transforms a corpu
 comments (text) [MinIO: pipeline/comments.json]
     → preprocessing/         # package: tokenization, stopwords, normalization (decision A1')
     → tree/                  # package: N-ary Tree: Dataset → Comment → Sentence → Word
-    → word_graph.py          # word co-occurrence graph (positional weight)
+    → word_graph/            # package: word co-occurrence graph (positional weight)
     → sentence_graph.py      # sentence graph (derived from word graph)
     → comment_graph.py       # comment graph (derived from sentence graph)
     → final_graph.py         # unified graph: all 3 levels + hierarchical edges
