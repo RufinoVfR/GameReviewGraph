@@ -98,6 +98,24 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** o método atual (MST mínima + corte ascendente) produz forte desbalanceamento medido no dataset canônico de 200 comentários: uma única comunidade absorve todas as 344 palavras e 279 frases (blob de ~700 nós), enquanto as demais recebem 0–1 palavra, e surgem comunidades de **1 comentário**. Distribuição observada: `[80, 47, 21, 20, 16, 8, 3, 3, 1, 1]`. A causa é estrutural: as palavras entram na MST quase só por arestas hierárquicas (não-cortáveis — ver decisão anterior), então nunca se separam do blob; o corte das arestas relacionais mais fracas apenas "descasca" fragmentos periféricos de 1–3 comentários. Em vez de trocar cegamente o algoritmo, optou-se por **comparar três abordagens no próprio relatório** e justificar objetivamente a escolhida — coerente com a Análise de Resultados (peso 2.0) e com o padrão Strategy já existente (`CommunityDetectionStrategy`), que permite trocar/justapor algoritmos sem alterar o filtro. O 3º método (maximização gulosa de Q) foi escolhido por otimizar diretamente a métrica de comparação, em vez de label propagation (resultado menos controlável) ou Girvan–Newman (recálculo de betweenness mais caro). O planejamento detalhado está em `planning/us14_final_report.md`.
 
+### Causa raiz do desbalanceamento: min-MST + escala minúscula do peso hierárquico
+
+**Decisão:** registrar que o blob do método 1 tem **duas** causas, não uma. Além da exclusão das arestas hierárquicas do corte (decisão anterior), a combinação **MST de mínimo + escala do peso hierárquico** é determinante: o `final_graph` é um grafo de similaridade (peso alto = relação forte), mas `community_detection.py` constrói uma árvore geradora de **mínimo** (`minimum_spanning_tree`, Prim com `weight < min_weight[v]`), que seleciona sempre as arestas **mais fracas**. As arestas hierárquicas pesam `1/|filhos|` (ex.: `1/10`), a menor escala de peso do grafo.
+
+**Por quê:** encadeando as duas, o min-MST **prefere** as arestas hierárquicas (são as mais baratas), de modo que toda palavra entra na árvore por sua aresta de contenção — quase nunca por uma `w_↔w_` — e, sendo não-cortável, fica colada ao blob. Ou seja, é a **escala** do peso hierárquico, não apenas sua não-cortabilidade, que impõe a comunidade do nó. Esse diagnóstico é o que abre as duas correções registradas na decisão seguinte (recalibrar a escala; ou usar MST de máximo). Detalhe em `planning/questao_arestas_hierarquicas.md`.
+
+### Comparação de 5 métodos de detecção: baseline preservado + correções como alternativas
+
+**Decisão:** **revisa e amplia** a decisão "Comparação de 3 métodos" acima. Em vez de substituir o método 1, ele é **preservado intocado como baseline** (sua falha é a evidência empírica de que a contenção estrutural não pode *impor* pertinência), e as correções entram como **métodos adicionais** no comparativo do relatório final. O lineup passa a ter **cinco** métodos, cada um uma `CommunityDetectionStrategy` plugável:
+
+1. **Corte progressivo na min-MST, hierárquicas não-cortáveis** (atual, intocado) — o problema (blob, `size=1`).
+2. **Min-MST com peso hierárquico recalibrado** (escala alta) — o peso passa a *influenciar* em vez de impor: num min-MST, a palavra entra pela aresta `w_↔w_` mais forte, não pela contenção. Mantém as hierárquicas não-cortáveis.
+3. **Max-MST + pesos normalizados por tipo + arestas cortáveis** — backbone formado pelas similaridades mais fortes; o corte progressivo remove as arestas fracas. Correção principista.
+4. **Detecção no subgrafo de comentários** (`c_↔c_`) — particiona só comentários, ignorando o blob de palavras.
+5. **Maximização gulosa da modularidade Q** — aglomerativo estilo Louvain.
+
+**Por quê:** a posição levantada na revisão do método 1 é que as arestas hierárquicas deveriam *influenciar*, não *impor*, a pertinência (ver decisão de causa raiz acima). Em vez de escolher silenciosamente uma correção, o time optou por **transformar o achado em narrativa**: o relatório mostra a causa (método 1), o fix mínimo (método 2, dentro do envelope min-MST), o fix principista (método 3, max-MST), e dois métodos ortogonais (4 e 5), todos medidos por modularidade Q e balanceamento. Isso aproveita o resultado "ruim" do método 1 como parte avaliável da Análise de Resultados (peso 2.0), em vez de descartá-lo. A decisão "Arestas hierárquicas excluídas do corte progressivo" **não é revertida** — passa a descrever especificamente o método 1; os métodos 2–3 redefinem a escala/direção do peso apenas dentro de suas próprias estratégias, sobre a cópia do grafo que recebem, sem reescrever o Filtro 6. A calibração concreta (`λ`, normalização por tipo) fica para a implementação. Planejamento em `planning/us14_final_report.md` e `planning/questao_arestas_hierarquicas.md`.
+
 ### K = 10 comunidades
 
 **Decisão:** `K=10` é uma constante global em `src/config.py`, não hardcoded nos filtros.
@@ -189,3 +207,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 22/06/2026 | 1.4 | Grafo final (Filtro 6): peso das arestas hierárquicas `Palavra→Frase` e `Frase→Comentário` definido por pertencimento (`1 / nº de filhos do pai`), estritamente positivo | Equipe |
 | 22/06/2026 | 1.5 | Detecção de comunidades (Filtro 7): arestas hierárquicas excluídas do corte progressivo — somente arestas relacionais (`w_↔w_`, `s_↔s_`, `c_↔c_`) são candidatas | Vinícius Rufino |
 | 22/06/2026 | 1.6 | Relatório final (Filtro 9) em duas partes (`report.json` + página no frontend); comparação de 3 métodos de detecção de comunidades motivada pelo desbalanceamento do corte progressivo | Lucas Antunes |
+| 22/06/2026 | 1.7 | Causa raiz do blob diagnosticada (min-MST + escala minúscula do peso hierárquico); comparativo ampliado de 3 → 5 métodos, com o método 1 preservado como baseline e duas correções (peso recalibrado, max-MST) adicionadas como alternativas | Lucas Antunes |

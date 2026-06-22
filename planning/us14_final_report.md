@@ -12,9 +12,9 @@ O relatório final tem **duas partes**:
 
 1. **Backend — `report.json`**: `analysis.py` (Filtro 9) gera um relatório **estruturado em JSON**
    (não apenas o `report.txt` textual da seção 14). Conteúdo por comunidade: tópico, termos
-   centrais, comentários associados e modularidade Q — **para cada um dos 3 métodos** de detecção.
+   centrais, comentários associados e modularidade Q — **para cada um dos 5 métodos** de detecção.
 2. **Frontend — última página**: uma **nova página final** consome o `report.json` e o renderiza
-   (comparação lado a lado dos 3 métodos, métricas e comunidades).
+   (comparação lado a lado dos 5 métodos, métricas e comunidades).
 
 O `report.txt` legível (formato seção 14) pode continuar como saída secundária para a entrega
 acadêmica, derivado do mesmo `report.json`.
@@ -28,25 +28,31 @@ Modularidade Q: 0.74
 
 ---
 
-## Comparação de 3 métodos de detecção de comunidades
+## Comparação de 5 métodos de detecção de comunidades
 
 **Motivação:** o método atual (MST mínima + corte progressivo ascendente) produz forte
 desbalanceamento — uma comunidade absorve todas as palavras (blob de 703 nós) e surgem
 comunidades de 1 comentário. Distribuição medida (200 comentários): `[80,47,21,20,16,8,3,3,1,1]`.
-O relatório final vai **comparar 3 abordagens** e justificar a escolhida via Q e balanceamento.
+A causa raiz é estrutural (min-MST + escala minúscula do peso hierárquico — ver
+`planning/questao_arestas_hierarquicas.md`). Em vez de esconder esse resultado, o relatório o
+**preserva como baseline** e compara correções, contando uma narrativa **causa → correção**,
+justificando objetivamente cada uma via Q e balanceamento.
 
-**Candidatos (a confirmar com o grupo — restrição: tudo do zero, sem libs de grafo):**
+**Lineup definido (5 métodos — cada um uma `CommunityDetectionStrategy`; restrição: tudo do zero, sem libs de grafo):**
 
-| # | Método | Ideia | Notas |
+| # | Método | Ideia | Papel |
 |---|--------|-------|-------|
-| 1 | Corte progressivo na MST (atual) | Baseline do enunciado | Tem o problema do blob/`size=1` |
-| 2 | Detecção no subgrafo de comentários (`c↔c`) | Particiona só comentários, ignora o blob de palavras | Resolve o blob; muda o escopo do Filtro 7 |
-| 3 | *A definir* | ex.: maximização gulosa de modularidade, label propagation, ou Girvan–Newman (remoção por betweenness) | Implementação from-scratch — escolher o de melhor custo/benefício |
+| 1 | Corte progressivo na min-MST, hierárquicas não-cortáveis *(atual, intocado)* | Baseline do enunciado | **O problema** — blob/`size=1` |
+| 2 | Min-MST, **peso hierárquico recalibrado** (escala alta) | Inverte a escala p/ a palavra entrar pela `w_↔w_`, não pela contenção | Fix mínimo: peso *influencia*, não impõe |
+| 3 | **Max-MST** + pesos normalizados por tipo + arestas cortáveis | Backbone = similaridades fortes; corta as fracas | Fix principista |
+| 4 | Detecção no subgrafo de comentários (`c_↔c_`) | Particiona só comentários, ignora o blob de palavras | Contorna o blob de vez |
+| 5 | Maximização gulosa da modularidade Q | Aglomerativo estilo Louvain, otimiza a própria métrica | Baseline da literatura |
 
 **Métricas de comparação (por método):** nº de comunidades, distribuição de tamanhos
 (min/max), nº de singletons, e **modularidade Q** (US13) como critério objetivo de qualidade.
 
-> ⚠️ Decisão em aberto: **quais 3 métodos**. Definir antes de implementar (ver "Decisões pendentes").
+> ✅ Decisão tomada (22/06/2026): lineup de **5 métodos** acima. Detalhe e justificativa em
+> `planning/questao_arestas_hierarquicas.md` e `docs/decisions.md`.
 
 ---
 
@@ -58,7 +64,7 @@ O relatório final vai **comparar 3 abordagens** e justificar a escolhida via Q 
 | Tópico dominante da comunidade | `comments.json` (gold) + `communities.json` | ✅ derivável |
 | Termos centrais | centralidade ponderada — **US12** (#9) | ⛔ em desenvolvimento (outra pessoa) |
 | Modularidade Q (por método) | **US13** (#10), depende da US12 | ⛔ bloqueada por US12 |
-| 3 partições para comparar | 3 métodos de detecção | ⚠️ 2 já viáveis; 3º a definir |
+| 5 partições para comparar | 5 métodos de detecção | ⚠️ métodos 1 e 4 viáveis; 2, 3, 5 a implementar |
 
 **Decisão tomada:** não definir o schema do `metrics.json` por conta própria — aguardar a US12
 fixar o formato. `analysis.py` consome esse contrato.
@@ -81,9 +87,9 @@ fixar o formato. `analysis.py` consome esse contrato.
 
 ### Parte 1 — Backend (`analysis.py`, Filtro 9)
 1. Ler o contrato do `metrics.json` (US12/US13) e anotar os campos.
-2. Decidir onde rodam os 3 métodos: provavelmente o Filtro 7 (community_detection) passa a
-   emitir as **3 partições** (ou um filtro de comparação dedicado), e o Filtro 8 (metrics)
-   calcula Q de cada uma.
+2. Decidir onde rodam os 5 métodos: provavelmente o Filtro 7 (community_detection) passa a
+   emitir as **5 partições** (uma por `CommunityDetectionStrategy`, ou um filtro de comparação
+   dedicado), e o Filtro 8 (metrics) calcula Q de cada uma.
 3. `AnalysisFilter(AbstractFilter)`: `input_key="communities"`,
    `extra_input_keys=["metrics","raw"]`, gera **`report.json`** (estruturado) e, opcionalmente,
    `report.txt`. Adicionar a chave `report_json` em `S3_KEYS`.
@@ -97,7 +103,7 @@ fixar o formato. `analysis.py` consome esse contrato.
 8. Incluir `report.json` no bundle: `scripts/build_bundle.py` lê o artefato do MinIO e grava
    `bundle/report.json`; estender `loader.ts` + `schemas.ts` (`ReportData`).
 9. Nova página/rota em `app.tsx` (ou componente dedicado) renderizando a comparação dos
-   3 métodos: tabela de métricas (Q, nº comunidades, balanceamento) + visual das comunidades.
+   5 métodos: tabela de métricas (Q, nº comunidades, balanceamento) + visual das comunidades.
 10. Fallback mock quando `report.json` ausente (consistente com o padrão atual do loader).
 11. Testes (vitest) do parsing/render do relatório.
 
@@ -105,9 +111,9 @@ fixar o formato. `analysis.py` consome esse contrato.
 
 ## Decisões pendentes
 
-1. **Quais 3 métodos** de detecção comparar (o 3º precisa ser escolhido).
+1. ~~**Quais métodos** de detecção comparar~~ — **resolvido (22/06/2026)**: 5 métodos (ver acima).
 2. **Formato do `report.json`** — definir após o contrato do `metrics.json` da US12.
-3. **Onde calcular as 3 partições** — estender o Filtro 7 vs. filtro de comparação novo.
+3. **Onde calcular as 5 partições** — estender o Filtro 7 vs. filtro de comparação novo.
 4. **Página do frontend** — rota dedicada vs. nível extra na navegação atual; layout da comparação.
 
 ---
@@ -117,7 +123,7 @@ fixar o formato. `analysis.py` consome esse contrato.
 - [ ] US12 (#9) mergeada e `metrics.json` produzido
 - [ ] Schema do `Metrics` definido em `src/types/metrics.py`
 - [ ] US13 (#10) mergeada (Q disponível)
-- [ ] 3º método de detecção escolhido
+- [x] Métodos de detecção escolhidos (5 — ver "Comparação de 5 métodos")
 - [ ] Backend: passos 1–7
 - [ ] Frontend: passos 8–11
 - [ ] Remover este arquivo de planejamento
