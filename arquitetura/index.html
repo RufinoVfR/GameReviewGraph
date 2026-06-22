@@ -1055,7 +1055,7 @@
         TR["tree/"]
     end
     subgraph F3["Filtro 3"]
-        WG["word_graph.py"]
+        WG["word_graph/"]
     end
     subgraph F4["Filtro 4"]
         SG["sentence_graph.py"]
@@ -1132,7 +1132,7 @@
 </tr>
 <tr>
 <td>3</td>
-<td><code>word_graph.py</code></td>
+<td><code>word_graph/</code></td>
 <td><code>tree.json</code></td>
 <td><code>word_graph.json</code></td>
 <td>Grafo de co-ocorrência de palavras com peso posicional</td>
@@ -1204,8 +1204,8 @@
 <td><code>NaryTree</code></td>
 </tr>
 <tr>
-<td><code>word_graph.py</code></td>
-<td><code>NaryTree</code></td>
+<td><code>word_graph/</code></td>
+<td><code>dict</code> (tree.json)</td>
 <td><code>Graph</code></td>
 </tr>
 <tr>
@@ -1369,6 +1369,12 @@
 <td>17/06/2026</td>
 <td>2.3</td>
 <td>Filtro 2 vira pacote <code>tree/</code> (modelo do Filtro 1: <code>filter.py</code>, <code>structure.py</code>, <code>build.py</code>, <code>serialize.py</code>); leitura de <code>tree.json</code> em <code>src/shared/tree.py</code></td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>17/06/2026</td>
+<td>2.4</td>
+<td>Filtro 3 vira pacote <code>word_graph/</code> (<code>filter.py</code>, <code>cooccurrence.py</code>); entrada do <code>process</code> é o dict do <code>tree.json</code></td>
 <td>Lucas Antunes</td>
 </tr>
 </tbody>

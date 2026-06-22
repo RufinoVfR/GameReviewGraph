@@ -1416,9 +1416,9 @@ cada trilha é só a ordem de <strong>integração final</strong>, não de iníc
 <li>O formato de <code>tree.json</code> <strong>já está fechado</strong> no bloco "Contrato de artefatos" (C.1): nó uniforme <code>{"type", "children"}</code>, folhas <code>word</code> com <code>value</code> + <code>position</code>, <code>sentence.index</code> global, <code>comment.id</code>. Implemente exatamente esse formato — a Trilha 2 consome <code>position</code>/<code>index</code>/<code>id</code> dele.</li>
 <li>Testes: usar <code>processed_comments</code>; verificar hierarquia, contagem de nós por nível e que cada palavra carrega <code>position</code>.</li>
 </ul>
-<h3 id="filtro-3-word_graphpy">Filtro 3 — <code>word_graph.py</code><a class="headerlink" href="#filtro-3-word_graphpy" title="Permanent link">&para;</a></h3>
+<h3 id="filtro-3-word_graph-pacote">Filtro 3 — <code>word_graph/</code> (pacote)<a class="headerlink" href="#filtro-3-word_graph-pacote" title="Permanent link">&para;</a></h3>
 <ul>
-<li><strong>In:</strong> <code>tree</code> → <strong>Out:</strong> <code>word_graph</code>.</li>
+<li><strong>In:</strong> <code>tree</code> → <strong>Out:</strong> <code>word_graph</code>. É um <strong>pacote</strong>: <code>filter.py</code> (orquestra <code>process()</code>) e <code>cooccurrence.py</code> (<code>word_pair_deltas</code>: pares dentro da frase + peso posicional, lógica de domínio). O pareamento é feito à mão (laço <code>j &gt; i</code>), não com <code>itertools.combinations</code>. Ver <code>src/word_graph/CLAUDE.md</code>.</li>
 <li>Fórmula posicional, acumulada por co-ocorrência:
   <div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.graph</span><span class="w"> </span><span class="kn">import</span> <span class="n">build_graph_from_deltas</span><span class="p">,</span> <span class="n">serialize_graph</span><span class="p">,</span> <span class="n">assert_valid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">src.shared.tree</span><span class="w"> </span><span class="kn">import</span> <span class="n">iter_sentences</span><span class="p">,</span> <span class="n">iter_words</span>   <span class="c1"># readers compartilhados</span>
@@ -1594,6 +1594,12 @@ esvazia as chaves <code>filter:*</code> do Redis e força o reprocessamento.</p>
 <td>2026-06-17</td>
 <td>1.5</td>
 <td>Leitura de <code>tree.json</code> centralizada em <code>src/shared/tree.py</code> (<code>iter_comments</code>/<code>iter_sentences</code>/<code>iter_words</code>/<code>hierarchical_edges</code>); filtros 3–6 importam de lá em vez de reimplementar; <code>from_dict</code> vira test-only</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>2026-06-17</td>
+<td>1.6</td>
+<td>Filtro 3 vira pacote <code>word_graph/</code> (<code>filter.py</code>, <code>cooccurrence.py</code>); pareamento à mão (<code>j &gt; i</code>), sem <code>itertools.combinations</code></td>
 <td>Lucas Antunes</td>
 </tr>
 </tbody>
