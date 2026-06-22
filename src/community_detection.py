@@ -21,9 +21,9 @@ import logging
 from src.config import K
 from src.shared.filter_base import AbstractFilter
 from src.shared.graph import (
-    connected_components,
+    connected_components as connected_components_graph,
     copy_graph,
-    count_components,
+    count_components as count_components_graph,
     deserialize_graph,
     has_edge,
     iter_edges,
@@ -31,12 +31,101 @@ from src.shared.graph import (
     neighbor_count,
     remove_edge,
 )
-from src.types import Communities, Graph
+from src.types import Communities, Graph, Queue
 
 logger = logging.getLogger(__name__)
 
 _LEVEL_PREFIXES: tuple[str, ...] = ("w_", "s_", "c_")
 
+def bfs(graph: dict[str, dict[str, float]], start: str, visited: set[str]) -> None:
+    """Visit all nodes reachable from start in breadth-first order.
+
+    Adapted from the traversal logic of src.shared.graph.traversal.bfs to
+    operate on the dict[str, dict[str, float]] adjacency format. Modifies
+    visited in-place; does not return anything.
+
+    Args:
+        graph: Adjacency dict mapping node -> {neighbor: weight}.
+        start: Node key to start the traversal from.
+        visited: Set of already-visited node keys; updated in-place.
+    """
+    if start in visited:
+        return
+    queue: list[str] = [start]
+    visited.add(start)
+    head = 0
+    while head < len(queue):
+        current = queue[head]
+        head += 1
+        for neighbor in graph.get(current, {}):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+
+def dfs(graph: dict[str, dict[str, float]], start: str, visited: set[str]) -> None:
+    """Visit all nodes reachable from start in depth-first order.
+
+    Uses an explicit stack (no recursion), matching the approach of
+    src.shared.graph.traversal.dfs, adapted to the dict adjacency format.
+    Modifies visited in-place; does not return anything.
+
+    Args:
+        graph: Adjacency dict mapping node -> {neighbor: weight}.
+        start: Node key to start the traversal from.
+        visited: Set of already-visited node keys; updated in-place.
+    """
+    if start in visited:
+        return
+    stack: list[str] = [start]
+    while stack:
+        current = stack.pop()
+        if current in visited:
+            continue
+        visited.add(current)
+        for neighbor in reversed(list(graph.get(current, {}))):
+            if neighbor not in visited:
+                stack.append(neighbor)
+
+
+def count_components(graph: dict[str, dict[str, float]]) -> int:
+    """Count the number of connected components in the graph.
+
+    Iterates over all nodes; for each unvisited node, restarts BFS and
+    increments the component counter — each restart marks a new component.
+
+    Args:
+        graph: Adjacency dict mapping node -> {neighbor: weight}.
+
+    Returns:
+        Total number of connected components.
+    """
+    visited: set[str] = set()
+    count = 0
+    for node in graph:
+        if node not in visited:
+            bfs(graph, node, visited)
+            count += 1
+    return count
+
+
+def get_components(graph: dict[str, dict[str, float]]) -> list[set[str]]:
+    """Return the connected components of the graph as sets of node keys.
+
+    Args:
+        graph: Adjacency dict mapping node -> {neighbor: weight}.
+
+    Returns:
+        List of sets, each containing the node keys of one component.
+    """
+    visited: set[str] = set()
+    components: list[set[str]] = []
+    for node in graph:
+        if node not in visited:
+            before = set(visited)
+            bfs(graph, node, visited)
+            components.append(visited - before)
+    return components
 
 def _is_relational(u: str, v: str) -> bool:
     """Return True if edge (u, v) connects nodes at the same graph level.
@@ -86,9 +175,10 @@ def _cut_edges(mst: Graph, k: int) -> Communities:
             continue
         if neighbor_count(mst, u) > 1 and neighbor_count(mst, v) > 1:
             remove_edge(mst, u, v)
-            if count_components(mst) >= k:
+            if count_components_graph(mst) >= k:
                 break
-    components = connected_components(mst)
+                
+    components = connected_components_graph(mst)
     return {i + 1: component for i, component in enumerate(components)}
 
 
@@ -132,6 +222,7 @@ class CommunityDetectionFilter(AbstractFilter):
         mst = minimum_spanning_tree(copy_graph(graph))
         communities = _cut_edges(mst, K)
         achieved = len(communities)
+        
         if achieved < K:
             logger.warning(
                 "community_detection: target K=%d not reached — achieved %d "
@@ -143,6 +234,7 @@ class CommunityDetectionFilter(AbstractFilter):
             logger.info(
                 "community_detection: found %d communities (K=%d).", achieved, K
             )
+
         return {str(community_id): nodes for community_id, nodes in communities.items()}
 
 
