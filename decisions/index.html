@@ -891,6 +891,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#peso-das-arestas-hierarquicas-do-grafo-final-por-pertencimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Peso das arestas hierárquicas do grafo final por pertencimento
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1333,6 +1344,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#peso-das-arestas-hierarquicas-do-grafo-final-por-pertencimento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Peso das arestas hierárquicas do grafo final por pertencimento
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1593,6 +1615,9 @@
 <h3 id="dfs-com-pilha-explicita-visitado-marcado-no-pop-nao-no-push">DFS com pilha explícita, visitado marcado no <code>pop</code> (não no <code>push</code>)<a class="headerlink" href="#dfs-com-pilha-explicita-visitado-marcado-no-pop-nao-no-push" title="Permanent link">&para;</a></h3>
 <p><strong>Decisão:</strong> <code>dfs</code> usa uma pilha explícita (<code>list</code> do Python) em vez de recursão, e marca um nó como visitado somente quando ele é removido da pilha (<code>pop</code>), não quando é inserido (<code>push</code>).</p>
 <p><strong>Por quê:</strong> evita o limite de recursão do Python em grafos maiores. Marcar visitado no <code>push</code> (o mesmo padrão usado no BFS) parece equivalente à primeira vista, mas produz uma ordem de visita diferente da DFS recursiva real — testado manualmente com <code>w_a-w_b, w_a-w_c, w_b-w_d</code>: marcar no push dá <code>[a, b, c, d]</code> (ordem tipo BFS invertido), enquanto marcar no pop dá <code>[a, b, d, c]</code>, igual à recursão (<code>visita a → primeiro vizinho b → primeiro vizinho de b que é d → backtrack → c</code>). Os vizinhos são empurrados em ordem reversa (<code>reversed(_neighbors(...))</code>) exatamente para preservar essa correspondência com a ordem de visita recursiva.</p>
+<h3 id="peso-das-arestas-hierarquicas-do-grafo-final-por-pertencimento">Peso das arestas hierárquicas do grafo final por pertencimento<a class="headerlink" href="#peso-das-arestas-hierarquicas-do-grafo-final-por-pertencimento" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> no grafo final (Filtro 6), as arestas hierárquicas que ligam os níveis — <code>Palavra→Frase</code> e <code>Frase→Comentário</code> — recebem peso <code>1 / (número de filhos do pai)</code>. Ou seja, uma aresta <code>Palavra→Frase</code> pesa <code>1 / |palavras da frase|</code> e uma aresta <code>Frase→Comentário</code> pesa <code>1 / |frases do comentário|</code>. As arestas relacionais dos três grafos de origem são preservadas com seus pesos originais.</p>
+<p><strong>Por quê:</strong> a versão antiga da issue sugeria aresta hierárquica "sem peso" (<code>None</code>/<code>0</code>), o que conflita com a representação atual, em que <code>0.0</code> na matriz significa <strong>ausência de aresta</strong> (sentinela) — o peso precisa ser estritamente positivo. Entre um valor fixo (ex.: <code>1.0</code>) e uma função do pertencimento, optou-se pela segunda: o peso por pertencimento espelha a convenção de normalização por tamanho já usada nas fórmulas relacionais (<code>Σ … / (|sa| × |sb|)</code>), faz um filho dentro de um contêiner menor ligar-se mais fortemente, mantém os pesos em <code>(0, 1]</code> (sempre <code>&gt; 0</code>) e é determinístico e testável. A contagem de filhos é obtida diretamente de <code>hierarchical_edges</code>, então inclui repetições de uma mesma palavra na frase, de forma consistente com como os grafos relacionais dimensionam as frases (cada posição conta). Como <code>add_edge</code> é idempotente, uma palavra repetida colapsa numa única aresta com o mesmo peso, e o divisor nunca é zero (o pai sempre tem ao menos o filho que originou a aresta).</p>
 <hr />
 <h2 id="algoritmos-implementados-do-zero">Algoritmos implementados do zero<a class="headerlink" href="#algoritmos-implementados-do-zero" title="Permanent link">&para;</a></h2>
 <h3 id="por-que-nenhum-algoritmo-usa-biblioteca-externa">Por que nenhum algoritmo usa biblioteca externa<a class="headerlink" href="#por-que-nenhum-algoritmo-usa-biblioteca-externa" title="Permanent link">&para;</a></h3>
@@ -1672,6 +1697,12 @@
 <td>16/06/2026</td>
 <td>1.3</td>
 <td><code>topic</code> não circula no pipeline: removido de <code>preprocessed.json</code>/grafos, reservado à validação por <code>id</code></td>
+<td>Equipe</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.4</td>
+<td>Grafo final (Filtro 6): peso das arestas hierárquicas <code>Palavra→Frase</code> e <code>Frase→Comentário</code> definido por pertencimento (<code>1 / nº de filhos do pai</code>), estritamente positivo</td>
 <td>Equipe</td>
 </tr>
 </tbody>
