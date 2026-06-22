@@ -27,7 +27,6 @@ from src.shared.graph import (
     assert_valid,
     build_graph_from_deltas,
     deserialize_graph,
-    get_edge_weight,
     iter_edges,
     new_graph,
     serialize_graph,
@@ -125,6 +124,13 @@ def _pair_deltas(
     ``Σ weight(si, sj)`` for each comment edge. Sentence pairs within the same
     comment are never crossed, so no self-loop can arise.
 
+    Each comment's sentences are resolved to their sentence-graph matrix row
+    indices once, so the hot inner loop indexes the adjacency matrix directly
+    instead of paying a ``get_edge_weight`` call (plus its redundant dict
+    lookups) per sentence pair. A ``0.0`` matrix entry means no edge, so absent
+    pairs are skipped exactly as before. Sentences missing from the graph
+    (isolated, hence edgeless) drop out during resolution.
+
     Args:
         sentence_graph: The deserialized sentence graph (``s_<index>`` nodes).
         membership: ``(comment_key, sentence_keys)`` pairs from
@@ -133,12 +139,22 @@ def _pair_deltas(
     Yields:
         ``(comment_a, comment_b, weight)`` triples for connected sentence pairs.
     """
-    for a, (comment_a, sentences_a) in enumerate(membership):
-        for comment_b, sentences_b in membership[a + 1:]:
-            for si in sentences_a:
-                for sj in sentences_b:
-                    weight = get_edge_weight(sentence_graph, si, sj)
-                    if weight is not None:
+    matrix = sentence_graph.matrix
+    index = sentence_graph.index
+
+    # Resolve each comment's sentences to sentence-graph row indices once.
+    resolved = [
+        (comment, [index[key] for key in sentence_keys if key in index])
+        for comment, sentence_keys in membership
+    ]
+
+    for a, (comment_a, rows_a) in enumerate(resolved):
+        for comment_b, rows_b in resolved[a + 1:]:
+            for si in rows_a:
+                row = matrix[si]
+                for sj in rows_b:
+                    weight = row[sj]
+                    if weight != 0.0:
                         yield (comment_a, comment_b, weight)
 
 
