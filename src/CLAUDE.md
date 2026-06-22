@@ -71,7 +71,11 @@ src/
 │   ├── structure.py         ← TreeNode + NaryTree (data structure, bidirectional navigation, get_* accessors)
 │   ├── build.py             ← build_from_corpus() — global sentence index + per-sentence word position
 │   └── serialize.py         ← serialize() / from_dict() — uniform-node tree.json, parent rebuilt on load
-├── word_graph.py            ← ConcreteFilter 3: word co-occurrence graph (positional weight)
+├── word_graph/              ← ConcreteFilter 3 (package): word co-occurrence graph (positional weight)
+│   ├── __init__.py          ← re-exports WordGraphFilter
+│   ├── __main__.py          ← WordGraphFilter().execute()  (target of `make word-graph`)
+│   ├── filter.py            ← WordGraphFilter(AbstractFilter) — orchestrates process()
+│   └── cooccurrence.py      ← word_pair_deltas() — within-sentence pairs + positional weight (domain)
 ├── sentence_graph.py        ← ConcreteFilter 4: sentence graph (derived from word graph)
 ├── comment_graph.py         ← ConcreteFilter 5: comment graph (derived from sentence graph)
 ├── final_graph.py           ← ConcreteFilter 6: unified graph (3 levels + hierarchical edges)
@@ -197,7 +201,7 @@ Run with: `make word-graph` (delegates to `docker compose run --rm app uv run py
 ## Non-negotiable implementation rules
 
 - **No external graph libraries** — NetworkX, igraph, graph-tool, and equivalents are forbidden. −5.0 points penalty.
-- **No imports between filters** — `word_graph.py` must not import from `sentence_graph.py`, and vice versa. Only `src/shared/`, `src/config.py`, and `src/types/` are shared.
+- **No imports between filters** — `word_graph/` must not import from `sentence_graph.py`, and vice versa. Only `src/shared/`, `src/config.py`, and `src/types/` are shared.
 - **No direct S3/Redis calls in filters** — use `AbstractFilter.execute()` for all I/O; never call `get_storage()` or `get_cache()` inside `process()`.
 - **Docstrings on every public function** — format: one-line summary, blank line, `Args:` and `Returns:` sections.
 - **Type hints on every function signature** — no `Any` unless truly unavoidable.

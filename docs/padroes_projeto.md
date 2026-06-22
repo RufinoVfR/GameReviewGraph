@@ -306,7 +306,7 @@ src/
 │
 ├── preprocessing/       ← ConcreteFilter 1 (pacote; filter.py herda AbstractFilter)
 ├── tree/                ← ConcreteFilter 2 (pacote; filter.py herda AbstractFilter)
-├── word_graph.py        ← ConcreteFilter 3
+├── word_graph/          ← ConcreteFilter 3 (pacote; filter.py herda AbstractFilter)
 ├── sentence_graph.py    ← ConcreteFilter 4
 ├── comment_graph.py     ← ConcreteFilter 5
 ├── final_graph.py       ← ConcreteFilter 6
@@ -338,3 +338,4 @@ src/config.py e src/types.py  →  permitidos em qualquer lugar
 | 12/06/2026 | 1.1 | Template Method: extra_input_keys e filtros multi-input; Strategy: delegação para src.shared.graph | Lucas Antunes |
 | 16/06/2026 | 1.2 | Filtro 1 (`preprocessing/`) passa a ser pacote no diagrama de módulos | Equipe |
 | 17/06/2026 | 1.3 | Filtro 2 (`tree/`) passa a ser pacote no diagrama de módulos | Lucas Antunes |
+| 17/06/2026 | 1.4 | Filtro 3 (`word_graph/`) passa a ser pacote no diagrama de módulos | Lucas Antunes |

@@ -17,7 +17,7 @@ flowchart TD
         TR["tree/"]
     end
     subgraph F3["Filtro 3"]
-        WG["word_graph.py"]
+        WG["word_graph/"]
     end
     subgraph F4["Filtro 4"]
         SG["sentence_graph.py"]
@@ -74,7 +74,7 @@ flowchart TD
 |---|--------|---------------|------------|-----------------|
 | 1 | `preprocessing/` | `comments.json` | `preprocessed.json` | Lowercase, remoção de pontuação, segmentação e tokenização por regex, stopwords PT (NLTK), normalização A1' (radical RSLP como chave de agrupamento; emite a forma de superfície mais frequente do grupo, com acento) |
 | 2 | `tree/` | `preprocessed.json` | `tree.json` | Constrói a Árvore N-ária: Dataset → Comentário → Frase → Palavra |
-| 3 | `word_graph.py` | `tree.json` | `word_graph.json` | Grafo de co-ocorrência de palavras com peso posicional |
+| 3 | `word_graph/` | `tree.json` | `word_graph.json` | Grafo de co-ocorrência de palavras com peso posicional |
 | 4 | `sentence_graph.py` | `word_graph.json` + `tree.json` | `sentence_graph.json` | Grafo de frases derivado das relações entre palavras |
 | 5 | `comment_graph.py` | `sentence_graph.json` + `tree.json` | `comment_graph.json` | Grafo de comentários derivado das relações entre frases |
 | 6 | `final_graph.py` | `word_graph.json` + `sentence_graph.json` + `comment_graph.json` + `tree.json` | `final_graph.json` | Grafo unificado: 3 níveis + arestas hierárquicas da árvore |
@@ -92,7 +92,7 @@ Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `
 |--------|-----------------------------|--------------------------|
 | `preprocessing/` | `list[RawComment]` | `list[ProcessedComment]` |
 | `tree/` | `list[ProcessedComment]` | `NaryTree` |
-| `word_graph.py` | `NaryTree` | `Graph` |
+| `word_graph/` | `dict` (tree.json) | `Graph` |
 | `sentence_graph.py` | `Graph` (word) + `NaryTree` | `Graph` |
 | `comment_graph.py` | `Graph` (sentence) + `NaryTree` | `Graph` |
 | `final_graph.py` | `Graph` × 3 + `NaryTree` | `Graph` |
@@ -164,3 +164,4 @@ s3://game-review-graph/
 | 16/06/2026 | 2.1 | Filtro 1 vira pacote `preprocessing/`; descrição reflete normalização A1' (radical RSLP como chave; emite forma de superfície com acento) | Lucas Antunes |
 | 16/06/2026 | 2.2 | `ProcessedComment` sem `topic` (rótulo-ouro reservado à validação por `id`) | Equipe |
 | 17/06/2026 | 2.3 | Filtro 2 vira pacote `tree/` (modelo do Filtro 1: `filter.py`, `structure.py`, `build.py`, `serialize.py`); leitura de `tree.json` em `src/shared/tree.py` | Lucas Antunes |
+| 17/06/2026 | 2.4 | Filtro 3 vira pacote `word_graph/` (`filter.py`, `cooccurrence.py`); entrada do `process` é o dict do `tree.json` | Lucas Antunes |

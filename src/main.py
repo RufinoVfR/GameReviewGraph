@@ -14,6 +14,7 @@ from src.shared.filter_base import AbstractFilter
 from src.shared.observers import LoggingObserver
 from src.shared.pipeline import FilterChain
 from src.tree import TreeFilter
+from src.word_graph import WordGraphFilter
 
 # Ordered list of pipeline filters. Extend as downstream filters land.
 # CommentGraphFilter (Filter 5) consumes sentence_graph.json + preprocessed.json;
@@ -22,6 +23,7 @@ FILTERS: list[AbstractFilter] = [
     PreprocessingFilter(),
     TreeFilter(),
     CommentGraphFilter(),
+    WordGraphFilter(),
 ]
 
 
