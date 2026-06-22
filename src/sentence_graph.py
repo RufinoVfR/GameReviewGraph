@@ -11,18 +11,23 @@ from src.shared.graph import (
     assert_valid,
     build_graph_from_deltas,
     deserialize_graph,
-    get_edge_weight,
     serialize_graph,
 )
 from src.shared.tree import iter_sentences, iter_words
+from src.types import Graph
 
 
-def _sentence_pair_deltas(tree: dict[str, Any], word_graph: Any) -> Iterator[tuple[str, str, float]]:
+def _sentence_pair_deltas(tree: dict[str, Any], word_graph: Graph) -> Iterator[tuple[str, str, float]]:
     """Yield (sentence_u, sentence_v, normalized_weight) for connected sentences.
 
     Calculates the relationship intensity between two sentences by summing the
     weights of all pairs of words (one from each sentence) and dividing by the
     product of the sentence lengths: Σ weight(wi, wj) / (|sa| * |sb|).
+
+    Each sentence's words are resolved to their word-graph matrix row indices
+    once, so the hot inner loop indexes the adjacency matrix directly instead of
+    paying a ``get_edge_weight`` call (plus its redundant dict lookups) per word
+    pair. A missing word weighs ``0.0``, so absent entries simply add nothing.
 
     Args:
         tree: Deserialized N-ary tree dict containing sentence and word nodes.
@@ -31,27 +36,36 @@ def _sentence_pair_deltas(tree: dict[str, Any], word_graph: Any) -> Iterator[tup
     Yields:
         Tuples of (node_key_1, node_key_2, normalized_weight).
     """
-    # Collect each sentence's word node keys.
+    matrix = word_graph.matrix
+    index = word_graph.index
+
+    # Resolve each sentence's words to word-graph row indices once. ``size`` is
+    # the full token count (the |sa| denominator); words absent from the graph
+    # (isolated, hence edgeless) are dropped from the sum but still counted.
     sentences: list[dict[str, Any]] = []
     for sentence_node in iter_sentences(tree):
-        s_id = f"s_{sentence_node['index']}"
-        words = [f"w_{word_node['value']}" for word_node in iter_words(sentence_node)]
-        if words:
-            sentences.append({"id": s_id, "words": words, "size": len(words)})
+        keys = [f"w_{word_node['value']}" for word_node in iter_words(sentence_node)]
+        if not keys:
+            continue
+        rows = [index[key] for key in keys if key in index]
+        sentences.append(
+            {"id": f"s_{sentence_node['index']}", "rows": rows, "size": len(keys)}
+        )
 
     # Compare every unique pair of sentences.
     for i in range(len(sentences)):
         sa = sentences[i]
+        rows_a = sa["rows"]
         for j in range(i + 1, len(sentences)):
             sb = sentences[j]
+            rows_b = sb["rows"]
 
-            # Sum the weights of the word pairs connecting the two sentences.
+            # Sum the weights of the word pairs connecting the two sentences,
+            # reading the matrix directly (0.0 entries contribute nothing).
             raw_sum = 0.0
-            for wi in sa["words"]:
-                for wj in sb["words"]:
-                    weight = get_edge_weight(word_graph, wi, wj)
-                    if weight is not None:
-                        raw_sum += weight
+            for row_index in rows_a:
+                row = matrix[row_index]
+                raw_sum += sum(row[col_index] for col_index in rows_b)
 
             # Normalize and emit the edge only when the pair is actually related.
             if raw_sum > 0.0:
