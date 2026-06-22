@@ -58,6 +58,12 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** evita o limite de recursão do Python em grafos maiores. Marcar visitado no `push` (o mesmo padrão usado no BFS) parece equivalente à primeira vista, mas produz uma ordem de visita diferente da DFS recursiva real — testado manualmente com `w_a-w_b, w_a-w_c, w_b-w_d`: marcar no push dá `[a, b, c, d]` (ordem tipo BFS invertido), enquanto marcar no pop dá `[a, b, d, c]`, igual à recursão (`visita a → primeiro vizinho b → primeiro vizinho de b que é d → backtrack → c`). Os vizinhos são empurrados em ordem reversa (`reversed(_neighbors(...))`) exatamente para preservar essa correspondência com a ordem de visita recursiva.
 
+### Peso das arestas hierárquicas do grafo final por pertencimento
+
+**Decisão:** no grafo final (Filtro 6), as arestas hierárquicas que ligam os níveis — `Palavra→Frase` e `Frase→Comentário` — recebem peso `1 / (número de filhos do pai)`. Ou seja, uma aresta `Palavra→Frase` pesa `1 / |palavras da frase|` e uma aresta `Frase→Comentário` pesa `1 / |frases do comentário|`. As arestas relacionais dos três grafos de origem são preservadas com seus pesos originais.
+
+**Por quê:** a versão antiga da issue sugeria aresta hierárquica "sem peso" (`None`/`0`), o que conflita com a representação atual, em que `0.0` na matriz significa **ausência de aresta** (sentinela) — o peso precisa ser estritamente positivo. Entre um valor fixo (ex.: `1.0`) e uma função do pertencimento, optou-se pela segunda: o peso por pertencimento espelha a convenção de normalização por tamanho já usada nas fórmulas relacionais (`Σ … / (|sa| × |sb|)`), faz um filho dentro de um contêiner menor ligar-se mais fortemente, mantém os pesos em `(0, 1]` (sempre `> 0`) e é determinístico e testável. A contagem de filhos é obtida diretamente de `hierarchical_edges`, então inclui repetições de uma mesma palavra na frase, de forma consistente com como os grafos relacionais dimensionam as frases (cada posição conta). Como `add_edge` é idempotente, uma palavra repetida colapsa numa única aresta com o mesmo peso, e o divisor nunca é zero (o pai sempre tem ao menos o filho que originou a aresta).
+
 ---
 
 ## Algoritmos implementados do zero
@@ -158,3 +164,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 16/06/2026 | 1.1 | `traversal.py` implementado (BFS, DFS, componentes conectados, MST); adicionada `Queue` própria em `src/types/queue.py`; justificada a marcação de visitado no `pop` da DFS | Lucas Antunes |
 | 16/06/2026 | 1.2 | Decisões do pré-processamento (Filtro 1): normalização A1', segmentação por regex, dados NLTK no Docker, pacote `preprocessing/`, descarte de ruído | Equipe |
 | 16/06/2026 | 1.3 | `topic` não circula no pipeline: removido de `preprocessed.json`/grafos, reservado à validação por `id` | Equipe |
+| 22/06/2026 | 1.4 | Grafo final (Filtro 6): peso das arestas hierárquicas `Palavra→Frase` e `Frase→Comentário` definido por pertencimento (`1 / nº de filhos do pai`), estritamente positivo | Equipe |
