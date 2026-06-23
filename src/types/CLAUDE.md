@@ -12,12 +12,13 @@
 
 ```
 src/types/
-├── __init__.py     ← re-exports: RawComment, ProcessedComment, Graph, NodeKey, Queue, Communities, Metrics
+├── __init__.py     ← re-exports: RawComment, ProcessedComment, Graph, NodeKey, Queue, Communities, Metrics, Report
 ├── comments.py     ← RawComment, ProcessedComment (preprocessing pipeline shapes)
 ├── graph.py        ← Graph dataclass, NodeKey
 ├── queue.py        ← Queue (singly linked list, O(1) enqueue/dequeue) — used by traversal.py's bfs()
 ├── communities.py  ← Communities (community_detection.py output)
-└── metrics.py      ← Metrics (metrics.py output)
+├── metrics.py      ← Metrics (metrics.py output)
+└── report.py       ← Report (analysis.py output — report.json schema)
 ```
 
 ## Import rule

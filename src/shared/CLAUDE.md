@@ -26,6 +26,7 @@ src/shared/
 ├── pipeline.py       ← Chain of Responsibility + Facade  (FilterChain)
 ├── observers.py      ← Observer  (PipelineObserver, LoggingObserver)
 ├── strategies.py     ← Strategy  (CommunityDetectionStrategy, ProgressiveEdgeCuttingStrategy)
+├── scoring.py        ← community scoring metrics  (weighted_degree_centrality, calculate_modularity, get_top_terms, community_centrality, normalize_communities, partition_stats)
 ├── storage.py        ← S3 / MinIO adapter  (S3Storage, get_storage)
 ├── cache.py          ← Redis cache adapter  (RedisCache, get_cache)
 ├── tree.py           ← tree.json readers  (iter_comments, iter_sentences, iter_words, hierarchical_edges)
@@ -96,6 +97,7 @@ Filters requiring multiple inputs in the pipeline:
 | `comment_graph` | `"sentence_graph"` | `["preprocessed"]` |
 | `final_graph` | `"comment_graph"` | `["word_graph", "sentence_graph", "tree"]` |
 | `metrics` | `"communities"` | `["final_graph"]` |
+| `analysis` | `"final_graph"` | `["raw"]` |
 
 ### Rules
 
@@ -336,6 +338,39 @@ def hierarchical_edges(tree: dict) -> list[tuple[NodeKey, NodeKey]]: ...
 
 ---
 
+## `scoring.py` — Community Scoring Metrics
+
+Pure, from-scratch scoring functions over a `Graph` and/or a `Communities`
+partition, **reused by two filters** — `metrics.py` (Filter 8) and `analysis.py`
+(Filter 9). They live here, not inside a filter, because a concrete filter must
+never import internal functions from another filter; both import from
+`src.shared.scoring` instead.
+
+### Contract
+
+```python
+def weighted_degree_centrality(graph: Graph) -> dict[str, float]: ...
+def calculate_modularity(graph: Graph, components: dict[int, list[str]]) -> float: ...  # Newman Q, O(|E|)
+def community_centrality(graph: Graph, nodes: list[str]) -> dict[str, float]: ...        # intra-community
+def get_top_terms(components, graph, centrality, n) -> dict[int, list[str]]: ...          # top-N w_ nodes
+def normalize_communities(raw: dict[Any, list[str]]) -> dict[int, list[str]]: ...         # JSON str keys → int
+def partition_stats(communities: Communities) -> dict[str, int]: ...                       # sizes, singletons, n_comments
+```
+
+### Rules
+
+- **Single source of truth** — the modularity Q and centrality formulas are
+  implemented **once**, here. `metrics.py` re-exports `calculate_modularity`,
+  `weighted_degree_centrality`, and `get_top_terms` for backward compatibility;
+  never reimplement them in a filter.
+- **Read-only** — no I/O, no graph mutation. Every function is a computation
+  over its inputs.
+- This module is the one sanctioned exception to "no domain algorithms in
+  `src/shared/`": these are graph **scoring metrics** (kin to `graph/metrics.py`)
+  whose reuse by two filters is exactly why they are shared.
+
+---
+
 ## `graph/` — Graph Utility Sub-package
 
 See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. Summary:
@@ -353,7 +388,7 @@ See [`graph/CLAUDE.md`](graph/CLAUDE.md) for the full contract of each module. S
 
 ## Non-negotiable rules
 
-- **No domain logic in `src/shared/`** — no graph algorithms, no NLP, no weight formulas.
+- **No domain logic in `src/shared/`** — no graph algorithms, no NLP, no weight formulas. The sole sanctioned exception is `scoring.py` (community scoring metrics reused by two filters — see its section above).
 - **No imports of concrete filters** — `src/shared/*.py` must never import from `src/preprocessing/`, `src/tree/`, etc.
 - **No external graph libraries** — even here, NetworkX and equivalents are forbidden.
 - **Docstrings on every public class and method** — format: one-line summary, blank line, `Args:` and `Returns:` sections.

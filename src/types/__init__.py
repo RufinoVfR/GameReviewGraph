@@ -9,6 +9,7 @@ from src.types.communities import Communities
 from src.types.graph import Graph, NodeKey
 from src.types.metrics import Metrics
 from src.types.queue import Queue
+from src.types.report import Report
 
 __all__ = [
     "RawComment",
@@ -18,4 +19,5 @@ __all__ = [
     "Queue",
     "Communities",
     "Metrics",
+    "Report",
 ]

@@ -41,6 +41,9 @@ flowchart TD
     subgraph F9["Filtro 9"]
         AN["analysis.py"]
     end
+    subgraph F10["Filtro 10"]
+        RT["report_text.py"]
+    end
 
     PRE["pipeline/preprocessed.json"]
     TREE["pipeline/tree.json"]
@@ -50,7 +53,8 @@ flowchart TD
     FGJ["pipeline/final_graph.json"]
     COM["pipeline/communities.json"]
     MET["pipeline/metrics.json"]
-    REP["pipeline/report.txt"]
+    REP["pipeline/report.json"]
+    RPT["pipeline/report.txt"]
 
     RAW --> F1 --> PRE --> F2 --> TREE
     TREE --> F3 --> WGJ
@@ -65,7 +69,9 @@ flowchart TD
     FGJ --> F7 --> COM
     FGJ --> F8
     COM --> F8 --> MET
-    MET --> F9 --> REP
+    FGJ --> F9
+    RAW --> F9 --> REP
+    REP --> F10 --> RPT
 ```
 
 > Todos os artefatos intermediários residem no bucket `game-review-graph` do MinIO sob o prefixo `pipeline/`. O Redis mantém os resultados em cache com a chave `filter:<nome>` — em um cache hit, `AbstractFilter.execute()` pula `process()` e regrava o artefato no S3 sem reprocessar.
@@ -166,8 +172,9 @@ frontend/
 | 5 | `comment_graph.py` | `sentence_graph.json` + `tree.json` | `comment_graph.json` | Grafo de comentários derivado das relações entre frases |
 | 6 | `final_graph.py` | `word_graph.json` + `sentence_graph.json` + `comment_graph.json` + `tree.json` | `final_graph.json` | Grafo unificado: 3 níveis + arestas hierárquicas da árvore |
 | 7 | `community_detection.py` | `final_graph.json` | `communities.json` | MST (Prim) + corte progressivo de arestas + BFS/DFS → K=10 comunidades |
-| 8 | `metrics.py` | `final_graph.json` + `communities.json` | `metrics.json` | Centralidade de grau ponderada + Modularidade Q |
-| 9 | `analysis.py` | `metrics.json` | `report.txt` | Geração do relatório final com tópicos e métricas |
+| 8 | `metrics.py` | `communities.json` + `final_graph.json` | `metrics.json` | Centralidade de grau ponderada + Modularidade Q |
+| 9 | `analysis.py` | `final_graph.json` + `comments.json` | `report.json` | Relatório final estruturado: roda as 5 estratégias de detecção e, por método, monta tópicos, termos centrais, comentários, Q e estatísticas de balanceamento — entregando a **matriz comparativa dos 5 métodos** (sem eleger vencedor). Consumido também pela última página do frontend |
+| 10 | `report_text.py` | `report.json` | `report.txt` | Projeção legível do `report.json` no formato de seções (não recomputa nada; repete o Q global do método em cada bloco de comunidade) |
 
 ---
 
@@ -184,8 +191,9 @@ Cada filtro concreto herda `AbstractFilter` e implementa apenas `process()`. O `
 | `comment_graph.py` | `Graph` (sentence) + `NaryTree` | `Graph` |
 | `final_graph.py` | `Graph` × 3 + `NaryTree` | `Graph` |
 | `community_detection.py` | `Graph` | `Communities` |
-| `metrics.py` | `Graph` + `Communities` | `Metrics` |
-| `analysis.py` | `Metrics` | `str` (relatório) |
+| `metrics.py` | `Communities` + `Graph` | `Metrics` |
+| `analysis.py` | `Graph` + `list[RawComment]` | `Report` (`dict`, `report.json`) |
+| `report_text.py` | `Report` (`dict`) | `str` (`report.txt`) |
 
 **Tipos** (pacote `src/types/`, um módulo por grupo semântico — ver [`grafos.md`](grafos.md) para o detalhe de `Graph`):
 
@@ -218,7 +226,8 @@ s3://game-review-graph/
     ├── final_graph.json        # saída do Filtro 6
     ├── communities.json        # saída do Filtro 7
     ├── metrics.json            # saída do Filtro 8
-    └── report.txt              # saída do Filtro 9 (legível por humanos)
+    ├── report.json             # saída do Filtro 9 (estruturada; consumida pelo frontend)
+    └── report.txt              # projeção legível do report.json
 ```
 
 **Cache Redis:** cada filtro armazena seu resultado serializado com pickle sob a chave `filter:<nome>` (ex.: `filter:word_graph`). `make clean` apaga todas as chaves `filter:*` e os artefatos S3 (exceto `comments.json`).
@@ -257,3 +266,5 @@ s3://game-review-graph/
 | 17/06/2026 | 2.3 | Filtro 2 vira pacote `tree/` (modelo do Filtro 1: `filter.py`, `structure.py`, `build.py`, `serialize.py`); leitura de `tree.json` em `src/shared/tree.py` | Lucas Antunes |
 | 17/06/2026 | 2.4 | Filtro 3 vira pacote `word_graph/` (`filter.py`, `cooccurrence.py`); entrada do `process` é o dict do `tree.json` | Lucas Antunes |
 | 22/06/2026 | 2.5 | Remoção do diagrama ASCII redundante; diagrama Mermaid existente já cobre o pipeline completo | [Vinícius Rufino](https://github.com/RufinoVfR) |
+| 22/06/2026 | 2.6 | Filtro 9 gera `report.json` estruturado (+ `report.txt` como projeção) com comparação de 3 métodos de detecção; saída renderizada na última página do frontend | Lucas Antunes |
+| 22/06/2026 | 2.7 | Filtro 9 (`analysis.py`) roda as **5** estratégias e entrega a matriz comparativa (sem vencedor); entrada passa a ser `final_graph.json` + `comments.json`. Filtro 10 (`report_text.py`) projeta o `report.txt`. Funções de score extraídas para `src/shared/scoring.py`; Filtro 7 passa a injetar a `CommunityDetectionStrategy` | Lucas Antunes |
