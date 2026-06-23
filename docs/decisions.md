@@ -116,6 +116,47 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** a posição levantada na revisão do método 1 é que as arestas hierárquicas deveriam *influenciar*, não *impor*, a pertinência (ver decisão de causa raiz acima). Em vez de escolher silenciosamente uma correção, o time optou por **transformar o achado em narrativa**: o relatório mostra a causa (método 1), o fix mínimo (método 2, dentro do envelope min-MST), o fix principista (método 3, max-MST), e dois métodos ortogonais (4 e 5), todos medidos por modularidade Q e balanceamento. Isso aproveita o resultado "ruim" do método 1 como parte avaliável da Análise de Resultados (peso 2.0), em vez de descartá-lo. A decisão "Arestas hierárquicas excluídas do corte progressivo" **não é revertida** — passa a descrever especificamente o método 1; os métodos 2–3 redefinem a escala/direção do peso apenas dentro de suas próprias estratégias, sobre a cópia do grafo que recebem, sem reescrever o Filtro 6. A calibração concreta (`λ`, normalização por tipo) fica para a implementação. Planejamento em `planning/us14_final_report.md` e `planning/questao_arestas_hierarquicas.md`.
 
+**Fórmulas das correções (esboçadas em `src/shared/strategies.py`):** todas operam sobre uma **cópia** do grafo final; nenhuma altera o Filtro 6. As constantes `factor` e `λ` são provisórias (a calibrar com Q).
+
+- **Método 2 — recalibração do peso hierárquico.** Cada aresta hierárquica recebe um peso uniforme acima da escala relacional, de modo que a min-MST deixe de preferi-las:
+
+  ```
+  peso'(e) = factor × max{ peso(r) : r é aresta relacional },   para toda aresta hierárquica e
+  peso'(r) = peso(r),                                            para toda aresta relacional r
+  factor ≥ 1   (provisório: 2.0)
+  ```
+
+  As arestas relacionais mantêm o peso original; a min-MST passa a conectar a palavra pela `w_↔w_` mais forte, e o corte segue cortando **só** as relacionais (hierárquicas continuam não-cortáveis).
+
+- **Método 3 — normalização por tipo + árvore geradora máxima.** Primeiro normaliza cada aresta para `(0, 1]` dentro do próprio tipo (os três níveis relacionais e o tipo hierárquico têm escalas muito distintas), amortecendo a influência hierárquica por `λ`:
+
+  ```
+  peso'(r) = peso(r) / max_L,            r relacional de nível L ∈ {w_, s_, c_};  max_L = maior peso daquele nível
+  peso'(e) = λ × ( peso(e) / max_hier ), e hierárquica;  max_hier = maior peso hierárquico
+  λ ∈ (0, 1]   (provisório: 0.5)
+  ```
+
+  Depois constrói a **árvore geradora máxima** reutilizando a `minimum_spanning_tree` (Prim) já implementada do zero, via inversão de peso — roda a MST mínima sobre `peso''` e restaura `peso'` nas arestas sobreviventes:
+
+  ```
+  shift  = max{ peso'(e) } + 1                 (o "+1" mantém tudo > 0, longe do sentinela 0.0)
+  peso''(e) = shift − peso'(e)                  (a aresta mais forte vira a mais leve)
+  MaxST(G) = MinST(G com peso'')               (arestas restauradas para peso')
+  ```
+
+  O corte progressivo então remove as arestas mais fracas (ascendente) com **todas** as arestas cortáveis, mantendo o guard `grau > 1` em ambos os lados.
+
+- **Método 5 — maximização gulosa de modularidade (estilo CNM).** Cada nó começa em sua própria comunidade; a cada passo funde-se o par de comunidades com maior ganho de modularidade positivo:
+
+  ```
+  ΔQ(a, b) = 2 × [ W_ab / 2m − (D_a × D_b) / (2m)² ]
+  W_ab = soma dos pesos das arestas entre as comunidades a e b
+  D_i  = grau ponderado somado dos nós da comunidade i
+  2m   = soma dos graus ponderados de todos os nós
+  ```
+
+  Para ao atingir `K` comunidades **ou** quando nenhum merge tem `ΔQ > 0` (pico de modularidade) — o que vier primeiro; o número natural de comunidades no pico é, ele próprio, um dado de comparação.
+
 ### K = 10 comunidades
 
 **Decisão:** `K=10` é uma constante global em `src/config.py`, não hardcoded nos filtros.
@@ -208,3 +249,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 22/06/2026 | 1.5 | Detecção de comunidades (Filtro 7): arestas hierárquicas excluídas do corte progressivo — somente arestas relacionais (`w_↔w_`, `s_↔s_`, `c_↔c_`) são candidatas | Vinícius Rufino |
 | 22/06/2026 | 1.6 | Relatório final (Filtro 9) em duas partes (`report.json` + página no frontend); comparação de 3 métodos de detecção de comunidades motivada pelo desbalanceamento do corte progressivo | Lucas Antunes |
 | 22/06/2026 | 1.7 | Causa raiz do blob diagnosticada (min-MST + escala minúscula do peso hierárquico); comparativo ampliado de 3 → 5 métodos, com o método 1 preservado como baseline e duas correções (peso recalibrado, max-MST) adicionadas como alternativas | Lucas Antunes |
+| 22/06/2026 | 1.8 | Fórmulas das correções (métodos 2, 3, 5) registradas: recalibração hierárquica, normalização por tipo + λ, árvore geradora máxima por inversão de peso, e ΔQ do greedy modularity | Lucas Antunes |
