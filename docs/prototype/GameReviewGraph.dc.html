@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;padding:0;height:100%;background:#080B10;}
+  *{box-sizing:border-box;}
+  ::selection{background:#FFD740;color:#080B10;}
+  @keyframes grgPulse{0%{opacity:.45}50%{opacity:1}100%{opacity:.45}}
+  @keyframes grgBlink{0%,100%{opacity:1}50%{opacity:.25}}
+  .grgScroll::-webkit-scrollbar{width:3px;}
+  .grgScroll::-webkit-scrollbar-track{background:transparent;}
+  .grgScroll::-webkit-scrollbar-thumb{background:#1E2535;}
+</style>
+</helmet>
+<div style="position:fixed;inset:0;background:#080B10;font-family:'Rajdhani',sans-serif;color:#D6E4FF;overflow:hidden;user-select:none;">
+
+  <canvas ref="{{ setCanvas }}" style="position:absolute;top:0;left:0;width:100%;height:100%;display:block;cursor:grab;"></canvas>
+
+  <!-- HEADER -->
+  <div style="position:absolute;top:0;left:0;right:0;height:48px;display:flex;align-items:center;gap:18px;padding:0 16px;background:rgba(8,11,16,.78);border-bottom:1px solid #1E2535;backdrop-filter:blur(8px);z-index:30;">
+    <div style="display:flex;align-items:center;gap:9px;">
+      <span style="color:#00E5FF;font-size:15px;line-height:1;transform:translateY(-1px);">&#9672;</span>
+      <span style="font-weight:700;font-size:16px;letter-spacing:.14em;color:#00E5FF;">GAMEREVIEWGRAPH</span>
+    </div>
+    <div style="flex:1;"></div>
+    <div style="display:flex;align-items:center;gap:8px;width:280px;height:28px;padding:0 10px;background:#111520;border:1px solid #1E2535;clip-path:polygon(6px 0%,100% 0%,100% 100%,0% 100%,0% 6px);">
+      <span style="color:#4A5878;font-size:12px;">&#9906;</span>
+      <input ref="{{ setSearch }}" onKeyDown="{{ onSearchKey }}" placeholder="BUSCAR PALAVRA / COMENTÁRIO" style="flex:1;background:transparent;border:none;outline:none;color:#D6E4FF;font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:.06em;text-transform:uppercase;" />
+    </div>
+    <button onClick="{{ onGear }}" title="Partículas ambiente" style="width:28px;height:28px;display:flex;align-items:center;justify-content:center;background:#111520;border:1px solid #1E2535;color:#4A5878;cursor:pointer;clip-path:polygon(6px 0%,100% 0%,100% 100%,0% 100%,0% 6px);font-size:14px;">&#9881;</button>
+  </div>
+
+  <!-- BREADCRUMB -->
+  <div style="position:absolute;top:48px;left:0;right:0;height:32px;display:flex;align-items:center;gap:8px;padding:0 16px;background:rgba(8,11,16,.62);border-bottom:1px solid #131826;z-index:25;font-size:12px;letter-spacing:.08em;text-transform:uppercase;">
+    <sc-for list="{{ crumbs }}" as="c" hint-placeholder-count="1">
+      <div style="display:flex;align-items:center;gap:8px;cursor:pointer;" onClick="{{ c.onClick }}">
+        <span style="{{ c.prefixStyle }}">{{ c.prefix }}</span>
+        <span style="{{ c.labelStyle }}">{{ c.label }}</span>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- SIDE PANEL -->
+  <div class="grgScroll" style="position:absolute;top:92px;bottom:56px;right:12px;width:336px;overflow-y:auto;overflow-x:hidden;background:#111520;border:1px solid #1E2535;border-left:2px solid {{ panel.accent }};clip-path:polygon(8px 0%,100% 0%,100% 100%,0% 100%,0% 8px);z-index:25;padding:0;box-shadow:0 0 0 1px rgba(0,0,0,.4),-8px 0 32px rgba(0,0,0,.45);">
+    <sc-if value="{{ panel.empty }}" hint-placeholder-val="{{ true }}">
+      <div style="height:100%;min-height:240px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:40px 24px;text-align:center;">
+        <div style="color:#1E2535;font-size:32px;line-height:1;">&#9671;</div>
+        <div style="color:#2C3650;font-size:13px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;">SELECIONE UM NÓ</div>
+        <div style="color:#4A5878;font-family:'Share Tech Mono',monospace;font-size:11px;letter-spacing:.02em;">clique em qualquer nó para inspecionar</div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ panel.shown }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:12px 14px 16px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding-bottom:9px;border-bottom:1px solid #1E2535;">
+          <span style="color:#4A5878;font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:600;">{{ panel.eyebrow }}</span>
+          <span onClick="{{ onClosePanel }}" style="color:#4A5878;cursor:pointer;font-size:13px;line-height:1;">&#10005;</span>
+        </div>
+        <div style="margin:12px 0 4px;color:{{ panel.accent }};font-size:18px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;">{{ panel.title }}</div>
+        <div style="margin:10px 0 14px;font-family:'Share Tech Mono',monospace;font-size:13px;line-height:1.62;color:#D6E4FF;">
+          <sc-for list="{{ panel.tokens }}" as="t" hint-placeholder-count="14">
+            <span onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.text }}</span>
+          </sc-for>
+        </div>
+        <div style="border-top:1px solid #1E2535;padding-top:12px;display:grid;grid-template-columns:auto 1fr;gap:7px 16px;">
+          <sc-for list="{{ panel.meta }}" as="m" hint-placeholder-count="4">
+            <span style="color:#4A5878;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:500;">{{ m.k }}</span>
+            <span style="color:#D6E4FF;font-size:12px;letter-spacing:.04em;text-transform:uppercase;font-weight:600;text-align:right;">{{ m.v }}</span>
+          </sc-for>
+        </div>
+        <sc-if value="{{ panel.hint }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:14px;padding-top:10px;border-top:1px solid #1E2535;color:#4A5878;font-family:'Share Tech Mono',monospace;font-size:10px;line-height:1.5;letter-spacing:.02em;">{{ panel.hintText }}</div>
+        </sc-if>
+      </div>
+    </sc-if>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="position:absolute;bottom:0;left:0;right:0;height:44px;display:flex;align-items:center;gap:14px;padding:0 16px;background:#080B10;border-top:1px solid #1E2535;z-index:30;">
+    <span style="color:#4A5878;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;">Filtros</span>
+    <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 4px 0 10px;background:#111520;border:1px solid #1E2535;clip-path:polygon(5px 0,100% 0,100% 100%,0 100%,0 5px);">
+      <span style="color:#4A5878;font-size:10px;letter-spacing:.1em;text-transform:uppercase;">Nível</span>
+      <select ref="{{ setLevelSel }}" onChange="{{ onLevelFilter }}" style="background:transparent;border:none;outline:none;color:#D6E4FF;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;padding-right:4px;">
+        <option style="background:#111520;">todos</option>
+        <option style="background:#111520;">comunidades</option>
+        <option style="background:#111520;">comentários</option>
+        <option style="background:#111520;">frases</option>
+        <option style="background:#111520;">palavras</option>
+      </select>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;height:26px;padding:0 4px 0 10px;background:#111520;border:1px solid #1E2535;clip-path:polygon(5px 0,100% 0,100% 100%,0 100%,0 5px);">
+      <span style="color:#4A5878;font-size:10px;letter-spacing:.1em;text-transform:uppercase;">Tópico</span>
+      <select ref="{{ setTopicSel }}" onChange="{{ onTopicFilter }}" style="background:transparent;border:none;outline:none;color:#D6E4FF;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;padding-right:4px;">
+        <sc-for list="{{ topicOptions }}" as="o" hint-placeholder-count="8">
+          <option style="background:#111520;">{{ o }}</option>
+        </sc-for>
+      </select>
+    </div>
+    <div style="flex:1;"></div>
+    <span style="color:#4A5878;font-size:11px;font-family:'Share Tech Mono',monospace;letter-spacing:.04em;">{{ statusLine }}</span>
+    <button onClick="{{ onBack }}" style="display:flex;align-items:center;gap:6px;height:28px;padding:0 14px;background:#111520;border:1px solid {{ backColor }};color:{{ backColor }};cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;clip-path:polygon(6px 0,100% 0,100% 100%,0 100%,0 6px);">&#9664; Voltar</button>
+  </div>
+
+  <!-- LEGEND -->
+  <div style="position:absolute;left:16px;bottom:96px;z-index:24;display:flex;gap:16px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;pointer-events:none;">
+    <span style="color:#4D7CFF;">&#11041; comunidade</span>
+    <span style="color:#D500F9;">&#9679; comentário</span>
+    <span style="color:#69FF47;">&#9632; frase</span>
+    <span style="color:#00E5FF;">&#9670; palavra</span>
+  </div>
+
+  <!-- HINT (bottom-left controls) -->
+  <div style="position:absolute;left:16px;bottom:56px;z-index:24;color:#2C3650;font-family:'Share Tech Mono',monospace;font-size:10px;line-height:1.7;letter-spacing:.02em;pointer-events:none;">
+    SCROLL &middot; zoom &nbsp;|&nbsp; ARRASTAR &middot; pan<br>CLIQUE &middot; inspecionar &nbsp;|&nbsp; DUPLO-CLIQUE &middot; explorar
+  </div>
+
+  <!-- TOOLTIP -->
+  <sc-if value="{{ tipShown }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;z-index:40;pointer-events:none;left:{{ tip.x }}px;top:{{ tip.y }}px;transform:translate(-50%,-140%);background:rgba(8,11,16,.92);border:1px solid #1E2535;padding:4px 8px;color:#D6E4FF;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:600;white-space:nowrap;clip-path:polygon(5px 0,100% 0,100% 100%,0 100%,0 5px);">{{ tip.text }}</div>
+  </sc-if>
+
+  <!-- ERROR TOAST -->
+  <sc-if value="{{ errorShown }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:64px;transform:translateX(-50%);z-index:45;display:flex;align-items:center;gap:16px;padding:12px 16px;background:#111520;border:1px solid #1E2535;border-top:2px solid #FF1744;clip-path:polygon(8px 0,100% 0,100% 100%,0 100%,0 8px);">
+      <span style="color:#FF1744;font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;">&#9888; Falha ao carregar dados</span>
+      <button onClick="{{ onReload }}" style="height:26px;padding:0 12px;background:transparent;border:1px solid #FF1744;color:#FF1744;cursor:pointer;font-family:'Rajdhani',sans-serif;font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;">Recarregar</button>
+    </div>
+  </sc-if>
+
+  <!-- LOADING -->
+  <sc-if value="{{ loadingShown }}" hint-placeholder-val="{{ true }}">
+    <div style="position:absolute;inset:0;z-index:60;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;background:#080B10;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:26px;">
+        <span style="color:#00E5FF;font-size:30px;line-height:1;animation:grgPulse 2.4s ease-in-out infinite;">&#9672;</span>
+        <span style="color:#00E5FF;font-size:28px;font-weight:700;letter-spacing:.18em;">GAMEREVIEWGRAPH</span>
+      </div>
+      <div style="color:#4A5878;font-size:13px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;margin-bottom:14px;">Carregando comunidades</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px;">
+        <div style="width:300px;height:2px;background:#1E2535;">
+          <div style="height:100%;background:#00E5FF;width:{{ load.pct }}%;box-shadow:0 0 8px rgba(0,229,255,.6);"></div>
+        </div>
+        <span style="color:#00E5FF;font-family:'Share Tech Mono',monospace;font-size:13px;width:46px;">{{ load.pct }} %</span>
+      </div>
+      <div style="color:#4A5878;font-family:'Share Tech Mono',monospace;font-size:12px;letter-spacing:.04em;text-align:center;line-height:1.7;">
+        {{ load.words }} palavras &middot; {{ load.sentences }} sentenças<br>{{ load.comments }} comentários
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:&quot;100%&quot;,&quot;height&quot;:&quot;100%&quot;},&quot;showParticles&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;ambientGlow&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;edgeDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sparse&quot;,&quot;normal&quot;,&quot;dense&quot;],&quot;default&quot;:&quot;normal&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { rev:0, loadingShown:true, loadPct:0, loadW:0, loadS:0, loadC:0, errorShown:false };
+
+  colors = { void:'#080B10', surf:'#111520', border:'#1E2535', grid:'#0F1319',
+    text:'#D6E4FF', dim:'#4A5878', word:'#00E5FF', sentence:'#69FF47',
+    comment:'#D500F9', community:'#4D7CFF', contain:'#FFD740', brush:'#FF1744' };
+
+  vocab = ['história','narrativa','gráficos','jogabilidade','trilha','mundo','combate','dificuldade','personagens','final','bugs','otimização','exploração','imersão','controles'];
+
+  bank = [
+    {t:'A história é envolvente do início ao fim.', w:['história']},
+    {t:'A narrativa surpreende em cada cap ítulo.', w:['narrativa']},
+    {t:'Os gráficos impressionam mesmo no modo performance.', w:['gráficos']},
+    {t:'A jogabilidade é fluida e responsiva.', w:['jogabilidade']},
+    {t:'A trilha sonora eleva cada momento de tensão.', w:['trilha']},
+    {t:'O mundo aberto convida à exploração constante.', w:['mundo','exploração']},
+    {t:'O combate exige timing e leitura do inimigo.', w:['combate']},
+    {t:'A dificuldade é punitiva, porém justa.', w:['dificuldade']},
+    {t:'Os personagens têm profundidade e arcos memoráveis.', w:['personagens']},
+    {t:'O final divide opiniões na comunidade.', w:['final']},
+    {t:'Ainda há bugs que quebram a imersão.', w:['bugs','imersão']},
+    {t:'A otimização melhorou bastante após os patches.', w:['otimização']},
+    {t:'A imersão é total graças ao design de som.', w:['imersão']},
+    {t:'Os controles respondem com precisão cirúrgica.', w:['controles']},
+    {t:'A exploramção recompensa quem sai do caminho.', w:['exploração']},
+    {t:'O combate brilha mesmo contra os chefes finais.', w:['combate']},
+    {t:'A história perde força no terceiro ato.', w:['história']},
+    {t:'Os gráficos custam caro em otimização.', w:['gráficos','otimização']},
+    {t:'Os personagens carregam uma narrativa densa.', w:['personagens','narrativa']},
+    {t:'O mundo é vasto mas às vezes vazio.', w:['mundo']}
+  ];
+
+  topics = ['rpg','soulslike','fps','roguelike','indie','strategy','horror'];
+
+  // ---------- lifecycle ----------
+  componentDidMount(){
+    this.cam = { x:0, y:0, scale:0.55 };
+    this.mode = 'overview';
+    this.sel = null; this.selKind = null;
+    this.brush = null; this.tip = null;
+    this.levelFilter = 'todos'; this.topicFilter = 'todos';
+    this.opts = { particles: this.props.showParticles ?? true,
+      glow: this.props.ambientGlow ?? true,
+      density: this.props.edgeDensity ?? 'normal' };
+    this.rng = this.mulberry(20260622);
+    this.generate();
+    this.layoutOverview();
+    this.startLoading();
+    window.addEventListener('resize', this.onResize);
+  }
+  componentWillUnmount(){
+    window.removeEventListener('resize', this.onResize);
+    if(this.raf) cancelAnimationFrame(this.raf);
+    if(this.simRaf) cancelAnimationFrame(this.simRaf);
+  }
+
+  mulberry(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+  // ---------- refs ----------
+  setCanvas = (el)=>{ if(!el || this.canvas===el) return; this.canvas=el; this.ctx=el.getContext('2d');
+    el.addEventListener('wheel', this.onWheel, {passive:false});
+    el.addEventListener('mousedown', this.onDown);
+    el.addEventListener('mousemove', this.onMove);
+    el.addEventListener('dblclick', this.onDbl);
+    window.addEventListener('mouseup', this.onUp);
+    this.ro = new ResizeObserver(()=>this.resize()); this.ro.observe(el);
+    requestAnimationFrame(()=>this.resize());
+    this.resize(); };
+  setSearch = (el)=>{ this.searchEl=el; };
+  setTopicSel = (el)=>{ this.topicSel=el; };
+
+  // ---------- data ----------
+  generate(){
+    const rng=this.rng; this.communities=[]; this.comments=[]; this.edges=[];
+    const nC=7;
+    for(let i=0;i<nC;i++){
+      const topic=this.topics[i%this.topics.length];
+      const size=12+Math.floor(rng()*16);
+      this.communities.push({id:i, topic, size, cx:0, cy:0, r:0, color:this.colors.community});
+    }
+    let gid=0;
+    this.communities.forEach((c)=>{
+      c.start=this.comments.length;
+      for(let j=0;j<c.size;j++){
+        const ns=2+Math.floor(rng()*2);
+        const used=new Set(); const sents=[]; const words=new Set();
+        for(let k=0;k<ns;k++){ let s; do{ s=Math.floor(rng()*this.bank.length); }while(used.has(s)&&used.size<this.bank.length); used.add(s);
+          const b=this.bank[s]; sents.push(b.t); b.w.forEach(w=>words.add(w)); }
+        this.comments.push({ id:gid++, gid:c.id, topic:c.topic, x:0,y:0,vx:0,vy:0, deg:0,
+          r:5+rng()*5, sentences:sents, text:sents.join(' '), keywords:[...words], iso:false });
+      }
+      c.end=this.comments.length;
+      const r=Math.sqrt(c.size); c.r=Math.max(16, Math.min(46, 12+r*6));
+    });
+    // similarity edges within community
+    const dens = this.opts.density==='dense'?3:this.opts.density==='sparse'?1:2;
+    this.communities.forEach(c=>{
+      for(let a=c.start;a<c.end;a++){
+        const links=1+Math.floor(this.rng()*dens);
+        for(let l=0;l<links;l++){
+          const b=c.start+Math.floor(this.rng()*(c.end-c.start));
+          if(b===a) continue;
+          this.edges.push({a, b, w:0.3+this.rng()*0.7});
+          this.comments[a].deg++; this.comments[b].deg++;
+        }
+      }
+    });
+    // mark a few isolated nodes
+    this.comments.forEach(cm=>{ if(cm.deg===0) cm.iso=true; });
+    // adjacency for focus sets
+    this.adj = this.comments.map(()=>new Set());
+    this.edges.forEach(e=>{ this.adj[e.a].add(e.b); this.adj[e.b].add(e.a); });
+    this.comments.forEach(cm=>this.buildSubNodes(cm));
+  }
+
+  // ---------- layout ----------
+  layoutOverview(){
+    const N=this.communities.length, R=430, rng=this.rng;
+    this.communities.forEach((c,i)=>{ const a=i/N*Math.PI*2 - Math.PI/2; c.cx=Math.cos(a)*R; c.cy=Math.sin(a)*R*0.62; });
+    this.comments.forEach(cm=>{ const c=this.communities[cm.gid]; const a=rng()*Math.PI*2, d=18+rng()*70;
+      cm.x=c.cx+Math.cos(a)*d; cm.y=c.cy+Math.sin(a)*d; cm.vx=0; cm.vy=0; });
+    this.byComm = this.communities.map(c=> this.comments.slice(c.start,c.end));
+  }
+
+  buildSubNodes(cm){
+    const ns=cm.sentences.length;
+    const sents=cm.sentences.map((text,i)=>{ const a=i/ns*Math.PI*2 - Math.PI/2;
+      return {kind:'sentence', text, idx:i, cm, ox:Math.cos(a)*16, oy:Math.sin(a)*16, words:this.vocab.filter(w=>text.toLowerCase().includes(w))}; });
+    const wmap=new Map();
+    sents.forEach(s=>s.words.forEach(w=>{ if(!wmap.has(w)) wmap.set(w,{kind:'word', word:w, cm, sent:s}); }));
+    const words=[...wmap.values()];
+    words.forEach((w,i)=>{ const a=i/Math.max(1,words.length)*Math.PI*2 - Math.PI/2; w.ox=Math.cos(a)*30; w.oy=Math.sin(a)*30; });
+    cm.sentNodes=sents; cm.wordNodes=words;
+  }
+
+  levelAlphas(){ const sc=this.cam.scale, lf=this.levelFilter; const cl=(v)=>Math.max(0,Math.min(1,v));
+    if(lf==='comunidades') return {comm:1,comment:0,sent:0,word:0};
+    if(lf==='comentários') return {comm:0,comment:1,sent:0,word:0};
+    if(lf==='frases') return {comm:0,comment:0.16,sent:1,word:0};
+    if(lf==='palavras') return {comm:0,comment:0.10,sent:0.18,word:1};
+    return { comm:cl((1.0-sc)/0.2), comment:cl((sc-0.8)/0.2), sent:cl((sc-1.7)/0.4), word:cl((sc-2.7)/0.4) };
+  }
+
+  step(alpha){
+    const C=this.communities;
+    for(let g=0; g<C.length; g++){
+      const list=this.byComm[g]; const center=C[g];
+      for(let i=0;i<list.length;i++){
+        const a=list[i];
+        for(let j=i+1;j<list.length;j++){
+          const b=list[j]; let dx=a.x-b.x, dy=a.y-b.y; let d2=dx*dx+dy*dy||0.01;
+          if(d2<6400){ const d=Math.sqrt(d2); const f=(700/d2)*alpha; const nx=dx/d, ny=dy/d;
+            a.vx+=nx*f; a.vy+=ny*f; b.vx-=nx*f; b.vy-=ny*f; }
+        }
+        // containment toward center
+        let dx=center.cx-a.x, dy=center.cy-a.y; a.vx+=dx*0.0016*alpha; a.vy+=dy*0.0016*alpha;
+      }
+    }
+    // similarity springs
+    this.edges.forEach(e=>{ const a=this.comments[e.a], b=this.comments[e.b];
+      let dx=b.x-a.x, dy=b.y-a.y; let d=Math.sqrt(dx*dx+dy*dy)||0.01; const target=36;
+      const f=(d-target)*0.01*alpha; const nx=dx/d, ny=dy/d;
+      a.vx+=nx*f; a.vy+=ny*f; b.vx-=nx*f; b.vy-=ny*f; });
+    // integrate
+    this.comments.forEach(a=>{ a.vx*=0.86; a.vy*=0.86; a.x+=a.vx; a.y+=a.vy; });
+  }
+
+  startSim(){
+    let alpha=1, t0=performance.now();
+    const loop=()=>{ this.step(alpha); alpha*=0.965; this.draw();
+      if(alpha>0.02 && performance.now()-t0<1700){ this.simRaf=requestAnimationFrame(loop); }
+      else { this.draw(); }
+    };
+    loop();
+  }
+
+  // ---------- loading ----------
+  startLoading(){
+    const t0=performance.now(), dur=2100; const W=467,S=3049,Cc=2000;
+    const tick=()=>{ const e=Math.min(1,(performance.now()-t0)/dur); const k=1-Math.pow(1-e,3);
+      this.setState({loadPct:Math.round(k*100), loadW:Math.round(k*W), loadS:Math.round(k*S), loadC:Math.round(k*Cc)});
+      if(e<1){ requestAnimationFrame(tick); }
+      else { this.setState({loadingShown:false}); this.startSim(); }
+    };
+    requestAnimationFrame(tick);
+  }
+
+  // ---------- camera helpers ----------
+  resize(){ if(!this.canvas) return; const dpr=window.devicePixelRatio||1; const r=this.canvas.getBoundingClientRect();
+    this.W=r.width; this.H=r.height; this.dpr=dpr; this.canvas.width=r.width*dpr; this.canvas.height=r.height*dpr;
+    this.makeParticles(); this.draw(); }
+  onResize = ()=>{ this.resize(); };
+  makeParticles(){ const n=70; this.particles=[]; for(let i=0;i<n;i++){ this.particles.push({x:Math.random()*this.W, y:Math.random()*this.H}); } }
+
+  w2s(wx,wy){ return [ (wx-this.cam.x)*this.cam.scale + this.W/2, (wy-this.cam.y)*this.cam.scale + this.H/2 ]; }
+  s2w(sx,sy){ return [ (sx-this.W/2)/this.cam.scale + this.cam.x, (sy-this.H/2)/this.cam.scale + this.cam.y ]; }
+
+  requestDraw(){ if(this._pd) return; this._pd=true; this.raf=requestAnimationFrame(()=>{ this._pd=false; this.draw(); }); }
+
+  // ---------- interaction ----------
+  onWheel = (e)=>{ e.preventDefault(); const [wx,wy]=this.s2w(e.offsetX, e.offsetY);
+    const f=Math.exp(-e.deltaY*0.0012); let ns=Math.max(0.18, Math.min(4, this.cam.scale*f)); this.cam.scale=ns;
+    const [nx,ny]=this.w2s(wx,wy); // keep cursor anchored
+    this.cam.x += (nx-e.offsetX)/this.cam.scale; this.cam.y += (ny-e.offsetY)/this.cam.scale;
+    this.bump(); this.requestDraw(); };
+
+  onDown = (e)=>{ this.drag={sx:e.offsetX, sy:e.offsetY, cx:this.cam.x, cy:this.cam.y, moved:false}; this.canvas.style.cursor='grabbing'; };
+  onMove = (e)=>{ if(this.drag){ const dx=e.offsetX-this.drag.sx, dy=e.offsetY-this.drag.sy;
+      if(Math.abs(dx)+Math.abs(dy)>3) this.drag.moved=true;
+      this.cam.x=this.drag.cx - dx/this.cam.scale; this.cam.y=this.drag.cy - dy/this.cam.scale; this.requestDraw(); return; }
+    const hit=this.hit(e.offsetX,e.offsetY); const prev=this.hov; this.hov=hit;
+    if(hit && hit.kind==='comment' && hit.node.iso){ const[sx,sy]=this.w2s(hit.node.x,hit.node.y); this.tip={x:sx,y:sy,text:'sem conexões no threshold atual'}; }
+    else if(this.tip){ this.tip=null; }
+    this.canvas.style.cursor = hit? 'pointer':'grab';
+    if(prev!==hit || (!hit&&this.tip===null)){ this.bump(); this.requestDraw(); } };
+  onUp = (e)=>{ if(!this.drag) return; const moved=this.drag.moved; this.drag=null; if(this.canvas) this.canvas.style.cursor='grab';
+    if(!moved){ this.click(e.offsetX, e.offsetY); } };
+  onDbl = (e)=>{ const hit=this.hit(e.offsetX,e.offsetY); if(!hit) return;
+    if(this.mode==='overview'){ if(hit.kind==='community'){ this.zoomTo(hit.node.cx,hit.node.cy,1.2); }
+      else if(hit.kind==='comment'){ this.enterDetail(hit.node); } } };
+
+  click(sx,sy){ const hit=this.hit(sx,sy);
+    if(!hit){ this.sel=null; this.selKind=null; this.detailSel=null; this.brush=null; this.computeFocus(); this.bump(); this.requestDraw(); return; }
+    this.sel=hit.node; this.selKind=hit.kind;
+    this.detailSel = (hit.kind==='sentence'||hit.kind==='word')? hit.node : null;
+    this.brush = hit.kind==='word'? hit.node.word : null;
+    this.computeFocus(); this.setBreadcrumb(); this.bump(); this.requestDraw(); }
+
+  hit(sx,sy){ const [wx,wy]=this.s2w(sx,sy);
+    if(this.mode==='detail'){ let best=null,bd=1e9; this.detail.nodes.forEach(n=>{ const dx=n.x-wx,dy=n.y-wy; const d=Math.hypot(dx,dy); const tol=n.r+6/this.cam.scale; if(d<tol&&d<bd){bd=d;best=n;} }); return best?{kind:best.kind,node:best}:null; }
+    const sc=this.cam.scale, A=this.levelAlphas(); const tm=(t)=>this.topicMatch(t);
+    const pick=(cands)=>{ let best=null,bd=1e9; for(const o of cands){ const d=Math.hypot(o.x-wx,o.y-wy); const tol=o.r+6/sc; if(d<tol&&d<bd){bd=d;best=o.node;} } return best; };
+    if(A.word>0.3){ const c=[]; this.comments.forEach(cm=>{ if(!tm(cm.topic))return; cm.wordNodes.forEach(w=>c.push({x:cm.x+w.ox,y:cm.y+w.oy,r:5.5,node:w})); }); const n=pick(c); if(n) return {kind:'word',node:n}; }
+    if(A.sent>0.3){ const c=[]; this.comments.forEach(cm=>{ if(!tm(cm.topic))return; cm.sentNodes.forEach(s=>c.push({x:cm.x+s.ox,y:cm.y+s.oy,r:7,node:s})); }); const n=pick(c); if(n) return {kind:'sentence',node:n}; }
+    if(A.comment>0.3){ const c=this.comments.filter(cm=>tm(cm.topic)).map(cm=>({x:cm.x,y:cm.y,r:cm.r,node:cm})); const n=pick(c); if(n) return {kind:'comment',node:n}; }
+    if(A.comm>0.3){ const c=this.communities.map(cc=>({x:cc.cx,y:cc.cy,r:cc.r,node:cc})); const n=pick(c); if(n) return {kind:'community',node:n}; }
+    return null; }
+
+  computeFocus(){ this.focus=null; if(this.mode!=='overview') return; if(this.selKind==='comment'){ const s=new Set([this.sel.id]); this.adj[this.sel.id].forEach(i=>s.add(i)); this.focus={comments:s, gid:this.sel.gid}; }
+    else if(this.selKind==='community'){ this.focus={gid:this.sel.id, comments:null}; } }
+
+  zoomTo(wx,wy,scale){ const start={x:this.cam.x,y:this.cam.y,s:this.cam.scale}, t0=performance.now(), dur=300;
+    const loop=()=>{ const e=Math.min(1,(performance.now()-t0)/dur); const k=1-Math.pow(1-e,3);
+      this.cam.x=start.x+(wx-start.x)*k; this.cam.y=start.y+(wy-start.y)*k; this.cam.scale=start.s+(scale-start.s)*k;
+      this.draw(); if(e<1) requestAnimationFrame(loop); else this.bump(); }; loop(); }
+
+  // ---------- detail mode ----------
+  enterDetail(cm){ this.savedCam={...this.cam}; this.mode='detail'; this.sel=cm; this.selKind='comment';
+    this.buildDetail(cm); this.cam={x:0,y:0,scale:1.0}; // flash then settle
+    this.setBreadcrumb(); this.bump();
+    // brief flash
+    this.flash=1; const t0=performance.now(); const fl=()=>{ this.flash=Math.max(0,1-(performance.now()-t0)/400); this.draw(); if(this.flash>0) requestAnimationFrame(fl); }; fl(); }
+
+  buildDetail(cm){ const nodes=[], edges=[]; const C={kind:'comment',node:cm,x:0,y:0,r:16,color:this.colors.comment,label:'C'+cm.id, ref:cm}; nodes.push(C);
+    const ns=cm.sentences.length;
+    cm.sentences.forEach((s,i)=>{ const a=i/ns*Math.PI*2 - Math.PI/2; const sx=Math.cos(a)*150, sy=Math.sin(a)*150;
+      const sn={kind:'sentence',x:sx,y:sy,r:10,color:this.colors.sentence,label:'S'+i,text:s, idx:i}; nodes.push(sn); edges.push({a:C,b:sn,kind:'contain'});
+      const ws=this.vocab.filter(w=> s.toLowerCase().includes(w));
+      ws.forEach((w,k)=>{ const wa=a + (k-(ws.length-1)/2)*0.34; const wx=Math.cos(wa)*270, wy=Math.sin(wa)*270;
+        const wn={kind:'word',x:wx,y:wy,r:7,color:this.colors.word,label:w,word:w}; nodes.push(wn); edges.push({a:sn,b:wn,kind:'contain'}); }); });
+    // sentence-sentence similarity (green)
+    for(let i=1;i<=ns;i++){ const A=nodes[i], B=nodes[i%ns+1]; if(A&&B&&A.kind==='sentence'&&B.kind==='sentence') edges.push({a:A,b:B,kind:'sim'}); }
+    this.detail={nodes,edges,comment:cm}; }
+
+  exitDetail(){ this.mode='overview'; this.detail=null; if(this.savedCam) this.zoomTo(this.savedCam.x,this.savedCam.y,this.savedCam.scale);
+    this.sel=null; this.selKind=null; this.computeFocus(); this.setBreadcrumb(); this.bump(); }
+
+  // ---------- handlers exposed ----------
+  bump(){ this.setState(s=>({rev:s.rev+1})); }
+  onGear = ()=>{ this.opts.particles=!this.opts.particles; this.draw(); };
+  onBack = ()=>{ if(this.mode==='detail'){ this.exitDetail(); return; }
+    if(this.sel){ this.sel=null; this.selKind=null; this.detailSel=null; this.brush=null; this.computeFocus(); this.setBreadcrumb(); this.bump(); this.requestDraw(); return; }
+    this.zoomTo(0,0,0.55); this.bump(); };
+  setLevelSel = (el)=>{ this.levelSel=el; };
+  onClosePanel = ()=>{ this.sel=null; this.selKind=null; this.brush=null; this.computeFocus(); this.setBreadcrumb(); this.bump(); this.requestDraw(); };
+  onSearchKey = (e)=>{ if(e.key!=='Enter') return; const q=(e.target.value||'').trim().toLowerCase(); this.brush=q||null; this.bump(); this.requestDraw(); };
+  onReload = ()=>{ this.setState({errorShown:false}); };
+  onLevelFilter = (e)=>{ this.levelFilter=e.target.value; const lf=this.levelFilter;
+    const f={'comunidades':0.5,'comentários':0.95,'frases':1.55,'palavras':2.0}[lf];
+    if(lf==='todos'||!f){ this.bump(); this.requestDraw(); return; }
+    let cx=0,cy=0;
+    if(lf!=='comunidades'){ let best=this.communities[0],bd=1e9; this.communities.forEach(c=>{const d=Math.hypot(c.cx-this.cam.x,c.cy-this.cam.y); if(d<bd){bd=d;best=c;}}); cx=best.cx; cy=best.cy; }
+    this.zoomTo(cx,cy,f); };
+  onTopicFilter = (e)=>{ this.topicFilter=e.target.value; this.requestDraw(); };
+  selectDetailNode(n){ this.sel=n.ref||n; this.selKind=n.kind; this.detailSel=n; this.setBreadcrumb(); this.bump(); this.requestDraw(); }
+
+  setBreadcrumb(){ /* breadcrumb derived in renderVals */ }
+
+  // ---------- drawing ----------
+  draw(){ const ctx=this.ctx; if(!ctx||!this.cam) return; const W=this.W,H=this.H,dpr=this.dpr,cam=this.cam,Cl=this.colors;
+    ctx.setTransform(dpr,0,0,dpr,0,0); ctx.fillStyle=Cl.void; ctx.fillRect(0,0,W,H);
+    this.drawGrid();
+    if(this.opts.particles && this.particles){ ctx.fillStyle=Cl.border; this.particles.forEach(p=>{ ctx.fillRect(p.x,p.y,1,1); }); }
+    if(this.mode==='detail') this.drawDetail(); else this.drawOverview();
+    if(this.flash>0){ ctx.fillStyle='rgba(213,0,249,'+(this.flash*0.12)+')'; ctx.fillRect(0,0,W,H); }
+  }
+
+  drawGrid(){ const ctx=this.ctx, cam=this.cam, W=this.W,H=this.H; if(cam.scale<0.3) return;
+    let ga = cam.scale<0.4? (cam.scale-0.3)/0.1 : 1; ga=Math.max(0,Math.min(1,ga))*0.9;
+    const sp=40*cam.scale; if(sp<6) return;
+    ctx.save(); ctx.strokeStyle=this.colors.grid; ctx.globalAlpha=ga; ctx.lineWidth=1; ctx.beginPath();
+    let ox=(W/2 - cam.x*cam.scale*0.6)%sp; if(ox<0)ox+=sp; let oy=(H/2 - cam.y*cam.scale*0.6)%sp; if(oy<0)oy+=sp;
+    for(let x=ox;x<W;x+=sp){ ctx.moveTo(Math.round(x)+0.5,0); ctx.lineTo(Math.round(x)+0.5,H); }
+    for(let y=oy;y<H;y+=sp){ ctx.moveTo(0,Math.round(y)+0.5); ctx.lineTo(W,Math.round(y)+0.5); }
+    ctx.stroke(); ctx.restore(); }
+
+  topicMatch(topic){ return this.topicFilter==='todos' || this.topicFilter===topic; }
+
+  drawOverview(){ const ctx=this.ctx, cam=this.cam, Cl=this.colors; const sc=cam.scale;
+    const commAlpha=Math.max(0,Math.min(1,(1.0-sc)/0.2));
+    const nodeAlpha=Math.max(0,Math.min(1,(sc-0.8)/0.2));
+    const lf=this.levelFilter;
+    const showComm = commAlpha>0 && lf!=='comentários';
+    const showNodes = nodeAlpha>0 && lf!=='comunidades';
+    const hasSel=!!this.sel; const focus=this.focus;
+    // similarity edges
+    if(showNodes){ ctx.save(); let base= sc<0.8?0.1:1; ctx.lineWidth=1;
+      this.edges.forEach(e=>{ const a=this.comments[e.a], b=this.comments[e.b];
+        const dim = hasSel && focus && focus.comments && !(focus.comments.has(a.id)&&focus.comments.has(b.id));
+        const [ax,ay]=this.w2s(a.x,a.y), [bx,by]=this.w2s(b.x,b.y);
+        let al=(0.15+e.w*0.2)*base*nodeAlpha; if(dim) al*=0.18; if(!this.topicMatch(a.topic)) al*=0.25;
+        ctx.strokeStyle='rgba(213,0,249,'+al+')'; ctx.lineWidth=0.8+e.w*1.2;
+        ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke(); });
+      ctx.restore(); }
+    // containment edges (community -> comment) amber dashed when zoomed
+    if(showNodes && sc>1.5){ ctx.save(); ctx.strokeStyle='rgba(255,215,64,0.5)'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]);
+      this.comments.forEach(cm=>{ if(!this.topicMatch(cm.topic)) return; const c=this.communities[cm.gid];
+        const [ax,ay]=this.w2s(c.cx,c.cy), [bx,by]=this.w2s(cm.x,cm.y); ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke(); });
+      ctx.setLineDash([]); ctx.restore(); }
+    // community hexagons
+    if(showComm){ this.communities.forEach(c=>{ const [sx,sy]=this.w2s(c.cx,c.cy); let r=Math.max(6,c.r*sc);
+      let a=commAlpha; const tm=this.topicMatch(c.topic); if(!tm) a*=0.22;
+      const selected=this.selKind==='community'&&this.sel===c; const hov=this.hov&&this.hov.kind==='community'&&this.hov.node===c;
+      this.shape(ctx,'hex',sx,sy,r,Cl.comment, {alpha:a*0.78, glow:(hov||selected)?14:0, ring:selected?r+5:0, ringColor:Cl.comment});
+      if(sc>=0.4 && tm){ const ab=sc<0.8? c.topic.toUpperCase() : ('C'+(c.id+1)+' // '+c.topic.toUpperCase()+' // '+c.size); this.label(ctx,ab,sx,sy+r+12,Cl.text,a); }
+    }); }
+    // comment nodes
+    if(showNodes){ this.comments.forEach(cm=>{ const [sx,sy]=this.w2s(cm.x,cm.y); let r=Math.max(2,cm.r*sc);
+      const tm=this.topicMatch(cm.topic); let a=nodeAlpha*0.75; if(!tm) a=nodeAlpha*0.12;
+      let color=Cl.comment; let glow=0, ring=0;
+      const brushed = this.brush && (cm.keywords.includes(this.brush)||cm.text.toLowerCase().includes(this.brush));
+      if(brushed){ color=Cl.brush; a=nodeAlpha; glow=16; }
+      const selected=this.selKind==='comment'&&this.sel===cm;
+      const hov=this.hov&&this.hov.kind==='comment'&&this.hov.node===cm;
+      if(hov&&!brushed){ a=nodeAlpha; glow=12; }
+      if(selected){ a=nodeAlpha; glow=20; ring=r+4; }
+      if(this.sel&&this.focus&&this.focus.comments&&!this.focus.comments.has(cm.id)&&!brushed){ a*=0.22; glow=0; }
+      else if(this.sel&&this.selKind==='community'&&this.focus&&cm.gid!==this.focus.gid&&!brushed){ a*=0.22; }
+      this.shape(ctx,'circle',sx,sy,r,color,{alpha:a, glow:this.opts.glow?glow:0, ring, ringColor:color, dash:cm.iso});
+    }); }
+  }
+
+  drawDetail(){ const ctx=this.ctx, Cl=this.colors; const d=this.detail; if(!d) return;
+    // edges
+    d.edges.forEach(e=>{ const [ax,ay]=this.w2s(e.a.x,e.a.y), [bx,by]=this.w2s(e.b.x,e.b.y);
+      ctx.save(); if(e.kind==='contain'){ ctx.strokeStyle='rgba(255,215,64,0.5)'; ctx.lineWidth=1.5; ctx.setLineDash([4,3]); }
+      else { ctx.strokeStyle='rgba(105,255,71,0.3)'; ctx.lineWidth=1.2; }
+      ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.stroke(); ctx.restore(); });
+    // nodes
+    d.nodes.forEach(n=>{ const [sx,sy]=this.w2s(n.x,n.y); const r=Math.max(3,n.r*this.cam.scale);
+      const shape = n.kind==='comment'?'circle': n.kind==='sentence'?'square':'diamond';
+      const selected=this.detailSel===n; const hov=this.hov&&this.hov.node===n;
+      let a=0.78, glow=0, ring=0;
+      const brushed=this.brush && n.kind==='word' && n.word===this.brush;
+      if(brushed){ a=1; glow=16; }
+      if(hov){ a=1; glow=12; }
+      if(selected){ a=1; glow=20; ring=r+4; }
+      this.shape(ctx,shape,sx,sy,r,brushed?Cl.brush:n.color,{alpha:a, glow:this.opts.glow?glow:0, ring, ringColor:n.color});
+      if(this.cam.scale>=1.0 && (n.kind==='word'||n.kind==='comment'||hov||selected)){ this.label(ctx,n.label.toUpperCase(),sx,sy+r+11,Cl.text,1); }
+    }); }
+
+  shape(ctx,kind,x,y,r,color,o){ o=o||{}; const a=o.alpha==null?1:o.alpha; if(a<=0.01) return; ctx.save();
+    if(o.glow){ ctx.shadowColor=color; ctx.shadowBlur=o.glow; }
+    ctx.globalAlpha=a; ctx.fillStyle=color; ctx.strokeStyle=color;
+    if(o.dash){ ctx.setLineDash([3,3]); ctx.lineWidth=1; ctx.globalAlpha=a*0.5; this.path(ctx,kind,x,y,r); ctx.stroke(); ctx.restore(); return; }
+    this.path(ctx,kind,x,y,r); ctx.fill();
+    if(o.ring){ ctx.shadowBlur=0; ctx.globalAlpha=Math.min(1,a); ctx.lineWidth=1.5; ctx.strokeStyle=o.ringColor||color; this.path(ctx,kind,x,y,o.ring); ctx.stroke(); }
+    ctx.restore(); }
+
+  path(ctx,kind,x,y,r){ ctx.beginPath();
+    if(kind==='circle'){ ctx.arc(x,y,r,0,Math.PI*2); }
+    else if(kind==='square'){ ctx.rect(x-r,y-r,r*2,r*2); }
+    else if(kind==='diamond'){ ctx.moveTo(x,y-r); ctx.lineTo(x+r,y); ctx.lineTo(x,y+r); ctx.lineTo(x-r,y); ctx.closePath(); }
+    else if(kind==='hex'){ for(let i=0;i<6;i++){ const a=Math.PI/6 + i*Math.PI/3; const px=x+Math.cos(a)*r, py=y+Math.sin(a)*r; i?ctx.lineTo(px,py):ctx.moveTo(px,py); } ctx.closePath(); } }
+
+  label(ctx,text,x,y,color,alpha){ ctx.save(); ctx.font='600 11px Rajdhani, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='top';
+    const w=ctx.measureText(text).width+10; ctx.globalAlpha=Math.min(1,alpha)*0.8; ctx.fillStyle='rgba(8,11,16,0.8)'; ctx.fillRect(x-w/2,y-1,w,15);
+    ctx.globalAlpha=Math.min(1,alpha); ctx.fillStyle=color; ctx.fillText(text,x,y+1); ctx.restore(); }
+
+  // ---------- render values ----------
+  renderVals(){
+    const Cl=this.colors, S=this.state;
+    const accentFor=(k)=> k==='word'?Cl.word : k==='sentence'?Cl.sentence : k==='comment'?Cl.comment : k==='community'?Cl.comment : Cl.border;
+    // breadcrumb
+    const crumbs=[];
+    const push=(label,prefix,current,onClick)=>crumbs.push({label,prefix,current,onClick,
+      prefixStyle:'color:'+(prefix==='▸'?'#00E5FF':'#1E2535')+';font-size:'+(prefix==='▸'?'13px':'12px')+';',
+      labelStyle:'color:'+(current?'#D6E4FF':'#4A5878')+';font-weight:'+(current?'600':'400')+';'+(current?'':'cursor:pointer;')});
+    push('dataset','▸', this.mode==='overview'&&!this.sel, ()=>{ this.onBack(); });
+    if(this.sel){
+      if(this.mode==='overview'&&this.selKind==='community'){ push('comunidade C'+(this.sel.id+1),'›',true,null); }
+      if(this.mode==='overview'&&this.selKind==='comment'){ push('comunidade C'+(this.sel.gid+1),'›',false,()=>{}); push('comentário '+this.sel.id,'›',true,null); }
+      if(this.mode==='detail'){ const cm=this.detail.comment; push('comunidade C'+(cm.gid+1),'›',false,()=>this.exitDetail()); push('comentário '+cm.id,'›',this.selKind==='comment',()=>this.selectDetailNode(this.detail.nodes[0]));
+        if(this.selKind==='sentence'&&this.detailSel) push('sentença '+this.detailSel.idx,'›',true,null);
+        if(this.selKind==='word'&&this.detailSel) push('palavra',true===true?'›':'›',true,null); } }
+
+    // panel
+    let panel={empty:true, shown:false, accent:Cl.border, tokens:[], meta:[], hint:false};
+    if(this.sel && this.selKind){
+      panel.empty=false; panel.shown=true; panel.accent=accentFor(this.selKind);
+      if(this.selKind==='comment'){ const cm = this.sel; panel.eyebrow='COMENTÁRIO · ID '+cm.id; panel.title=cm.topic;
+        panel.tokens=this.tokenize(cm.text);
+        panel.meta=[{k:'Tópico',v:cm.topic},{k:'Comunidade',v:'C'+(cm.gid+1)},{k:'Grau',v:cm.deg},{k:'Sentenças',v:cm.sentences.length}];
+        if(cm.iso){ panel.hint=true; panel.hintText='SEM CONEXÕES NO THRESHOLD ATUAL'; } }
+      else if(this.selKind==='community'){ const c=this.sel; panel.eyebrow='COMUNIDADE · C'+(c.id+1); panel.title=c.topic;
+        panel.tokens=[{text:'Agrupamento de '+c.size+' comentários em torno do tópico “'+c.topic+'”.',style:''}];
+        panel.meta=[{k:'Tópico',v:c.topic},{k:'Comentários',v:c.size},{k:'Nível',v:'comunidade'}];
+        panel.hint=true; panel.hintText='DUPLO-CLIQUE PARA EXPLORAR A COMUNIDADE'; }
+      else if(this.selKind==='sentence'){ const n=this.detailSel; panel.eyebrow='SENTENÇA · '+n.label; panel.title='sentença';
+        panel.tokens=this.tokenize(n.text); panel.meta=[{k:'Nível',v:'sentença'},{k:'Comentário',v:'C'+this.detail.comment.id},{k:'Índice',v:n.idx}]; }
+      else if(this.selKind==='word'){ const n=this.detailSel; panel.eyebrow='PALAVRA'; panel.title=n.word;
+        panel.tokens=[{text:'Elemento léxico atômico. Brushing destaca todos os comentários que contêm esta palavra.',style:''}];
+        panel.meta=[{k:'Nível',v:'palavra'},{k:'Termo',v:n.word}]; panel.hint=true; panel.hintText='NÓ SELECIONADO PROPAGA BRUSHING CROSS-NÍVEL'; }
+    }
+
+    const topicOptions=['todos',...this.topics||[]];
+    const statusLine = this.mode==='detail'? ('detalhe · C'+(this.detail?this.detail.comment.id:'')) :
+      (this.communities? (this.communities.length+' comunidades · '+this.comments.length+' nós') : '');
+
+    return {
+      setCanvas:this.setCanvas, setSearch:this.setSearch, setTopicSel:this.setTopicSel,
+      onSearchKey:this.onSearchKey, onGear:this.onGear, onBack:this.onBack, onClosePanel:this.onClosePanel,
+      onLevelFilter:this.onLevelFilter, onTopicFilter:this.onTopicFilter, onReload:this.onReload,
+      crumbs, panel, topicOptions, statusLine,
+      backColor: (this.sel||this.mode==='detail')? '#00E5FF':'#1E2535',
+      loadingShown:S.loadingShown, load:{pct:S.loadPct,words:S.loadW,sentences:S.loadS,comments:S.loadC},
+      tipShown: !!this.tip, tip:this.tip||{x:0,y:0,text:''},
+      errorShown:S.errorShown
+    };
+  }
+
+  tokenize(text){ const out=[]; const parts=text.split(' ');
+    parts.forEach((p,i)=>{ const clean=p.replace(/[.,!?“”"]/g,'').toLowerCase(); const isKey=this.vocab.includes(clean);
+      const brushed=this.brush&&clean===this.brush;
+      const style= isKey? ('cursor:pointer;border-bottom:1px dotted #2C3650;'+(brushed?'background:rgba(255,215,64,0.2);color:#FFD740;':'color:#D6E4FF;')) : '';
+      out.push({text:p+(i<parts.length-1?' ':''), style, onClick: isKey? (()=>{ this.brush = brushed?null:clean; this.bump(); this.requestDraw(); }) : null }); });
+    return out; }
+}
+</script>
+</body>
+</html>

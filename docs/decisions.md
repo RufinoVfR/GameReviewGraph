@@ -186,6 +186,12 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** manter um único filtro de relatório (em vez de comparação + análise separados) evita um artefato intermediário e mantém o lineup num só lugar; a extração para `shared/scoring.py` elimina a tentação de reimplementar Q/centralidade em dois filtros (risco de divergência); e injetar a Strategy no Filtro 7 remove código duplicado e alinha baseline e relatório. A matriz sem vencedor é coerente com a Análise de Resultados (peso 2.0): a comparação é o produto, a interpretação é textual.
 
+### Filtro 7 do pipeline usa o método 4 (subgrafo de comentários), não o de maior Q
+
+**Decisão (22/06/2026):** o `community_detection` (Filtro 7) — cuja saída (`communities.json`) alimenta `metrics.json` e o **bundle do frontend** — é configurado em `main.py` com a `CommentSubgraphStrategy` (método 4), **não** com o método de maior modularidade Q. O relatório (Filtro 9) continua comparando os 5 métodos de forma independente; esta escolha afeta apenas qual partição o restante do pipeline e a visualização consomem.
+
+**Por quê:** o vencedor do benchmark por Q é o **greedy modularidade** (método 5, Q ≈ 0.62 vs ≤ 0.08 dos baseados em MST), mas esse Q é **dominado pela estrutura de palavras/frases** do grafo unificado, e a partição gulosa **colapsa os 200 comentários numa única comunidade** (distribuição de comentários `[200, 0, …]`). Como o frontend navega comunidades **de comentários** (comunidade→comentário→frase→palavra), o greedy degeneraria a visualização para uma comunidade só. O método 4 particiona o subgrafo `c_↔c_` em **10 comunidades de comentários equilibradas, sem singletons** (`[47,44,37,20,17,14,8,7,3,3]`) — o agrupamento de comentários mais limpo. Ou seja, "melhor método" depende do critério: o Q global não mede a qualidade do agrupamento de *comentários* neste grafo; para o objetivo do explorador, o balanceamento da partição de comentários é o critério correto. O `build_bundle` usa apenas os `commentIds` de cada comunidade (palavras/frases vêm do `tree.json`), então a partição comment-only do método 4 encaixa sem ajustes.
+
 ---
 
 ## Pré-processamento (Filtro 1)
@@ -264,3 +270,4 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 22/06/2026 | 1.7 | Causa raiz do blob diagnosticada (min-MST + escala minúscula do peso hierárquico); comparativo ampliado de 3 → 5 métodos, com o método 1 preservado como baseline e duas correções (peso recalibrado, max-MST) adicionadas como alternativas | Lucas Antunes |
 | 22/06/2026 | 1.8 | Fórmulas das correções (métodos 2, 3, 5) registradas: recalibração hierárquica, normalização por tipo + λ, árvore geradora máxima por inversão de peso, e ΔQ do greedy modularity | Lucas Antunes |
 | 22/06/2026 | 1.9 | Decomposição da implementação da US14: comparação dos 5 métodos dentro do `analysis.py`, score extraído para `src/shared/scoring.py`, `report.txt` como Filtro 10 (`report_text.py`), Filtro 7 injeta a Strategy; matriz comparativa sem método escolhido; método 4 por corte progressivo; Q global repetido por bloco | Lucas Antunes |
+| 22/06/2026 | 2.0 | Filtro 7 do pipeline configurado com o método 4 (subgrafo `c_↔c_`) para alimentar `communities.json`/`metrics.json`/bundle do frontend: o greedy (maior Q) colapsa todos os comentários numa comunidade, degenerando o explorador; o método 4 dá 10 comunidades de comentários equilibradas | Lucas Antunes |

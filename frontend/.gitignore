@@ -1,0 +1,14 @@
+node_modules
+dist
+.vite
+coverage
+
+# TypeScript build outputs (the composite node project emits these from tsc -b).
+*.tsbuildinfo
+vite.config.js
+vite.config.d.ts
+
+# Generated visualization bundles (rebuild with `make frontend-bundle`).
+# Keep the directory tracked via .gitkeep; the UI falls back to mock data when absent.
+public/bundle/*
+!public/bundle/.gitkeep

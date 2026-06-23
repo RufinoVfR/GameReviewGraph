@@ -34,6 +34,8 @@ Os requisitos funcionais descrevem as funcionalidades que o sistema deve impleme
 
 **RF10 — Gerar relatório de análise:** O sistema deve produzir uma saída estruturada (`report.json`) listando cada comunidade detectada com seus termos centrais, comentários associados e o valor de modularidade Q, incluindo a comparação de três métodos de detecção de comunidades. O `report.json` é renderizado na última página do frontend; o `report.txt` legível (formato do planejamento) é uma projeção dele.
 
+**RF11 — Visualizar interativamente o grafo unificado:** O sistema deve oferecer uma interface gráfica interativa para explorar o grafo final em múltiplos níveis, com visão inicial por comunidades, drill-down para comentários, sentenças e palavras, breadcrumb de navegação, busca, filtros e painel lateral com metadados e texto associado ao nó selecionado.
+
 ---
 
 ## 2. Requisitos Não Funcionais
@@ -59,6 +61,12 @@ Os requisitos não funcionais definem restrições técnicas e de qualidade que 
 **RNF06 — Hospedagem no GitHub:** O código-fonte completo deve estar hospedado em repositório público no GitHub de ao menos um integrante do grupo, com a última atualização realizada até **22/06/2026**. A ausência do repositório implica nota zero; atrasos implicam -2,0 pontos por dia.
 
 **RNF07 — Execução sem falhas:** O sistema deve executar completamente sem erros a partir do comando `python main.py`, produzindo todas as saídas previstas. Código que não executa ou apresenta falhas graves implica nota zero.
+
+**RNF08 — Visualização sem bibliotecas prontas:** A camada de visualização deve ser implementada sem bibliotecas prontas de grafo ou de layout visual. A renderização do explorador deve usar Canvas 2D e algoritmos próprios para posicionamento, picking e navegação.
+
+**RNF09 — Consumo de artefatos compactos:** O navegador não deve carregar a matriz completa do `final_graph.json` em produção. A interface deve consumir apenas bundles derivados, esparsificados e versionados em etapa offline quando eles existirem.
+
+**RNF10 — Operação sem artefatos prontos:** A interface deve iniciar e permanecer funcional mesmo na ausência dos bundles reais, usando dados mockados, fixtures locais ou estados vazios com mensagens claras de carregamento/indisponibilidade.
 
 ---
 

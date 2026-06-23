@@ -19,10 +19,21 @@ from src.sentence_graph import SentenceGraphFilter
 from src.shared.filter_base import AbstractFilter
 from src.shared.observers import LoggingObserver
 from src.shared.pipeline import FilterChain
+from src.shared.strategies import CommentSubgraphStrategy
 from src.tree import TreeFilter
 from src.word_graph import WordGraphFilter
 
 # Ordered list of pipeline filters. Extend as downstream filters land.
+#
+# The community-detection filter is wired to the comment-subgraph strategy
+# (method 4 of the final-report benchmark). Although greedy modularity scores a
+# higher global Q (≈ 0.62), that Q is dominated by the word/sentence structure
+# and the greedy partition collapses all 200 comments into a single community —
+# degenerate for the frontend, which navigates comment communities. Method 4
+# partitions the c_↔c_ subgraph into 10 balanced comment communities (no
+# singletons), the cleanest comment grouping for the explorer. communities.json
+# — and therefore metrics.json and the frontend bundle — carry this partition.
+# The full 5-method comparison is still produced independently by AnalysisFilter.
 FILTERS: list[AbstractFilter] = [
     PreprocessingFilter(),
     TreeFilter(),
@@ -30,7 +41,7 @@ FILTERS: list[AbstractFilter] = [
     SentenceGraphFilter(),
     CommentGraphFilter(),
     FinalGraphFilter(),
-    CommunityDetectionFilter(),
+    CommunityDetectionFilter(strategy=CommentSubgraphStrategy()),
     MetricsFilter(),
     AnalysisFilter(),
     ReportTextFilter(),

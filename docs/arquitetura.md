@@ -2,6 +2,8 @@
 
 O **GameReviewGraph** é estruturado como um pipeline de **Pipe and Filter**: cada módulo é um filtro independente que lê uma entrada bem definida, aplica uma transformação e escreve uma saída serializada. Os filtros se comunicam exclusivamente por artefatos JSON armazenados no **MinIO S3** — nenhum filtro importa diretamente funções internas de outro. Resultados intermediários são mantidos no **Redis** para evitar reprocessamento.
 
+A visualização interativa é uma **camada consumidora separada** do pipeline analítico. Ela não altera os filtros nem o grafo final; apenas lê o `final_graph.json` e os bundles derivados para renderizar o explorador multinível em `frontend/`.
+
 ---
 
 ## Pipeline Completo
@@ -73,6 +75,89 @@ flowchart TD
 ```
 
 > Todos os artefatos intermediários residem no bucket `game-review-graph` do MinIO sob o prefixo `pipeline/`. O Redis mantém os resultados em cache com a chave `filter:<nome>` — em um cache hit, `AbstractFilter.execute()` pula `process()` e regrava o artefato no S3 sem reprocessar.
+
+## Camada de Visualização
+
+A camada de visualização consome apenas artefatos já preparados pelo pipeline. O navegador nunca carrega a matriz bruta completa do `final_graph.json`; em vez disso, recebe bundles compactos gerados por um passo offline em Python puro.
+
+### Princípios de desenho
+
+| Princípio | Decisão | Motivação |
+|-----------|---------|-----------|
+| Fonte canônica | `final_graph.json` + artefatos derivados | Preserva o pipeline analítico como única fonte de verdade |
+| Transporte para o navegador | Bundles esparsos e índices prontos | Evita carregar centenas de megabytes no cliente |
+| Renderização | `Canvas 2D` + `requestAnimationFrame` | Escala melhor que SVG/DOM para milhares de nós e arestas |
+| Algoritmos no frontend | Implementação própria | Mantém coerência com a regra da disciplina de não usar bibliotecas prontas |
+| Navegação | `ViewStack` + breadcrumb | Permite drill-down coerente entre comunidade, comentário, sentença e palavra |
+
+### Pipeline offline da visualização
+
+```mermaid
+flowchart TD
+    FG["pipeline/final_graph.json"]
+    CM["pipeline/communities.json"]
+    BT["scripts/build_bundle.py"]
+    MB["frontend/public/bundle/meta.json"]
+    CB["frontend/public/bundle/communities.json"]
+    CT["frontend/public/bundle/containment.json"]
+    WG["frontend/public/bundle/word_graph.json"]
+    IX["frontend/public/bundle/inverted_index.json"]
+    TX["frontend/public/bundle/text_store.json"]
+    FE["frontend/"]
+
+    FG --> BT
+    CM --> BT
+    BT --> MB
+    BT --> CB
+    BT --> CT
+    BT --> WG
+    BT --> IX
+    BT --> TX
+    MB --> FE
+    CB --> FE
+    CT --> FE
+    WG --> FE
+    IX --> FE
+    TX --> FE
+```
+
+### Schemas dos bundles
+
+| Arquivo | Conteúdo mínimo | Carregamento |
+|---------|-----------------|--------------|
+| `meta.json` | contagens por tipo, `k`, thresholds, versão e data de geração | inicial |
+| `communities.json` | comunidades de comentário, tamanhos, tópico dominante, coordenadas iniciais e arestas agregadas | visão de entrada |
+| `containment.json` | `comentario -> sentenças` e `sentença -> palavras` | drill-down |
+| `word_graph.json` | bloco `w ↔ w` esparsificado, com pesos normalizados e comunidades | nível de palavras |
+| `sentence_neighbors.json` | vizinhos top-k por sentença no bloco `s ↔ s` | drill-down em comentário |
+| `inverted_index.json` | `palavra -> sentenças` e `palavra -> comentários` | brushing cruzado |
+| `text_store.json` | `id -> texto bruto` dos comentários | painel lateral |
+
+### Estrutura do frontend
+
+```text
+frontend/
+├── src/
+│   ├── data/         # loader de bundles e cache em memória
+│   ├── model/        # grafo, índices e montagem de subgrafos
+│   ├── layout/       # quadtree e force layout próprios
+│   ├── render/       # câmera, canvas renderer e LOD
+│   ├── interaction/  # picker, busca, brushing e filtros
+│   ├── state/        # view stack, seleção e histórico
+│   ├── ui/           # painel lateral, breadcrumb e controles
+│   └── app.tsx       # composição da interface
+└── public/
+    └── bundle/       # artefatos compactos gerados offline
+```
+
+### Regras da camada de visualização
+
+- O frontend não lê `final_graph.json` bruto em produção.
+- O frontend não depende de bibliotecas de grafo ou de layout visual.
+- A navegação começa em comunidades de comentário e aprofunda conforme o nível de zoom e o clique.
+- O `tree.json` continua útil apenas como apoio semântico e de texto, não como fonte primária das arestas de navegação.
+- O frontend deve iniciar mesmo sem os bundles gerados, usando fixtures locais, mocks sintéticos ou estados vazios com feedback visual adequado.
+- Quando os bundles reais estiverem disponíveis, eles substituem automaticamente os mocks sem exigir mudança de código na interface.
 
 ---
 
@@ -158,6 +243,10 @@ s3://game-review-graph/
 | Execução isolada | `make <filtro>` via `docker compose run` | Debug por etapa sem reprocessar o pipeline inteiro |
 | Prefixos de nó (`w_`, `s_`, `c_`) | Convenção no `final_graph.json` | Identifica o tipo de um nó sem tabela auxiliar; evita colisão de chaves entre os três níveis |
 | Infraestrutura de padrões GoF | `src/shared/` isolado dos filtros de domínio | Filtros de domínio não importam uns dos outros; `shared/` é a única dependência cruzada permitida |
+| Camada de visualização | `frontend/` separado do pipeline | Isola renderização e interação da análise, permitindo evoluir UX sem tocar nos filtros |
+| Geração de bundles | `scripts/build_bundle.py` | Esparsifica blocos densos, preserva contenção e cria índices para navegação |
+| Renderização do explorador | Canvas 2D + algoritmos próprios | Mantém performance e respeita a restrição de não usar bibliotecas prontas |
+| Fonte de navegação | `communities.json` + blocos de contenção | Garante drill-down coerente sem depender da matriz bruta no navegador |
 | Padrões GoF aplicados | Template Method, Chain of Responsibility, Facade, Observer, Strategy | Ver [Padrões de Projeto](padroes_projeto.md) para especificação completa |
 | Execução containerizada | Docker obrigatório | Garante paridade entre dev, CI e entrega; elimina "funciona na minha máquina" |
 | S3 local em dev | MinIO | API 100% compatível com AWS S3; zero custo; console visual para inspeção |
