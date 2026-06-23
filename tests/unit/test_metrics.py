@@ -2,8 +2,13 @@
 
 import pytest
 
-from src.metrics import MetricsFilter, get_top_terms, weighted_degree_centrality
-from src.shared.graph.ops import add_edge, new_graph, serialize_graph
+from src.metrics import (
+    MetricsFilter,
+    calculate_modularity,
+    get_top_terms,
+    weighted_degree_centrality,
+)
+from src.shared.graph.ops import add_edge, add_node, new_graph, serialize_graph
 from tests.conftest import make_graph
 
 
@@ -159,6 +164,60 @@ class TestGetTopTerms:
         assert top_terms[1] == []
 
 
+class TestCalculateModularity:
+    """Test the calculate_modularity function against known values."""
+
+    def test_two_separated_edges_two_communities(self):
+        """Two disjoint unit edges, each its own community → Q = 0.5.
+
+        Edges (a-b, 1) and (c-d, 1): 2m = 4, each community has W_in = 1 and
+        Σ_tot = 2, so Q = 2·[2·1/4 − (2/4)²] = 2·(0.5 − 0.25) = 0.5.
+        """
+        graph = make_graph([("w_a", "w_b", 1.0), ("w_c", "w_d", 1.0)])
+        communities = {1: ["w_a", "w_b"], 2: ["w_c", "w_d"]}
+        assert calculate_modularity(graph, communities) == pytest.approx(0.5)
+
+    def test_single_community_all_internal_is_zero(self):
+        """The same graph with every node in one community → Q = 0.0.
+
+        W_in = 2 (both edges internal), Σ_tot = 4: Q = 2·2/4 − (4/4)² = 0.
+        """
+        graph = make_graph([("w_a", "w_b", 1.0), ("w_c", "w_d", 1.0)])
+        communities = {1: ["w_a", "w_b", "w_c", "w_d"]}
+        assert calculate_modularity(graph, communities) == pytest.approx(0.0)
+
+    def test_singleton_communities_are_negative(self):
+        """Every node alone has no internal edges → Q < 0 (and ≥ −1).
+
+        Four singleton communities, each k_i = 1, 2m = 4:
+        Q = Σ −(k_i/2m)² = 4·−(1/4)² = −0.25.
+        """
+        graph = make_graph([("w_a", "w_b", 1.0), ("w_c", "w_d", 1.0)])
+        communities = {1: ["w_a"], 2: ["w_b"], 3: ["w_c"], 4: ["w_d"]}
+        q = calculate_modularity(graph, communities)
+        assert q == pytest.approx(-0.25)
+        assert -1.0 <= q <= 1.0
+
+    def test_edgeless_graph_returns_zero(self):
+        """A graph with no edges (2m == 0) yields Q = 0.0, not a division error."""
+        graph = new_graph()
+        add_node(graph, "w_a")
+        add_node(graph, "w_b")
+        assert calculate_modularity(graph, {1: ["w_a"], 2: ["w_b"]}) == 0.0
+
+    def test_clustered_graph_partition_beats_merged(self, clustered_graph):
+        """The natural 2-cluster split scores higher than lumping all together."""
+        split = {
+            1: ["w_a1", "w_a2", "w_a3"],
+            2: ["w_b1", "w_b2", "w_b3"],
+        }
+        merged = {1: ["w_a1", "w_a2", "w_a3", "w_b1", "w_b2", "w_b3"]}
+        q_split = calculate_modularity(clustered_graph, split)
+        q_merged = calculate_modularity(clustered_graph, merged)
+        assert q_split > q_merged
+        assert -1.0 <= q_split <= 1.0
+
+
 class TestMetricsFilter:
     """Test the MetricsFilter class (Filter 8)."""
 
@@ -184,8 +243,11 @@ class TestMetricsFilter:
 
         assert "centrality" in result
         assert "top_terms" in result
+        assert "modularity" in result
         assert isinstance(result["centrality"], dict)
         assert isinstance(result["top_terms"], dict)
+        assert isinstance(result["modularity"], float)
+        assert -1.0 <= result["modularity"] <= 1.0
 
         # Top terms should be present for both communities.
         assert 1 in result["top_terms"]
