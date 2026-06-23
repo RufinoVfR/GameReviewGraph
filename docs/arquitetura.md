@@ -8,6 +8,8 @@ A visualização interativa é uma **camada consumidora separada** do pipeline a
 
 ## Pipeline Completo
 
+### Diagrama (Mermaid)
+
 ```mermaid
 flowchart TD
     RAW["MinIO\npipeline/comments.json\n(entrada bruta)"]
@@ -254,3 +256,4 @@ s3://game-review-graph/
 | 16/06/2026 | 2.2 | `ProcessedComment` sem `topic` (rótulo-ouro reservado à validação por `id`) | Equipe |
 | 17/06/2026 | 2.3 | Filtro 2 vira pacote `tree/` (modelo do Filtro 1: `filter.py`, `structure.py`, `build.py`, `serialize.py`); leitura de `tree.json` em `src/shared/tree.py` | Lucas Antunes |
 | 17/06/2026 | 2.4 | Filtro 3 vira pacote `word_graph/` (`filter.py`, `cooccurrence.py`); entrada do `process` é o dict do `tree.json` | Lucas Antunes |
+| 22/06/2026 | 2.5 | Remoção do diagrama ASCII redundante; diagrama Mermaid existente já cobre o pipeline completo | [Vinícius Rufino](https://github.com/RufinoVfR) |

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Grafo de Co-ocorrência de Palavras</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<style>
+  :root{
+    --bg: #0b0d12;
+    --panel: #111521;
+    --panel-border: #1f2535;
+    --ink: #e7ebf3;
+    --ink-dim: #8993a8;
+    --accent: #ff7a45;
+    --grid: #161b27;
+    --mono: 'IBM Plex Mono', 'SF Mono', Consolas, monospace;
+    --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  }
+  @font-face{
+    font-family:'IBM Plex Mono';
+    src: local('IBM Plex Mono');
+  }
+  *{ box-sizing:border-box; }
+  html,body{
+    margin:0; padding:0; height:100%;
+    background:var(--bg);
+    font-family:var(--sans);
+    color:var(--ink);
+    overflow:hidden;
+  }
+  #app{ position:relative; width:100%; height:100vh; }
+
+  /* background grid texture */
+  #bggrid{
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events:none;
+    opacity:0.6;
+  }
+
+  svg{ width:100%; height:100%; display:block; position:relative; }
+
+  .link{
+    stroke: #3a4256;
+    stroke-opacity: 0.55;
+  }
+  .link.dim{ stroke-opacity:0.05; }
+  .link.lit{ stroke: var(--accent); stroke-opacity:0.85; }
+
+  .node circle{
+    stroke: #0b0d12;
+    stroke-width: 1.5px;
+    cursor: grab;
+  }
+  .node.dim circle{ opacity:0.12; }
+  .node.dim text{ opacity:0.12; }
+  .node.lit circle{ stroke: #fff; stroke-width:2px; }
+  .node.pinned circle{ stroke: var(--accent); stroke-width:2.5px; }
+
+  .node text{
+    font-family: var(--mono);
+    fill: var(--ink);
+    font-size: 11px;
+    pointer-events:none;
+    paint-order: stroke;
+    stroke: #0b0d12;
+    stroke-width: 3px;
+    stroke-linejoin: round;
+  }
+  .node.lit text{ fill:#fff; font-weight:600; }
+
+  /* HUD */
+  .hud{
+    position:absolute;
+    font-family: var(--mono);
+    color: var(--ink);
+    z-index: 10;
+  }
+  .panel{
+    background: rgba(17,21,33,0.88);
+    border: 1px solid var(--panel-border);
+    border-radius: 6px;
+    backdrop-filter: blur(6px);
+  }
+
+  #title-block{
+    top: 22px; left: 24px;
+    max-width: 360px;
+  }
+  #title-block .eyebrow{
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  #title-block h1{
+    font-family: var(--sans);
+    font-size: 19px;
+    font-weight: 700;
+    margin: 0 0 4px 0;
+    letter-spacing: -0.01em;
+    color: #fff;
+  }
+  #title-block p{
+    font-size: 12px;
+    color: var(--ink-dim);
+    margin: 0;
+    line-height:1.5;
+  }
+  #stats{
+    display:flex; gap:16px; margin-top:14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--panel-border);
+  }
+  #stats .stat{ font-size: 11px; }
+  #stats .stat b{ display:block; font-size:18px; color:#fff; font-weight:600; }
+  #stats .stat span{ color: var(--ink-dim); font-size:10px; text-transform:uppercase; letter-spacing:0.08em; }
+
+  #search-box{
+    top: 22px; right: 24px;
+    padding: 10px 12px;
+    width: 230px;
+  }
+  #search-box input{
+    width:100%;
+    background: #0b0d12;
+    border: 1px solid var(--panel-border);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 7px 9px;
+    border-radius: 4px;
+    outline:none;
+  }
+  #search-box input:focus{ border-color: var(--accent); }
+  #search-box input::placeholder{ color:#525c72; }
+  #search-results{
+    margin-top:8px;
+    max-height: 160px;
+    overflow-y:auto;
+  }
+  #search-results div{
+    padding: 5px 7px;
+    font-size: 12px;
+    cursor:pointer;
+    border-radius:3px;
+    color: var(--ink-dim);
+    display:flex; justify-content:space-between;
+  }
+  #search-results div:hover{ background:#1a2030; color:#fff; }
+
+  #legend{
+    bottom: 22px; left: 24px;
+    padding: 12px 14px;
+  }
+  #legend .leg-title{
+    font-size: 10px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color: var(--ink-dim);
+    margin-bottom: 8px;
+  }
+  .leg-row{
+    display:flex; align-items:center; gap:8px;
+    font-size: 12px;
+    padding: 3px 0;
+    cursor:pointer;
+    color: var(--ink-dim);
+    transition: color 0.15s;
+  }
+  .leg-row:hover{ color: var(--ink); }
+  .leg-row.off{ opacity:0.35; }
+  .leg-dot{
+    width:10px; height:10px; border-radius:50%;
+    flex-shrink:0;
+  }
+
+  #inspector{
+    bottom: 22px; right: 24px;
+    width: 240px;
+    padding: 14px 16px;
+    display:none;
+  }
+  #inspector.show{ display:block; }
+  #inspector .insp-label{
+    font-size: 10px;
+    text-transform:uppercase;
+    letter-spacing:0.1em;
+    color: var(--ink-dim);
+    margin-bottom:2px;
+  }
+  #inspector h2{
+    font-family: var(--sans);
+    font-size: 20px;
+    margin: 0 0 10px 0;
+    color: #fff;
+  }
+  #inspector .insp-row{
+    display:flex; justify-content:space-between;
+    font-size:11px; padding: 5px 0;
+    border-top: 1px solid var(--panel-border);
+    color: var(--ink-dim);
+  }
+  #inspector .insp-row b{ color: var(--ink); font-weight:500; }
+  #neighbor-list{ margin-top:8px; max-height:140px; overflow-y:auto; }
+  #neighbor-list .nb{
+    display:flex; justify-content:space-between;
+    font-size:12px; padding:4px 0; color:var(--ink-dim);
+    cursor:pointer;
+  }
+  #neighbor-list .nb:hover{ color:#fff; }
+  #neighbor-list .nb .w{ font-family:var(--mono); font-size:10px; color:#525c72; }
+
+  #close-insp{
+    position:absolute; top:10px; right:10px;
+    cursor:pointer; color:var(--ink-dim); font-size:14px;
+    width:18px;height:18px; text-align:center; line-height:18px;
+  }
+  #close-insp:hover{ color:#fff; }
+
+  #hint{
+    position:absolute;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 10px;
+    color: #525c72;
+    letter-spacing: 0.04em;
+    z-index:5;
+  }
+
+  ::-webkit-scrollbar{ width:5px; }
+  ::-webkit-scrollbar-thumb{ background:#2a3145; border-radius:3px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="bggrid"></div>
+  <svg id="canvas"></svg>
+
+  <div class="hud panel" id="title-block">
+    <div class="eyebrow">Análise de Texto · Rede Léxica</div>
+    <h1>Grafo de Co-ocorrência</h1>
+    <p>Palavras conectadas por proximidade em comentários de feedback de jogo. Espessura da linha = força da relação.</p>
+    <div id="stats">
+      <div class="stat"><b id="stat-nodes">–</b><span>Palavras</span></div>
+      <div class="stat"><b id="stat-links">–</b><span>Conexões</span></div>
+      <div class="stat"><b id="stat-clusters">–</b><span>Clusters</span></div>
+    </div>
+  </div>
+
+  <div class="hud panel" id="search-box">
+    <input type="text" id="search-input" placeholder="Buscar palavra…" autocomplete="off">
+    <div id="search-results"></div>
+  </div>
+
+  <div class="hud panel" id="legend"></div>
+
+  <div class="hud panel" id="inspector">
+    <div id="close-insp">✕</div>
+    <div class="insp-label">Nó selecionado</div>
+    <h2 id="insp-word">–</h2>
+    <div class="insp-row"><span>Cluster</span><b id="insp-cluster">–</b></div>
+    <div class="insp-row"><span>Grau ponderado</span><b id="insp-degree">–</b></div>
+    <div class="insp-row"><span>Conexões</span><b id="insp-conns">–</b></div>
+    <div id="neighbor-list"></div>
+  </div>
+
+  <div id="hint">arraste para fixar · clique para inspecionar · scroll para zoom</div>
+</div>
+
+<script>
+const graphData = {"nodes":[{"id":0,"label":"jogo","group":2,"degree":2.167},{"id":1,"label":"trava","group":4,"degree":1.5},{"id":2,"label":"atualização","group":3,"degree":2.667},{"id":3,"label":"fps","group":5,"degree":2.083},{"id":4,"label":"demais","group":6,"degree":3.833},{"id":5,"label":"durante","group":2,"degree":2.333},{"id":6,"label":"partidas","group":2,"degree":2.417},{"id":7,"label":"otimização","group":1,"degree":1.917},{"id":8,"label":"precisa","group":1,"degree":1.833},{"id":9,"label":"melhorou","group":2,"degree":3.667},{"id":10,"label":"bastante","group":1,"degree":3.417},{"id":11,"label":"após","group":2,"degree":2.167},{"id":12,"label":"agora","group":5,"degree":3.0},{"id":13,"label":"ficou","group":5,"degree":5.5},{"id":14,"label":"final","group":1,"degree":2.0},{"id":15,"label":"história","group":1,"degree":1.333},{"id":16,"label":"começa","group":1,"degree":0.5},{"id":17,"label":"personagens","group":0,"degree":1.333},{"id":18,"label":"têm","group":0,"degree":2.833},{"id":19,"label":"muita","group":0,"degree":1.917},{"id":20,"label":"campanha","group":6,"degree":1.0},{"id":21,"label":"principal","group":6,"degree":1.5},{"id":22,"label":"conexão","group":2,"degree":1.917},{"id":23,"label":"servidores","group":1,"degree":1.583},{"id":24,"label":"online","group":2,"degree":0.5},{"id":25,"label":"ajustada","group":2,"degree":1.583},{"id":26,"label":"ainda","group":1,"degree":1.833},{"id":27,"label":"vezes","group":0,"degree":2.083},{"id":28,"label":"menu","group":6,"degree":1.917},{"id":29,"label":"configurações","group":5,"degree":0.5},{"id":30,"label":"interface","group":5,"degree":0.5},{"id":31,"label":"responde","group":4,"degree":2.333},{"id":32,"label":"rápido","group":4,"degree":2.167},{"id":33,"label":"progressão","group":5,"degree":1.667},{"id":34,"label":"nível","group":3,"degree":2.0},{"id":35,"label":"experiência","group":0,"degree":0.5},{"id":36,"label":"some","group":0,"degree":1.333},{"id":37,"label":"cada","group":3,"degree":1.917},{"id":38,"label":"recompensas","group":3,"degree":0.833},{"id":39,"label":"trilha","group":6,"degree":1.333},{"id":40,"label":"sonora","group":6,"degree":1.5},{"id":41,"label":"efeitos","group":0,"degree":1.917},{"id":42,"label":"áudio","group":0,"degree":1.833},{"id":43,"label":"atrapalha","group":0,"degree":1.0},{"id":44,"label":"gráficos","group":3,"degree":1.0},{"id":45,"label":"iluminação","group":3,"degree":1.0},{"id":46,"label":"texturas","group":0,"degree":0.5},{"id":47,"label":"suporte","group":4,"degree":2.583},{"id":48,"label":"poucas","group":3,"degree":1.833},{"id":49,"label":"controles","group":4,"degree":1.0},{"id":50,"label":"sensibilidade","group":0,"degree":1.0},{"id":51,"label":"novidades","group":3,"degree":1.583},{"id":52,"label":"expansão","group":1,"degree":1.333},{"id":53,"label":"conteúdo","group":1,"degree":0.833},{"id":54,"label":"atendimento","group":4,"degree":0.833},{"id":55,"label":"resolve","group":4,"degree":2.333},{"id":56,"label":"problema","group":4,"degree":2.167}],
+"links":[{"source":0,"target":1,"weight":0.5},{"source":0,"target":2,"weight":0.3333},{"source":0,"target":9,"weight":0.5},{"source":0,"target":11,"weight":0.3333},{"source":0,"target":47,"weight":0.5},{"source":1,"target":2,"weight":0.5},{"source":1,"target":49,"weight":0.5},{"source":2,"target":37,"weight":0.5},{"source":2,"target":48,"weight":0.5},{"source":2,"target":51,"weight":0.8333},{"source":3,"target":4,"weight":0.5},{"source":3,"target":5,"weight":0.3333},{"source":3,"target":6,"weight":0.25},{"source":3,"target":12,"weight":0.5},{"source":3,"target":13,"weight":0.5},{"source":4,"target":5,"weight":0.5},{"source":4,"target":6,"weight":0.3333},{"source":4,"target":21,"weight":0.5},{"source":4,"target":28,"weight":0.3333},{"source":4,"target":33,"weight":0.3333},{"source":4,"target":34,"weight":0.5},{"source":4,"target":39,"weight":0.3333},{"source":4,"target":40,"weight":0.5},{"source":5,"target":6,"weight":1.0},{"source":5,"target":22,"weight":0.5},{"source":6,"target":22,"weight":0.3333},{"source":6,"target":24,"weight":0.5},{"source":7,"target":8,"weight":0.5},{"source":7,"target":9,"weight":0.3333},{"source":7,"target":10,"weight":0.25},{"source":7,"target":13,"weight":0.3333},{"source":7,"target":14,"weight":0.5},{"source":8,"target":9,"weight":0.5},{"source":8,"target":10,"weight":0.3333},{"source":8,"target":23,"weight":0.5},{"source":9,"target":10,"weight":0.5},{"source":9,"target":11,"weight":1.0},{"source":9,"target":22,"weight":0.5},{"source":9,"target":25,"weight":0.3333},{"source":10,"target":14,"weight":0.5},{"source":10,"target":15,"weight":0.3333},{"source":10,"target":47,"weight":0.5},{"source":10,"target":52,"weight":0.5},{"source":10,"target":53,"weight":0.5},{"source":11,"target":22,"weight":0.3333},{"source":11,"target":25,"weight":0.5},{"source":12,"target":13,"weight":0.8333},{"source":12,"target":28,"weight":0.5},{"source":12,"target":31,"weight":0.5},{"source":12,"target":32,"weight":0.3333},{"source":12,"target":33,"weight":0.3333},{"source":13,"target":14,"weight":0.5},{"source":13,"target":23,"weight":0.3333},{"source":13,"target":26,"weight":0.5},{"source":13,"target":27,"weight":0.5},{"source":13,"target":29,"weight":0.5},{"source":13,"target":30,"weight":0.5},{"source":13,"target":33,"weight":0.5},{"source":13,"target":45,"weight":0.5},{"source":14,"target":15,"weight":0.5},{"source":15,"target":16,"weight":0.5},{"source":17,"target":18,"weight":0.5},{"source":17,"target":19,"weight":0.3333},{"source":17,"target":20,"weight":0.5},{"source":18,"target":19,"weight":1.0},{"source":18,"target":41,"weight":0.3333},{"source":18,"target":42,"weight":0.5},{"source":18,"target":46,"weight":0.5},{"source":19,"target":41,"weight":0.25},{"source":19,"target":42,"weight":0.3333},{"source":20,"target":21,"weight":0.5},{"source":21,"target":28,"weight":0.5},{"source":22,"target":25,"weight":0.25},{"source":23,"target":26,"weight":0.5},{"source":23,"target":27,"weight":0.25},{"source":25,"target":50,"weight":0.5},{"source":26,"target":27,"weight":0.3333},{"source":26,"target":52,"weight":0.5},{"source":27,"target":36,"weight":0.5},{"source":27,"target":41,"weight":0.5},{"source":28,"target":31,"weight":0.3333},{"source":28,"target":32,"weight":0.25},{"source":31,"target":32,"weight":0.5},{"source":31,"target":47,"weight":0.5},{"source":31,"target":49,"weight":0.5},{"source":32,"target":47,"weight":0.25},{"source":32,"target":55,"weight":0.3333},{"source":32,"target":56,"weight":0.5},{"source":33,"target":34,"weight":0.5},{"source":34,"target":37,"weight":0.5},{"source":34,"target":38,"weight":0.5},{"source":35,"target":36,"weight":0.5},{"source":36,"target":41,"weight":0.3333},{"source":37,"target":38,"weight":0.3333},{"source":37,"target":48,"weight":0.3333},{"source":37,"target":51,"weight":0.25},{"source":39,"target":40,"weight":1.0},{"source":41,"target":42,"weight":0.5},{"source":42,"target":43,"weight":0.5},{"source":43,"target":50,"weight":0.5},{"source":44,"target":45,"weight":0.5},{"source":44,"target":48,"weight":0.5},{"source":47,"target":55,"weight":0.5},{"source":47,"target":56,"weight":0.3333},{"source":48,"target":51,"weight":0.5},{"source":52,"target":53,"weight":0.3333},{"source":54,"target":55,"weight":0.5},{"source":54,"target":56,"weight":0.3333},{"source":55,"target":56,"weight":1.0}]};
+
+const clusterMeta = {
+  0: { name: "Áudio / Efeitos", color: "#ff7a45" },
+  1: { name: "Otimização / Final", color: "#4dd0e1" },
+  2: { name: "Partidas Online", color: "#9575cd" },
+  3: { name: "Progressão / Visual", color: "#ffd54f" },
+  4: { name: "Controles / Suporte", color: "#66bb6a" },
+  5: { name: "Estado da Sessão", color: "#f06292" },
+  6: { name: "Menu / Campanha", color: "#90a4ae" }
+};
+
+const width = window.innerWidth, height = window.innerHeight;
+const svg = d3.select("#canvas");
+const root = svg.append("g");
+
+// zoom
+const zoom = d3.zoom()
+  .scaleExtent([0.2, 4])
+  .on("zoom", (event) => root.attr("transform", event.transform));
+svg.call(zoom);
+
+const linkSel = root.append("g").attr("class", "links")
+  .selectAll("line")
+  .data(graphData.links)
+  .join("line")
+  .attr("class", "link")
+  .attr("stroke-width", d => 0.6 + d.weight * 3.5);
+
+const maxDeg = d3.max(graphData.nodes, d => d.degree);
+const minDeg = d3.min(graphData.nodes, d => d.degree);
+const radiusScale = d3.scaleSqrt().domain([minDeg, maxDeg]).range([6, 22]);
+
+const nodeSel = root.append("g").attr("class", "nodes")
+  .selectAll("g")
+  .data(graphData.nodes)
+  .join("g")
+  .attr("class", "node")
+  .call(drag());
+
+nodeSel.append("circle")
+  .attr("r", d => radiusScale(d.degree))
+  .attr("fill", d => clusterMeta[d.group].color);
+
+nodeSel.append("text")
+  .attr("dy", d => radiusScale(d.degree) + 12)
+  .attr("text-anchor", "middle")
+  .text(d => d.label);
+
+nodeSel.on("click", (event, d) => {
+  event.stopPropagation();
+  showInspector(d);
+  highlightNode(d.id);
+});
+
+svg.on("click", () => {
+  clearHighlight();
+  hideInspector();
+});
+
+const linkedByIndex = {};
+graphData.links.forEach(l => {
+  linkedByIndex[`${l.source},${l.target}`] = l.weight;
+  linkedByIndex[`${l.target},${l.source}`] = l.weight;
+});
+function isConnected(a, b){ return a === b || linkedByIndex[`${a},${b}`]; }
+
+function highlightNode(id){
+  nodeSel.classed("dim", n => !isConnected(id, n.id));
+  nodeSel.classed("lit", n => n.id === id);
+  linkSel.classed("dim", l => l.source.id !== id && l.target.id !== id);
+  linkSel.classed("lit", l => l.source.id === id || l.target.id === id);
+}
+function clearHighlight(){
+  nodeSel.classed("dim", false).classed("lit", false);
+  linkSel.classed("dim", false).classed("lit", false);
+}
+
+// activeFilters tracks which clusters are visible
+let activeFilters = new Set(Object.keys(clusterMeta).map(Number));
+function applyClusterFilter(){
+  nodeSel.style("display", d => activeFilters.has(d.group) ? null : "none");
+  linkSel.style("display", l => {
+    const a = graphData.nodes.find(n => n.id === (l.source.id ?? l.source));
+    const b = graphData.nodes.find(n => n.id === (l.target.id ?? l.target));
+    return (activeFilters.has(a.group) && activeFilters.has(b.group)) ? null : "none";
+  });
+}
+
+// legend
+const legend = d3.select("#legend");
+legend.append("div").attr("class", "leg-title").text("Clusters semânticos");
+Object.entries(clusterMeta).forEach(([key, meta]) => {
+  const row = legend.append("div")
+    .attr("class", "leg-row")
+    .attr("data-group", key)
+    .on("click", function(){
+      const g = +key;
+      if(activeFilters.has(g)){
+        activeFilters.delete(g);
+        d3.select(this).classed("off", true);
+      } else {
+        activeFilters.add(g);
+        d3.select(this).classed("off", false);
+      }
+      applyClusterFilter();
+    });
+  row.append("div").attr("class", "leg-dot").style("background", meta.color);
+  row.append("div").text(meta.name);
+});
+
+// stats
+document.getElementById("stat-nodes").textContent = graphData.nodes.length;
+document.getElementById("stat-links").textContent = graphData.links.length;
+document.getElementById("stat-clusters").textContent = Object.keys(clusterMeta).length;
+
+// inspector
+function showInspector(d){
+  const insp = document.getElementById("inspector");
+  insp.classList.add("show");
+  document.getElementById("insp-word").textContent = d.label;
+  document.getElementById("insp-cluster").textContent = clusterMeta[d.group].name;
+  document.getElementById("insp-cluster").style.color = clusterMeta[d.group].color;
+  document.getElementById("insp-degree").textContent = d.degree.toFixed(2);
+
+  const neighbors = graphData.links
+    .filter(l => l.source.id === d.id || l.target.id === d.id)
+    .map(l => {
+      const otherId = l.source.id === d.id ? l.target.id : l.source.id;
+      const other = graphData.nodes.find(n => n.id === otherId);
+      return { label: other.label, id: other.id, weight: l.weight };
+    })
+    .sort((a,b) => b.weight - a.weight);
+
+  document.getElementById("insp-conns").textContent = neighbors.length;
+
+  const list = document.getElementById("neighbor-list");
+  list.innerHTML = "";
+  neighbors.forEach(n => {
+    const row = document.createElement("div");
+    row.className = "nb";
+    row.innerHTML = `<span>${n.label}</span><span class="w">${n.weight.toFixed(2)}</span>`;
+    row.onclick = () => {
+      const node = graphData.nodes.find(x => x.id === n.id);
+      showInspector(node);
+      highlightNode(node.id);
+      centerOn(node);
+    };
+    list.appendChild(row);
+  });
+}
+function hideInspector(){
+  document.getElementById("inspector").classList.remove("show");
+}
+document.getElementById("close-insp").onclick = (e) => { e.stopPropagation(); hideInspector(); clearHighlight(); };
+
+function centerOn(d){
+  const scale = 1.4;
+  const t = d3.zoomIdentity
+    .translate(width/2 - d.x*scale, height/2 - d.y*scale)
+    .scale(scale);
+  svg.transition().duration(600).call(zoom.transform, t);
+}
+
+// search
+const searchInput = document.getElementById("search-input");
+const searchResults = document.getElementById("search-results");
+searchInput.addEventListener("input", () => {
+  const q = searchInput.value.trim().toLowerCase();
+  searchResults.innerHTML = "";
+  if(!q) return;
+  const matches = graphData.nodes
+    .filter(n => n.label.toLowerCase().includes(q))
+    .slice(0, 8);
+  matches.forEach(n => {
+    const row = document.createElement("div");
+    row.innerHTML = `<span>${n.label}</span><span style="color:${clusterMeta[n.group].color}">●</span>`;
+    row.onclick = () => {
+      showInspector(n);
+      highlightNode(n.id);
+      centerOn(n);
+    };
+    searchResults.appendChild(row);
+  });
+});
+
+// force simulation
+const simulation = d3.forceSimulation(graphData.nodes)
+  .force("link", d3.forceLink(graphData.links).id(d => d.id).distance(d => 90 - d.weight*40).strength(d => 0.15 + d.weight*0.5))
+  .force("charge", d3.forceManyBody().strength(-220))
+  .force("center", d3.forceCenter(width/2, height/2))
+  .force("collide", d3.forceCollide().radius(d => radiusScale(d.degree) + 14))
+  .on("tick", ticked);
+
+function ticked(){
+  linkSel
+    .attr("x1", d => d.source.x)
+    .attr("y1", d => d.source.y)
+    .attr("x2", d => d.target.x)
+    .attr("y2", d => d.target.y);
+  nodeSel.attr("transform", d => `translate(${d.x},${d.y})`);
+}
+
+function drag(){
+  function dragstarted(event, d){
+    if(!event.active) simulation.alphaTarget(0.25).restart();
+    d.fx = d.x; d.fy = d.y;
+    d3.select(event.sourceEvent.target.closest(".node")).select("circle").style("cursor","grabbing");
+  }
+  function dragged(event, d){
+    d.fx = event.x; d.fy = event.y;
+  }
+  function dragended(event, d){
+    if(!event.active) simulation.alphaTarget(0);
+    // keep pinned
+    d3.select(event.sourceEvent.target.closest(".node")).classed("pinned", true);
+  }
+  return d3.drag().on("start", dragstarted).on("drag", dragged).on("end", dragended);
+}
+
+// double click to unpin
+nodeSel.on("dblclick", (event, d) => {
+  event.stopPropagation();
+  d.fx = null; d.fy = null;
+  d3.select(event.currentTarget).classed("pinned", false);
+  simulation.alphaTarget(0.2).restart();
+  setTimeout(() => simulation.alphaTarget(0), 300);
+});
+
+window.addEventListener("resize", () => {
+  // keep simple; D3 viewBox-less but svg scales via width:100%
+});
+</script>
+</body>
+</html>

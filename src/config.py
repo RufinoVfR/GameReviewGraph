@@ -6,6 +6,7 @@ import os
 
 K: int = 10
 MIN_FREQ: int = 2
+N_CENTRAL_TERMS: int = 3
 
 # ── S3 / MinIO ─────────────────────────────────────────────────────────────────
 
