@@ -43,6 +43,7 @@ src/
 │   ├── strategies.py        ← Strategy  (CommunityDetectionStrategy)
 │   ├── storage.py           ← S3/MinIO adapter  (S3Storage, get_storage)
 │   ├── cache.py             ← Redis cache adapter  (RedisCache, get_cache)
+│   ├── scoring.py           ← community scoring metrics  (centrality, modularity Q, top_terms, partition_stats) — shared by Filters 8 & 9
 │   ├── tree.py              ← tree.json readers  (iter_comments, iter_sentences, iter_words, hierarchical_edges)
 │   └── graph/               ← graph primitive utilities (see shared/graph/CLAUDE.md)
 │       ├── ops.py           ← add_edge, increase_edge, remove_edge, iter_edges, copy_graph, build_graph_from_deltas, serialize_graph
@@ -53,7 +54,7 @@ src/
 ├── main.py                  ← orchestrator: instantiates FilterChain + all filters
 ├── config.py                ← env vars, S3_KEYS, K=10, MIN_FREQ
 ├── types/                   ← type aliases/dataclasses, split by semantics (see types/CLAUDE.md)
-│   ├── __init__.py          ← re-exports: RawComment, ProcessedComment, Graph, NodeKey, Communities, Metrics
+│   ├── __init__.py          ← re-exports: RawComment, ProcessedComment, Graph, NodeKey, Communities, Metrics, Report
 │   ├── comments.py          ← RawComment, ProcessedComment
 │   ├── graph.py             ← Graph dataclass, NodeKey
 │   ├── communities.py       ← Communities
@@ -80,8 +81,9 @@ src/
 ├── comment_graph.py         ← ConcreteFilter 5: comment graph (derived from sentence graph)
 ├── final_graph.py           ← ConcreteFilter 6: unified graph (3 levels + hierarchical edges)
 ├── community_detection.py   ← ConcreteFilter 7: progressive edge cutting + BFS/DFS
-├── metrics.py               ← ConcreteFilter 8: weighted degree centrality + modularity Q
-└── analysis.py              ← ConcreteFilter 9: report generation
+├── metrics.py               ← ConcreteFilter 8: weighted degree centrality + modularity Q (re-exports from shared/scoring.py)
+├── analysis.py              ← ConcreteFilter 9: runs the 5 detection methods → report.json (cross-method comparison matrix)
+└── report_text.py           ← ConcreteFilter 10: report.json → report.txt (human-readable projection)
 ```
 
 ---
@@ -135,6 +137,7 @@ S3_KEYS: dict[str, str] = {
     "final_graph":    "final_graph.json",
     "communities":    "communities.json",
     "metrics":        "metrics.json",
+    "report_json":    "report.json",
     "report":         "report.txt",
 }
 ```

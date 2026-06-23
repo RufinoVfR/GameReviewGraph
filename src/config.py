@@ -33,5 +33,6 @@ S3_KEYS: dict[str, str] = {
     "final_graph":    "final_graph.json",
     "communities":    "communities.json",
     "metrics":        "metrics.json",
+    "report_json":    "report.json",
     "report":         "report.txt",
 }

@@ -37,6 +37,7 @@ from collections.abc import Callable
 
 from src.shared.graph import (
     add_edge,
+    add_node,
     connected_components,
     copy_graph,
     count_components,
@@ -45,6 +46,7 @@ from src.shared.graph import (
     iter_edges,
     minimum_spanning_tree,
     neighbor_count,
+    new_graph,
     remove_edge,
     total_edge_weight,
 )
@@ -153,7 +155,9 @@ class ProgressiveEdgeCuttingStrategy(CommunityDetectionStrategy):
     Algorithm:
         1. Reduce the graph to a Minimum Spanning Tree (Prim) — V-1 edges.
         2. Sort the MST's edges ascending by weight.
-        3. For each edge (u, v): if neighbor_count(u) > 1 and neighbor_count(v) > 1, remove it.
+        3. For each *relational* edge (u, v): if neighbor_count(u) > 1 and
+           neighbor_count(v) > 1, remove it. Hierarchical (cross-level) edges are
+           never cut, preserving the containment skeleton inside each community.
         4. After each removal, count connected components via BFS.
         5. Stop when components >= k or no more removable edges remain.
 
@@ -173,7 +177,7 @@ class ProgressiveEdgeCuttingStrategy(CommunityDetectionStrategy):
             Mapping of community_id (1-indexed) to list of node keys.
         """
         working = minimum_spanning_tree(copy_graph(graph))
-        return _progressive_cut(working, k, is_cuttable=lambda u, v: True)
+        return _progressive_cut(working, k, is_cuttable=_is_relational)
 
 
 def _recalibrate_hierarchical(graph: Graph, factor: float) -> Graph:
@@ -408,3 +412,93 @@ class GreedyModularityStrategy(CommunityDetectionStrategy):
         return {
             i + 1: sorted(members[comm]) for i, comm in enumerate(active)
         }
+
+
+def _comment_subgraph(graph: Graph) -> Graph:
+    """Return the relational subgraph induced by the comment nodes (``c_``).
+
+    Method 4's core transform. Keeps only ``c_`` nodes and the ``c_↔c_``
+    relational edges between them; every word and sentence node — and every
+    hierarchical edge — is dropped. Partitioning this subgraph therefore ignores
+    the word/sentence "blob" entirely and clusters comments purely by their
+    mutual similarity.
+
+    Args:
+        graph: Final graph. Not mutated.
+
+    Returns:
+        A new graph over the comment nodes only, carrying the original
+        ``c_↔c_`` edge weights. Comment nodes with no relational edge are kept
+        as isolated nodes so the partition still covers every comment.
+    """
+    subgraph = new_graph()
+    for node in graph.nodes:
+        if node.startswith("c_"):
+            add_node(subgraph, node)
+    for u, v, weight in iter_edges(graph):
+        if u.startswith("c_") and v.startswith("c_"):
+            add_edge(subgraph, u, v, weight)
+    return subgraph
+
+
+class CommentSubgraphStrategy(CommunityDetectionStrategy):
+    """Method 4: progressive edge cutting restricted to the ``c_↔c_`` subgraph.
+
+    Extracts the comment-only subgraph (``_comment_subgraph``) and runs the same
+    minimum-MST progressive cut as the baseline on it, so the word/sentence blob
+    that dominates the full-graph methods is sidestepped entirely. The resulting
+    communities contain comment nodes only; words/sentences are intentionally
+    out of scope for this method.
+
+    Because the subgraph may be disconnected (comments with no mutual
+    similarity), its minimum spanning *forest* already yields one component per
+    connected piece; the progressive cut then refines the largest pieces toward
+    ``k``. Every comment is covered, isolated ones forming their own community.
+    """
+
+    def detect(self, graph: Graph, k: int) -> Communities:
+        """Partition the comment subgraph into communities.
+
+        Args:
+            graph: Unified final graph. Not mutated.
+            k: Target number of communities.
+
+        Returns:
+            Mapping of 1-indexed community id to list of comment node keys.
+        """
+        subgraph = _comment_subgraph(graph)
+        tree = minimum_spanning_tree(subgraph)
+        # Every surviving edge is c_↔c_, hence relational — all are cuttable.
+        return _progressive_cut(tree, k, is_cuttable=_is_relational)
+
+
+# ── Method registry ───────────────────────────────────────────────────────────
+# Single source of truth for the 5-method line-up compared in the final report
+# (US14). ``analysis.py`` iterates this list to build the comparison matrix.
+DETECTION_METHODS: list[dict[str, object]] = [
+    {
+        "id": 1,
+        "label": "Corte progressivo na min-MST (baseline, hierárquicas não-cortáveis)",
+        "strategy": ProgressiveEdgeCuttingStrategy(),
+    },
+    {
+        "id": 2,
+        "label": "Min-MST com peso hierárquico recalibrado",
+        "strategy": RecalibratedHierarchyStrategy(),
+    },
+    {
+        "id": 3,
+        "label": "Max-MST sobre pesos normalizados por tipo",
+        "strategy": MaxSpanningTreeStrategy(),
+    },
+    {
+        "id": 4,
+        "label": "Corte progressivo no subgrafo de comentários (c_↔c_)",
+        "strategy": CommentSubgraphStrategy(),
+    },
+    {
+        "id": 5,
+        "label": "Maximização gulosa da modularidade Q",
+        "strategy": GreedyModularityStrategy(),
+    },
+]
