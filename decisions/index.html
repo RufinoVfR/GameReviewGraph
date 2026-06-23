@@ -1099,6 +1099,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filtro-7-do-pipeline-usa-o-metodo-4-subgrafo-de-comentarios-nao-o-de-maior-q" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtro 7 do pipeline usa o método 4 (subgrafo de comentários), não o de maior Q
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -1761,6 +1772,17 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#filtro-7-do-pipeline-usa-o-metodo-4-subgrafo-de-comentarios-nao-o-de-maior-q" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Filtro 7 do pipeline usa o método 4 (subgrafo de comentários), não o de maior Q
+      
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2042,6 +2064,9 @@ D_i  = grau ponderado somado dos nós da comunidade i
 </ol>
 <p><strong>Sem método escolhido:</strong> o <code>report.json</code> entrega a <strong>matriz comparativa dos 5 métodos</strong> (Q, nº de comunidades, tamanhos min/máx, singletons); não há <code>chosen_method</code>. Eleger/interpretar um vencedor fica para a Análise de Resultados escrita, não para o pipeline. Duas convenções menores: o <strong>método 4</strong> usa <strong>corte progressivo</strong> na min-MST do subgrafo <code>c_↔c_</code> (mesma mecânica do método 1, restrita a comentários); e, como Q é uma métrica <strong>global da partição</strong>, cada bloco de comunidade no <code>report.txt</code> repete o <strong>Q global do método</strong> (não uma contribuição por comunidade).</p>
 <p><strong>Por quê:</strong> manter um único filtro de relatório (em vez de comparação + análise separados) evita um artefato intermediário e mantém o lineup num só lugar; a extração para <code>shared/scoring.py</code> elimina a tentação de reimplementar Q/centralidade em dois filtros (risco de divergência); e injetar a Strategy no Filtro 7 remove código duplicado e alinha baseline e relatório. A matriz sem vencedor é coerente com a Análise de Resultados (peso 2.0): a comparação é o produto, a interpretação é textual.</p>
+<h3 id="filtro-7-do-pipeline-usa-o-metodo-4-subgrafo-de-comentarios-nao-o-de-maior-q">Filtro 7 do pipeline usa o método 4 (subgrafo de comentários), não o de maior Q<a class="headerlink" href="#filtro-7-do-pipeline-usa-o-metodo-4-subgrafo-de-comentarios-nao-o-de-maior-q" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão (22/06/2026):</strong> o <code>community_detection</code> (Filtro 7) — cuja saída (<code>communities.json</code>) alimenta <code>metrics.json</code> e o <strong>bundle do frontend</strong> — é configurado em <code>main.py</code> com a <code>CommentSubgraphStrategy</code> (método 4), <strong>não</strong> com o método de maior modularidade Q. O relatório (Filtro 9) continua comparando os 5 métodos de forma independente; esta escolha afeta apenas qual partição o restante do pipeline e a visualização consomem.</p>
+<p><strong>Por quê:</strong> o vencedor do benchmark por Q é o <strong>greedy modularidade</strong> (método 5, Q ≈ 0.62 vs ≤ 0.08 dos baseados em MST), mas esse Q é <strong>dominado pela estrutura de palavras/frases</strong> do grafo unificado, e a partição gulosa <strong>colapsa os 200 comentários numa única comunidade</strong> (distribuição de comentários <code>[200, 0, …]</code>). Como o frontend navega comunidades <strong>de comentários</strong> (comunidade→comentário→frase→palavra), o greedy degeneraria a visualização para uma comunidade só. O método 4 particiona o subgrafo <code>c_↔c_</code> em <strong>10 comunidades de comentários equilibradas, sem singletons</strong> (<code>[47,44,37,20,17,14,8,7,3,3]</code>) — o agrupamento de comentários mais limpo. Ou seja, "melhor método" depende do critério: o Q global não mede a qualidade do agrupamento de <em>comentários</em> neste grafo; para o objetivo do explorador, o balanceamento da partição de comentários é o critério correto. O <code>build_bundle</code> usa apenas os <code>commentIds</code> de cada comunidade (palavras/frases vêm do <code>tree.json</code>), então a partição comment-only do método 4 encaixa sem ajustes.</p>
 <hr />
 <h2 id="pre-processamento-filtro-1">Pré-processamento (Filtro 1)<a class="headerlink" href="#pre-processamento-filtro-1" title="Permanent link">&para;</a></h2>
 <h3 id="normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie">Normalização A1': radical como chave de agrupamento, emitindo a forma de superfície<a class="headerlink" href="#normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie" title="Permanent link">&para;</a></h3>
@@ -2143,6 +2168,12 @@ D_i  = grau ponderado somado dos nós da comunidade i
 <td>22/06/2026</td>
 <td>1.9</td>
 <td>Decomposição da implementação da US14: comparação dos 5 métodos dentro do <code>analysis.py</code>, score extraído para <code>src/shared/scoring.py</code>, <code>report.txt</code> como Filtro 10 (<code>report_text.py</code>), Filtro 7 injeta a Strategy; matriz comparativa sem método escolhido; método 4 por corte progressivo; Q global repetido por bloco</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>2.0</td>
+<td>Filtro 7 do pipeline configurado com o método 4 (subgrafo <code>c_↔c_</code>) para alimentar <code>communities.json</code>/<code>metrics.json</code>/bundle do frontend: o greedy (maior Q) colapsa todos os comentários numa comunidade, degenerando o explorador; o método 4 dá 10 comunidades de comentários equilibradas</td>
 <td>Lucas Antunes</td>
 </tr>
 </tbody>

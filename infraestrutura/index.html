@@ -1387,7 +1387,8 @@
 
 
 <h1 id="infraestrutura">Infraestrutura<a class="headerlink" href="#infraestrutura" title="Permanent link">&para;</a></h1>
-<p>O <strong>GameReviewGraph</strong> é executado inteiramente via Docker. A orquestração combina três serviços: a aplicação Python, um armazenamento S3-compatível (MinIO) para os artefatos do pipeline, e um cache Redis para os resultados dos filtros.</p>
+<p>O <strong>GameReviewGraph</strong> é executado inteiramente via Docker. A orquestração combina quatro serviços: a aplicação Python, um frontend interativo em Canvas 2D, um armazenamento S3-compatível (MinIO) para os artefatos do pipeline, e um cache Redis para os resultados dos filtros.</p>
+<p>Para desenvolvimento da interface, o frontend pode ser iniciado isoladamente com <code>make frontend</code>.</p>
 <hr />
 <h2 id="visao-geral">Visão Geral<a class="headerlink" href="#visao-geral" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
@@ -1395,6 +1396,7 @@
 
     subgraph Docker["docker-compose"]
         APP["app\n(Python 3.11)"]
+        FE["frontend\n(Vite + React + TS)"]
         MINIO["minio\n(MinIO — S3-compatível)"]
         REDIS["redis\n(Redis 7)"]
     end
@@ -1403,6 +1405,7 @@
     RKEYS["Chaves Redis\nfilter:preprocessing\nfilter:tree\nfilter:word_graph\n..."]
 
     DEV --&gt; APP
+    DEV --&gt; FE
     APP --&gt; MINIO --&gt; BUCKET
     APP --&gt; REDIS --&gt; RKEYS</code></pre>
 <hr />
@@ -1422,6 +1425,12 @@
 <td>build local (<code>Dockerfile</code>)</td>
 <td>—</td>
 <td>Executa os 9 filtros do pipeline</td>
+</tr>
+<tr>
+<td><code>frontend</code></td>
+<td>build local (<code>frontend/Dockerfile</code>)</td>
+<td><code>5173</code></td>
+<td>Explorador multinível com fallback para mocks</td>
 </tr>
 <tr>
 <td><code>minio</code></td>
@@ -1451,8 +1460,8 @@
 <tbody>
 <tr>
 <td><code>pipeline/comments.json</code></td>
-<td><code>data/comments.json</code></td>
-<td>entrada bruta (upload via <code>make init-data</code>)</td>
+<td><code>data/comments_200.json</code></td>
+<td>entrada bruta (upload via <code>make init-data</code>; dataset selecionável via <code>DATASET=</code>)</td>
 </tr>
 <tr>
 <td><code>pipeline/preprocessed.json</code></td>
@@ -1617,6 +1626,9 @@ cp<span class="w"> </span>.env.example<span class="w"> </span>.env
 <span class="c1"># 2. Suba os serviços em background</span>
 make<span class="w"> </span>docker-up
 
+<span class="c1"># 2.1 Suba apenas o frontend, se quiser validar a visualização isoladamente</span>
+make<span class="w"> </span>frontend
+
 <span class="c1"># 3. Faça upload do arquivo de entrada bruta para MinIO</span>
 make<span class="w"> </span>init-data
 
@@ -1643,6 +1655,7 @@ make<span class="w"> </span>clean<span class="w">                   </span><span
 <p>O pipeline de CI usa <code>docker-compose.ci.yml</code> sobreposto ao <code>docker-compose.yml</code>. As diferenças:</p>
 <ul>
 <li>Serviços <code>minio</code> e <code>redis</code> expõem <strong>health checks</strong> — o <code>app</code> só inicia após ambos estarem saudáveis</li>
+<li>O frontend pode subir de forma independente, usando mocks quando os bundles não existirem</li>
 <li>Nenhuma porta é exposta ao host (sem conflito em runners compartilhados)</li>
 <li>Credenciais via GitHub Secrets: <code>S3_BUCKET</code>, <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code>, <code>REDIS_URL</code></li>
 </ul>

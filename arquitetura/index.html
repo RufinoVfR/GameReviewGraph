@@ -772,6 +772,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#camada-de-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Camada de Visualização
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Camada de Visualização">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#principios-de-desenho" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Princípios de desenho
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-offline-da-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline offline da visualização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemas-dos-bundles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schemas dos bundles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrutura-do-frontend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura do frontend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-da-camada-de-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras da camada de visualização
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tabela-de-filtros" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1180,6 +1252,78 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#camada-de-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Camada de Visualização
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Camada de Visualização">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#principios-de-desenho" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Princípios de desenho
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pipeline-offline-da-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pipeline offline da visualização
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#schemas-dos-bundles" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schemas dos bundles
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#estrutura-do-frontend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estrutura do frontend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#regras-da-camada-de-visualizacao" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Regras da camada de visualização
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#tabela-de-filtros" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1256,6 +1400,7 @@
 
 <h1 id="arquitetura-pipe-and-filter">Arquitetura — Pipe and Filter<a class="headerlink" href="#arquitetura-pipe-and-filter" title="Permanent link">&para;</a></h1>
 <p>O <strong>GameReviewGraph</strong> é estruturado como um pipeline de <strong>Pipe and Filter</strong>: cada módulo é um filtro independente que lê uma entrada bem definida, aplica uma transformação e escreve uma saída serializada. Os filtros se comunicam exclusivamente por artefatos JSON armazenados no <strong>MinIO S3</strong> — nenhum filtro importa diretamente funções internas de outro. Resultados intermediários são mantidos no <strong>Redis</strong> para evitar reprocessamento.</p>
+<p>A visualização interativa é uma <strong>camada consumidora separada</strong> do pipeline analítico. Ela não altera os filtros nem o grafo final; apenas lê o <code>final_graph.json</code> e os bundles derivados para renderizar o explorador multinível em <code>frontend/</code>.</p>
 <hr />
 <h2 id="pipeline-completo">Pipeline Completo<a class="headerlink" href="#pipeline-completo" title="Permanent link">&para;</a></h2>
 <h3 id="diagrama-mermaid">Diagrama (Mermaid)<a class="headerlink" href="#diagrama-mermaid" title="Permanent link">&para;</a></h3>
@@ -1323,6 +1468,142 @@
 <blockquote>
 <p>Todos os artefatos intermediários residem no bucket <code>game-review-graph</code> do MinIO sob o prefixo <code>pipeline/</code>. O Redis mantém os resultados em cache com a chave <code>filter:&lt;nome&gt;</code> — em um cache hit, <code>AbstractFilter.execute()</code> pula <code>process()</code> e regrava o artefato no S3 sem reprocessar.</p>
 </blockquote>
+<h2 id="camada-de-visualizacao">Camada de Visualização<a class="headerlink" href="#camada-de-visualizacao" title="Permanent link">&para;</a></h2>
+<p>A camada de visualização consome apenas artefatos já preparados pelo pipeline. O navegador nunca carrega a matriz bruta completa do <code>final_graph.json</code>; em vez disso, recebe bundles compactos gerados por um passo offline em Python puro.</p>
+<h3 id="principios-de-desenho">Princípios de desenho<a class="headerlink" href="#principios-de-desenho" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Princípio</th>
+<th>Decisão</th>
+<th>Motivação</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Fonte canônica</td>
+<td><code>final_graph.json</code> + artefatos derivados</td>
+<td>Preserva o pipeline analítico como única fonte de verdade</td>
+</tr>
+<tr>
+<td>Transporte para o navegador</td>
+<td>Bundles esparsos e índices prontos</td>
+<td>Evita carregar centenas de megabytes no cliente</td>
+</tr>
+<tr>
+<td>Renderização</td>
+<td><code>Canvas 2D</code> + <code>requestAnimationFrame</code></td>
+<td>Escala melhor que SVG/DOM para milhares de nós e arestas</td>
+</tr>
+<tr>
+<td>Algoritmos no frontend</td>
+<td>Implementação própria</td>
+<td>Mantém coerência com a regra da disciplina de não usar bibliotecas prontas</td>
+</tr>
+<tr>
+<td>Navegação</td>
+<td><code>ViewStack</code> + breadcrumb</td>
+<td>Permite drill-down coerente entre comunidade, comentário, sentença e palavra</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pipeline-offline-da-visualizacao">Pipeline offline da visualização<a class="headerlink" href="#pipeline-offline-da-visualizacao" title="Permanent link">&para;</a></h3>
+<pre class="mermaid"><code>flowchart TD
+    FG["pipeline/final_graph.json"]
+    CM["pipeline/communities.json"]
+    BT["scripts/build_bundle.py"]
+    MB["frontend/public/bundle/meta.json"]
+    CB["frontend/public/bundle/communities.json"]
+    CT["frontend/public/bundle/containment.json"]
+    WG["frontend/public/bundle/word_graph.json"]
+    IX["frontend/public/bundle/inverted_index.json"]
+    TX["frontend/public/bundle/text_store.json"]
+    FE["frontend/"]
+
+    FG --&gt; BT
+    CM --&gt; BT
+    BT --&gt; MB
+    BT --&gt; CB
+    BT --&gt; CT
+    BT --&gt; WG
+    BT --&gt; IX
+    BT --&gt; TX
+    MB --&gt; FE
+    CB --&gt; FE
+    CT --&gt; FE
+    WG --&gt; FE
+    IX --&gt; FE
+    TX --&gt; FE</code></pre>
+<h3 id="schemas-dos-bundles">Schemas dos bundles<a class="headerlink" href="#schemas-dos-bundles" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Arquivo</th>
+<th>Conteúdo mínimo</th>
+<th>Carregamento</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>meta.json</code></td>
+<td>contagens por tipo, <code>k</code>, thresholds, versão e data de geração</td>
+<td>inicial</td>
+</tr>
+<tr>
+<td><code>communities.json</code></td>
+<td>comunidades de comentário, tamanhos, tópico dominante, coordenadas iniciais e arestas agregadas</td>
+<td>visão de entrada</td>
+</tr>
+<tr>
+<td><code>containment.json</code></td>
+<td><code>comentario -&gt; sentenças</code> e <code>sentença -&gt; palavras</code></td>
+<td>drill-down</td>
+</tr>
+<tr>
+<td><code>word_graph.json</code></td>
+<td>bloco <code>w ↔ w</code> esparsificado, com pesos normalizados e comunidades</td>
+<td>nível de palavras</td>
+</tr>
+<tr>
+<td><code>sentence_neighbors.json</code></td>
+<td>vizinhos top-k por sentença no bloco <code>s ↔ s</code></td>
+<td>drill-down em comentário</td>
+</tr>
+<tr>
+<td><code>inverted_index.json</code></td>
+<td><code>palavra -&gt; sentenças</code> e <code>palavra -&gt; comentários</code></td>
+<td>brushing cruzado</td>
+</tr>
+<tr>
+<td><code>text_store.json</code></td>
+<td><code>id -&gt; texto bruto</code> dos comentários</td>
+<td>painel lateral</td>
+</tr>
+</tbody>
+</table>
+<h3 id="estrutura-do-frontend">Estrutura do frontend<a class="headerlink" href="#estrutura-do-frontend" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>frontend/
+├── src/
+│   ├── data/         # loader de bundles e cache em memória
+│   ├── model/        # grafo, índices e montagem de subgrafos
+│   ├── layout/       # quadtree e force layout próprios
+│   ├── render/       # câmera, canvas renderer e LOD
+│   ├── interaction/  # picker, busca, brushing e filtros
+│   ├── state/        # view stack, seleção e histórico
+│   ├── ui/           # painel lateral, breadcrumb e controles
+│   └── app.tsx       # composição da interface
+└── public/
+    └── bundle/       # artefatos compactos gerados offline
+</code></pre></div>
+<h3 id="regras-da-camada-de-visualizacao">Regras da camada de visualização<a class="headerlink" href="#regras-da-camada-de-visualizacao" title="Permanent link">&para;</a></h3>
+<ul>
+<li>O frontend não lê <code>final_graph.json</code> bruto em produção.</li>
+<li>O frontend não depende de bibliotecas de grafo ou de layout visual.</li>
+<li>A navegação começa em comunidades de comentário e aprofunda conforme o nível de zoom e o clique.</li>
+<li>O <code>tree.json</code> continua útil apenas como apoio semântico e de texto, não como fonte primária das arestas de navegação.</li>
+<li>O frontend deve iniciar mesmo sem os bundles gerados, usando fixtures locais, mocks sintéticos ou estados vazios com feedback visual adequado.</li>
+<li>Quando os bundles reais estiverem disponíveis, eles substituem automaticamente os mocks sem exigir mudança de código na interface.</li>
+</ul>
 <hr />
 <h2 id="tabela-de-filtros">Tabela de Filtros<a class="headerlink" href="#tabela-de-filtros" title="Permanent link">&para;</a></h2>
 <table>
@@ -1534,6 +1815,26 @@
 <td>Infraestrutura de padrões GoF</td>
 <td><code>src/shared/</code> isolado dos filtros de domínio</td>
 <td>Filtros de domínio não importam uns dos outros; <code>shared/</code> é a única dependência cruzada permitida</td>
+</tr>
+<tr>
+<td>Camada de visualização</td>
+<td><code>frontend/</code> separado do pipeline</td>
+<td>Isola renderização e interação da análise, permitindo evoluir UX sem tocar nos filtros</td>
+</tr>
+<tr>
+<td>Geração de bundles</td>
+<td><code>scripts/build_bundle.py</code></td>
+<td>Esparsifica blocos densos, preserva contenção e cria índices para navegação</td>
+</tr>
+<tr>
+<td>Renderização do explorador</td>
+<td>Canvas 2D + algoritmos próprios</td>
+<td>Mantém performance e respeita a restrição de não usar bibliotecas prontas</td>
+</tr>
+<tr>
+<td>Fonte de navegação</td>
+<td><code>communities.json</code> + blocos de contenção</td>
+<td>Garante drill-down coerente sem depender da matriz bruta no navegador</td>
 </tr>
 <tr>
 <td>Padrões GoF aplicados</td>

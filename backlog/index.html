@@ -1301,6 +1301,10 @@
 <td>TE03</td>
 <td>Detecção de Comunidades e Análise de Resultados</td>
 </tr>
+<tr>
+<td>TE04</td>
+<td>Visualização Interativa dos Grafos e Navegação Semântica</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -1350,6 +1354,12 @@
 <td>E06</td>
 <td>Métricas de Qualidade e Relatório</td>
 <td>Calcular centralidade de grau ponderada e modularidade Q, e gerar o relatório final com os tópicos identificados e suas métricas.</td>
+</tr>
+<tr>
+<td>TE04</td>
+<td>E07</td>
+<td>Explorador Interativo Multinível</td>
+<td>Construir a interface de visualização em Canvas 2D para explorar o grafo unificado em níveis, com drill-down, busca, filtros e brushing cruzado.</td>
 </tr>
 </tbody>
 </table>
@@ -1448,6 +1458,42 @@
 <td>Como pesquisador, eu quero que o sistema gere um relatório de saída com os tópicos detectados, seus termos centrais, comentários associados e a modularidade Q para que os resultados sejam interpretáveis e documentáveis.</td>
 <td>TE03</td>
 <td>E06</td>
+</tr>
+<tr>
+<td>US15</td>
+<td>Como pesquisador, eu quero que o sistema abra em uma visão inicial de comunidades para que eu consiga entender a organização geral dos tópicos antes de aprofundar a análise.</td>
+<td>TE04</td>
+<td>E07</td>
+</tr>
+<tr>
+<td>US16</td>
+<td>Como pesquisador, eu quero que o sistema carregue bundles compactos derivados do grafo final para que a visualização funcione sem consumir a matriz bruta no navegador.</td>
+<td>TE04</td>
+<td>E07</td>
+</tr>
+<tr>
+<td>US17</td>
+<td>Como pesquisador, eu quero que eu possa dar zoom e clicar em uma comunidade, comentário ou sentença para navegar para o próximo nível sem perder o contexto da exploração.</td>
+<td>TE04</td>
+<td>E07</td>
+</tr>
+<tr>
+<td>US18</td>
+<td>Como pesquisador, eu quero que o sistema destaque automaticamente os nós relacionados a uma palavra selecionada para que eu identifique rapidamente onde o termo aparece no corpus.</td>
+<td>TE04</td>
+<td>E07</td>
+</tr>
+<tr>
+<td>US19</td>
+<td>Como pesquisador, eu quero que o sistema ofereça busca e filtros por tópico e nível para que eu localize focos específicos de interesse de forma rápida.</td>
+<td>TE04</td>
+<td>E07</td>
+</tr>
+<tr>
+<td>US20</td>
+<td>Como pesquisador, eu quero que o sistema mantenha a navegação responsiva, com breadcrumb e painel lateral persistentes, para que eu consiga voltar e comparar contextos sem me perder.</td>
+<td>TE04</td>
+<td>E07</td>
 </tr>
 </tbody>
 </table>
@@ -1625,6 +1671,72 @@
 <td>US12, US13</td>
 <td>4</td>
 </tr>
+<tr>
+<td>US15</td>
+<td>Visão inicial de comunidades</td>
+<td>5</td>
+<td>5</td>
+<td>3</td>
+<td>2</td>
+<td>12</td>
+<td>US08, US10, US11, US12, US13</td>
+<td>4</td>
+</tr>
+<tr>
+<td>US16</td>
+<td>Bundles compactos da visualização</td>
+<td>5</td>
+<td>5</td>
+<td>3</td>
+<td>2</td>
+<td>12</td>
+<td>US08, US09, US10</td>
+<td>4</td>
+</tr>
+<tr>
+<td>US17</td>
+<td>Zoom e drill-down multinível</td>
+<td>5</td>
+<td>5</td>
+<td>4</td>
+<td>3</td>
+<td>8</td>
+<td>US15, US16</td>
+<td>4</td>
+</tr>
+<tr>
+<td>US18</td>
+<td>Brushing cruzado por palavra</td>
+<td>4</td>
+<td>4</td>
+<td>3</td>
+<td>2</td>
+<td>7</td>
+<td>US16, US17</td>
+<td>4</td>
+</tr>
+<tr>
+<td>US19</td>
+<td>Busca e filtros</td>
+<td>4</td>
+<td>4</td>
+<td>2</td>
+<td>2</td>
+<td>8</td>
+<td>US15, US16</td>
+<td>4</td>
+</tr>
+<tr>
+<td>US20</td>
+<td>Breadcrumb e painel persistentes</td>
+<td>4</td>
+<td>4</td>
+<td>2</td>
+<td>1</td>
+<td>9</td>
+<td>US17, US19</td>
+<td>4</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -1724,6 +1836,42 @@
 <td>4</td>
 <td>✅</td>
 </tr>
+<tr>
+<td>US15</td>
+<td>Visão inicial de comunidades</td>
+<td>4</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>US16</td>
+<td>Bundles compactos da visualização</td>
+<td>4</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>US17</td>
+<td>Zoom e drill-down multinível</td>
+<td>4</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>US18</td>
+<td>Brushing cruzado por palavra</td>
+<td>4</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>US19</td>
+<td>Busca e filtros</td>
+<td>4</td>
+<td>✅</td>
+</tr>
+<tr>
+<td>US20</td>
+<td>Breadcrumb e painel persistentes</td>
+<td>4</td>
+<td>✅</td>
+</tr>
 </tbody>
 </table>
 <hr />
@@ -1816,6 +1964,42 @@
 <li>O <code>report.json</code> inclui a comparação de <strong>três métodos</strong> de detecção de comunidades (corte progressivo, subgrafo de comentários, maximização gulosa de Q) com suas métricas de qualidade e balanceamento</li>
 <li>O frontend possui uma <strong>última página</strong> que renderiza o <code>report.json</code>, incluindo a comparação dos métodos lado a lado</li>
 </ul>
+<p><strong>US15 — Visão inicial de comunidades</strong></p>
+<ul>
+<li>A interface abre em uma visão de entrada com as comunidades de comentário como super-nós</li>
+<li>Cada comunidade mostra tamanho, tópico dominante e distinção visual consistente</li>
+<li>O clique em uma comunidade inicia a navegação para o próximo nível</li>
+</ul>
+<p><strong>US16 — Bundles compactos da visualização</strong></p>
+<ul>
+<li>O navegador carrega apenas bundles compactos quando eles estiverem disponíveis, nunca a matriz bruta completa</li>
+<li>Na ausência dos bundles reais, a interface sobe com mocks, fixtures locais ou estados vazios</li>
+<li>Os bundles incluem metadados, contenção, vizinhanças e índices invertidos, e a geração é feita em etapa offline e versionada junto ao projeto</li>
+</ul>
+<p><strong>US17 — Zoom e drill-down multinível</strong></p>
+<ul>
+<li>O usuário pode ampliar e reduzir a visualização sem perder a seleção atual</li>
+<li>O clique em um nó abre a decomposição do nível seguinte quando houver dados disponíveis</li>
+<li>O breadcrumb reflete exatamente o caminho atual da navegação</li>
+</ul>
+<p><strong>US18 — Brushing cruzado por palavra</strong></p>
+<ul>
+<li>Selecionar uma palavra destaca sentenças e comentários ligados a ela</li>
+<li>O destaque é derivado do índice invertido dos blocos de contenção</li>
+<li>O brushing não altera o estado estrutural da navegação</li>
+</ul>
+<p><strong>US19 — Busca e filtros</strong></p>
+<ul>
+<li>O usuário pode buscar por palavras, comentários e tópicos</li>
+<li>Filtros por nível e tópico reduzem a quantidade de nós e arestas visíveis</li>
+<li>A aplicação preserva o estado da visualização ao alternar filtros</li>
+</ul>
+<p><strong>US20 — Breadcrumb e painel persistentes</strong></p>
+<ul>
+<li>O breadcrumb acompanha a pilha de navegação em todas as mudanças de nível</li>
+<li>O painel lateral mantém o texto bruto e os metadados do nó selecionado</li>
+<li>A interface deve continuar utilizável em resoluções menores, sem colapsar a navegação</li>
+</ul>
 <hr />
 <h2 id="historico-de-revisao">Histórico de Revisão<a class="headerlink" href="#historico-de-revisao" title="Permanent link">&para;</a></h2>
 <table>
@@ -1837,6 +2021,12 @@
 <tr>
 <td>22/06/2026</td>
 <td>1.1</td>
+<td>Inclusão da camada de visualização interativa, novos épicos/histórias e critérios de aceitação para o explorador multinível</td>
+<td>Codex</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.2</td>
 <td>US14 ampliada: <code>report.json</code> + página no frontend; comparação de 3 métodos de detecção de comunidades</td>
 <td><a href="https://github.com/LucasGSAntunes">Lucas Antunes</a></td>
 </tr>

@@ -461,6 +461,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#visualizacao-interativa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualização Interativa
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topicos-detectados" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1150,6 +1161,17 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#visualizacao-interativa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualização Interativa
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#topicos-detectados" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1197,6 +1219,8 @@
 <h2 id="sobre-o-projeto">Sobre o projeto<a class="headerlink" href="#sobre-o-projeto" title="Permanent link">&para;</a></h2>
 <p>O <strong>GameReviewGraph</strong> transforma um corpus de ~200 reviews de jogos em português em uma estrutura de grafo hierárquica de três níveis — palavras → frases → comentários — e detecta comunidades semânticas (tópicos) por corte progressivo de arestas.</p>
 <p>Implementado em Python puro, sem bibliotecas externas de grafos. Disciplina <strong>FGA0030 — Estruturas de Dados 2 / UnB 2026/1</strong>.</p>
+<p>Além do pipeline analítico, o projeto inclui uma camada de visualização interativa em <code>frontend/</code>, alimentada por bundles compactos derivados do <code>final_graph.json</code>. Essa camada permite explorar comunidades, aprofundar comentários e inspecionar relações entre palavras sem carregar a matriz completa no navegador.</p>
+<p>Durante a implementação, a interface também pode iniciar com mocks ou fixtures locais, o que permite desenvolver e testar a UX antes da geração dos artefatos finais.</p>
 <hr />
 <h2 id="quick-start-por-onde-comecar">Quick Start — por onde começar<a class="headerlink" href="#quick-start-por-onde-comecar" title="Permanent link">&para;</a></h2>
 <p>Entrou no projeto e vai implementar um filtro? A trilha de leitura mínima, <strong>nesta ordem</strong>:</p>
@@ -1265,6 +1289,23 @@
 </tr>
 </tbody>
 </table>
+<h2 id="visualizacao-interativa">Visualização Interativa<a class="headerlink" href="#visualizacao-interativa" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Camada</th>
+<th>Módulo</th>
+<th>Descrição</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>10</td>
+<td><code>frontend/</code></td>
+<td>Explorador multinível em Canvas 2D, com bundles compactos, drill-down, busca, filtros e brushing cruzado</td>
+</tr>
+</tbody>
+</table>
 <hr />
 <h2 id="topicos-detectados">Tópicos detectados<a class="headerlink" href="#topicos-detectados" title="Permanent link">&para;</a></h2>
 <p><code>Desempenho</code> · <code>Narrativa</code> · <code>Multiplayer</code> · <code>Interface</code> · <code>Progressão</code> · <code>Áudio</code> · <code>Gráficos</code> · <code>Controles</code> · <code>Conteúdo Pós-lançamento</code> · <code>Suporte Técnico</code></p>
@@ -1276,6 +1317,7 @@
 <li><strong>BFS / DFS</strong> — implementados do zero</li>
 <li><strong>Modularidade Q</strong> — implementada do zero</li>
 <li><strong>Árvore N-ária</strong> — implementada do zero</li>
+<li><strong>Canvas 2D + JavaScript/TypeScript</strong> — visualização interativa sem bibliotecas de grafo</li>
 </ul>
 
 

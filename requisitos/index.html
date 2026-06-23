@@ -1328,6 +1328,7 @@
 <p><strong>RF08 — Calcular centralidade de grau ponderada:</strong> O sistema deve calcular, para cada vértice, a soma dos pesos de todas as suas arestas, identificando os termos mais representativos dentro de cada comunidade detectada.</p>
 <p><strong>RF09 — Calcular modularidade Q:</strong> O sistema deve calcular a métrica de modularidade Q ao final do processo de corte, avaliando objetivamente a qualidade dos agrupamentos obtidos com base na fórmula <code>Q = (1/2m) × Σ [Aij − (ki × kj / 2m)] × δ(ci, cj)</code>.</p>
 <p><strong>RF10 — Gerar relatório de análise:</strong> O sistema deve produzir uma saída estruturada (<code>report.json</code>) listando cada comunidade detectada com seus termos centrais, comentários associados e o valor de modularidade Q, incluindo a comparação de três métodos de detecção de comunidades. O <code>report.json</code> é renderizado na última página do frontend; o <code>report.txt</code> legível (formato do planejamento) é uma projeção dele.</p>
+<p><strong>RF11 — Visualizar interativamente o grafo unificado:</strong> O sistema deve oferecer uma interface gráfica interativa para explorar o grafo final em múltiplos níveis, com visão inicial por comunidades, drill-down para comentários, sentenças e palavras, breadcrumb de navegação, busca, filtros e painel lateral com metadados e texto associado ao nó selecionado.</p>
 <hr />
 <h2 id="2-requisitos-nao-funcionais">2. Requisitos Não Funcionais<a class="headerlink" href="#2-requisitos-nao-funcionais" title="Permanent link">&para;</a></h2>
 <p>Os requisitos não funcionais definem restrições técnicas e de qualidade que o sistema deve satisfazer, derivadas das exigências da disciplina e das decisões arquiteturais do grupo.</p>
@@ -1341,6 +1342,9 @@
 <h3 id="disponibilidade">Disponibilidade<a class="headerlink" href="#disponibilidade" title="Permanent link">&para;</a></h3>
 <p><strong>RNF06 — Hospedagem no GitHub:</strong> O código-fonte completo deve estar hospedado em repositório público no GitHub de ao menos um integrante do grupo, com a última atualização realizada até <strong>22/06/2026</strong>. A ausência do repositório implica nota zero; atrasos implicam -2,0 pontos por dia.</p>
 <p><strong>RNF07 — Execução sem falhas:</strong> O sistema deve executar completamente sem erros a partir do comando <code>python main.py</code>, produzindo todas as saídas previstas. Código que não executa ou apresenta falhas graves implica nota zero.</p>
+<p><strong>RNF08 — Visualização sem bibliotecas prontas:</strong> A camada de visualização deve ser implementada sem bibliotecas prontas de grafo ou de layout visual. A renderização do explorador deve usar Canvas 2D e algoritmos próprios para posicionamento, picking e navegação.</p>
+<p><strong>RNF09 — Consumo de artefatos compactos:</strong> O navegador não deve carregar a matriz completa do <code>final_graph.json</code> em produção. A interface deve consumir apenas bundles derivados, esparsificados e versionados em etapa offline quando eles existirem.</p>
+<p><strong>RNF10 — Operação sem artefatos prontos:</strong> A interface deve iniciar e permanecer funcional mesmo na ausência dos bundles reais, usando dados mockados, fixtures locais ou estados vazios com mensagens claras de carregamento/indisponibilidade.</p>
 <hr />
 <h2 id="historico-de-revisao">Histórico de Revisão<a class="headerlink" href="#historico-de-revisao" title="Permanent link">&para;</a></h2>
 <table>
