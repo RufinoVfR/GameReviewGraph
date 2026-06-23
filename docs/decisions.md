@@ -92,11 +92,99 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 
 **Por quê:** arestas hierárquicas representam **contenção estrutural** (uma palavra *pertence a* uma frase, uma frase *pertence a* um comentário), não similaridade semântica. Cortá-las quebraria os vínculos de pertencimento que ligam os três níveis do grafo: uma palavra poderia acabar em uma comunidade completamente separada da frase e do comentário ao qual pertence estruturalmente, tornando o resultado semanticamente ininterpretável. Como as arestas hierárquicas possuem peso em `(0, 1]` — tipicamente pequeno (ex.: `1/5 = 0.2` para uma frase de 5 palavras) — elas aparecem no topo da lista ordenada por peso ascendente e seriam as primeiras a ser cortadas se não fossem explicitamente excluídas. Ao mantê-las intactas na MST, elas funcionam como "esqueleto" de conectividade entre os níveis, garantindo que cada comunidade detectada possa conter nós de todos os três níveis (`w_`, `s_`, `c_`) relacionados tematicamente. A exclusão é implementada como um predicado `_is_relational(u, v)` em `community_detection.py` — retorna `True` quando ambos os nós compartilham o mesmo prefixo de nível — o que mantém a lógica de corte desacoplada da `ProgressiveEdgeCuttingStrategy` e isolada no filtro.
 
+### Comparação de 3 métodos de detecção de comunidades (problema de desbalanceamento)
+
+**Decisão:** o relatório final compara **três** algoritmos de detecção de comunidades sobre o `final_graph`, em vez de assumir o corte progressivo como única abordagem: (1) corte progressivo na MST (atual), (2) detecção restrita ao **subgrafo de comentários** (`c_↔c_`), e (3) **maximização gulosa da modularidade Q** (aglomerativo, estilo Louvain). A qualidade de cada partição é medida por modularidade Q e por balanceamento (nº de comunidades, distribuição de tamanhos, nº de comunidades de tamanho 1).
+
+**Por quê:** o método atual (MST mínima + corte ascendente) produz forte desbalanceamento medido no dataset canônico de 200 comentários: uma única comunidade absorve todas as 344 palavras e 279 frases (blob de ~700 nós), enquanto as demais recebem 0–1 palavra, e surgem comunidades de **1 comentário**. Distribuição observada: `[80, 47, 21, 20, 16, 8, 3, 3, 1, 1]`. A causa é estrutural: as palavras entram na MST quase só por arestas hierárquicas (não-cortáveis — ver decisão anterior), então nunca se separam do blob; o corte das arestas relacionais mais fracas apenas "descasca" fragmentos periféricos de 1–3 comentários. Em vez de trocar cegamente o algoritmo, optou-se por **comparar três abordagens no próprio relatório** e justificar objetivamente a escolhida — coerente com a Análise de Resultados (peso 2.0) e com o padrão Strategy já existente (`CommunityDetectionStrategy`), que permite trocar/justapor algoritmos sem alterar o filtro. O 3º método (maximização gulosa de Q) foi escolhido por otimizar diretamente a métrica de comparação, em vez de label propagation (resultado menos controlável) ou Girvan–Newman (recálculo de betweenness mais caro). O planejamento detalhado está em `planning/us14_final_report.md`.
+
+### Causa raiz do desbalanceamento: min-MST + escala minúscula do peso hierárquico
+
+**Decisão:** registrar que o blob do método 1 tem **duas** causas, não uma. Além da exclusão das arestas hierárquicas do corte (decisão anterior), a combinação **MST de mínimo + escala do peso hierárquico** é determinante: o `final_graph` é um grafo de similaridade (peso alto = relação forte), mas `community_detection.py` constrói uma árvore geradora de **mínimo** (`minimum_spanning_tree`, Prim com `weight < min_weight[v]`), que seleciona sempre as arestas **mais fracas**. As arestas hierárquicas pesam `1/|filhos|` (ex.: `1/10`), a menor escala de peso do grafo.
+
+**Por quê:** encadeando as duas, o min-MST **prefere** as arestas hierárquicas (são as mais baratas), de modo que toda palavra entra na árvore por sua aresta de contenção — quase nunca por uma `w_↔w_` — e, sendo não-cortável, fica colada ao blob. Ou seja, é a **escala** do peso hierárquico, não apenas sua não-cortabilidade, que impõe a comunidade do nó. Esse diagnóstico é o que abre as duas correções registradas na decisão seguinte (recalibrar a escala; ou usar MST de máximo). Detalhe em `planning/questao_arestas_hierarquicas.md`.
+
+### Comparação de 5 métodos de detecção: baseline preservado + correções como alternativas
+
+**Decisão:** **revisa e amplia** a decisão "Comparação de 3 métodos" acima. Em vez de substituir o método 1, ele é **preservado intocado como baseline** (sua falha é a evidência empírica de que a contenção estrutural não pode *impor* pertinência), e as correções entram como **métodos adicionais** no comparativo do relatório final. O lineup passa a ter **cinco** métodos, cada um uma `CommunityDetectionStrategy` plugável:
+
+1. **Corte progressivo na min-MST, hierárquicas não-cortáveis** (atual, intocado) — o problema (blob, `size=1`).
+2. **Min-MST com peso hierárquico recalibrado** (escala alta) — o peso passa a *influenciar* em vez de impor: num min-MST, a palavra entra pela aresta `w_↔w_` mais forte, não pela contenção. Mantém as hierárquicas não-cortáveis.
+3. **Max-MST + pesos normalizados por tipo + arestas cortáveis** — backbone formado pelas similaridades mais fortes; o corte progressivo remove as arestas fracas. Correção principista.
+4. **Detecção no subgrafo de comentários** (`c_↔c_`) — particiona só comentários, ignorando o blob de palavras.
+5. **Maximização gulosa da modularidade Q** — aglomerativo estilo Louvain.
+
+**Por quê:** a posição levantada na revisão do método 1 é que as arestas hierárquicas deveriam *influenciar*, não *impor*, a pertinência (ver decisão de causa raiz acima). Em vez de escolher silenciosamente uma correção, o time optou por **transformar o achado em narrativa**: o relatório mostra a causa (método 1), o fix mínimo (método 2, dentro do envelope min-MST), o fix principista (método 3, max-MST), e dois métodos ortogonais (4 e 5), todos medidos por modularidade Q e balanceamento. Isso aproveita o resultado "ruim" do método 1 como parte avaliável da Análise de Resultados (peso 2.0), em vez de descartá-lo. A decisão "Arestas hierárquicas excluídas do corte progressivo" **não é revertida** — passa a descrever especificamente o método 1; os métodos 2–3 redefinem a escala/direção do peso apenas dentro de suas próprias estratégias, sobre a cópia do grafo que recebem, sem reescrever o Filtro 6. A calibração concreta (`λ`, normalização por tipo) fica para a implementação. Planejamento em `planning/us14_final_report.md` e `planning/questao_arestas_hierarquicas.md`.
+
+**Fórmulas das correções (esboçadas em `src/shared/strategies.py`):** todas operam sobre uma **cópia** do grafo final; nenhuma altera o Filtro 6. As constantes `factor` e `λ` são provisórias (a calibrar com Q).
+
+- **Método 2 — recalibração do peso hierárquico.** Cada aresta hierárquica recebe um peso uniforme acima da escala relacional, de modo que a min-MST deixe de preferi-las:
+
+  ```
+  peso'(e) = factor × max{ peso(r) : r é aresta relacional },   para toda aresta hierárquica e
+  peso'(r) = peso(r),                                            para toda aresta relacional r
+  factor ≥ 1   (provisório: 2.0)
+  ```
+
+  As arestas relacionais mantêm o peso original; a min-MST passa a conectar a palavra pela `w_↔w_` mais forte, e o corte segue cortando **só** as relacionais (hierárquicas continuam não-cortáveis).
+
+- **Método 3 — normalização por tipo + árvore geradora máxima.** Primeiro normaliza cada aresta para `(0, 1]` dentro do próprio tipo (os três níveis relacionais e o tipo hierárquico têm escalas muito distintas), amortecendo a influência hierárquica por `λ`:
+
+  ```
+  peso'(r) = peso(r) / max_L,            r relacional de nível L ∈ {w_, s_, c_};  max_L = maior peso daquele nível
+  peso'(e) = λ × ( peso(e) / max_hier ), e hierárquica;  max_hier = maior peso hierárquico
+  λ ∈ (0, 1]   (provisório: 0.5)
+  ```
+
+  Depois constrói a **árvore geradora máxima** reutilizando a `minimum_spanning_tree` (Prim) já implementada do zero, via inversão de peso — roda a MST mínima sobre `peso''` e restaura `peso'` nas arestas sobreviventes:
+
+  ```
+  shift  = max{ peso'(e) } + 1                 (o "+1" mantém tudo > 0, longe do sentinela 0.0)
+  peso''(e) = shift − peso'(e)                  (a aresta mais forte vira a mais leve)
+  MaxST(G) = MinST(G com peso'')               (arestas restauradas para peso')
+  ```
+
+  O corte progressivo então remove as arestas mais fracas (ascendente) com **todas** as arestas cortáveis, mantendo o guard `grau > 1` em ambos os lados.
+
+- **Método 5 — maximização gulosa de modularidade (estilo CNM).** Cada nó começa em sua própria comunidade; a cada passo funde-se o par de comunidades com maior ganho de modularidade positivo:
+
+  ```
+  ΔQ(a, b) = 2 × [ W_ab / 2m − (D_a × D_b) / (2m)² ]
+  W_ab = soma dos pesos das arestas entre as comunidades a e b
+  D_i  = grau ponderado somado dos nós da comunidade i
+  2m   = soma dos graus ponderados de todos os nós
+  ```
+
+  Para ao atingir `K` comunidades **ou** quando nenhum merge tem `ΔQ > 0` (pico de modularidade) — o que vier primeiro; o número natural de comunidades no pico é, ele próprio, um dado de comparação.
+
 ### K = 10 comunidades
 
 **Decisão:** `K=10` é uma constante global em `src/config.py`, não hardcoded nos filtros.
 
 **Por quê:** corresponde exatamente ao número de tópicos do dataset (desempenho, narrativa, multiplayer, etc.) — o objetivo é que a detecção de comunidades recupere esses 10 tópicos a partir da estrutura do grafo, sem que o algoritmo "veja" os rótulos de tópico originais. Mantê-lo como constante (em vez de espalhado pelo código) facilita ajustar o experimento sem alterar lógica de filtro.
+
+---
+
+## Saída final (Filtro 9)
+
+### Relatório final em duas partes: `report.json` + página no frontend
+
+**Decisão:** o Filtro 9 (`analysis.py`) gera um **`report.json` estruturado** (além do `report.txt` legível da seção 14 do planejamento), e o frontend ganha uma **última página dedicada** que renderiza esse JSON — incluindo a comparação dos três métodos de detecção. O `report.txt` passa a ser uma **projeção** do mesmo `report.json`.
+
+**Por quê:** a entrega tem dois consumidores distintos: o avaliador acadêmico (texto formatado, seção 14) e a visualização interativa do frontend (que já consome bundles JSON do MinIO via `scripts/build_bundle.py`). Um `report.json` estruturado serve ambos sem duplicar lógica de formatação — o texto vira uma projeção do JSON, não um segundo formato mantido à mão. Renderizar no frontend, na mesma navegação que já mostra comunidades/comentários/frases/palavras, fecha o ciclo: o usuário vê tópicos detectados, termos centrais, Q e a comparação dos métodos lado a lado, em vez de só um arquivo `.txt`. Implica adicionar uma chave `report.json` ao `S3_KEYS` e estender o `build_bundle.py` + o loader do frontend para carregar o relatório. Detalhes e passos em `planning/us14_final_report.md`.
+
+### Decomposição da implementação do relatório final
+
+**Decisão (22/06/2026):** ao implementar a US14, fixaram-se quatro escolhas estruturais:
+
+1. **Comparação dentro do `analysis.py`, sem filtro de comparação separado.** O Filtro 9 itera o registro `DETECTION_METHODS` (`src/shared/strategies.py` — fonte única do lineup), roda as 5 estratégias sobre o `final_graph` e calcula Q/centralidade/estatísticas por método. Sua entrada é `final_graph.json` + `comments.json` (rótulos-ouro) — **não** o `metrics.json`; o método 1 é recalculado de forma uniforme com os demais, em vez de reusar o `communities.json` do Filtro 7.
+2. **Funções de score extraídas para `src/shared/scoring.py`.** `weighted_degree_centrality`, `calculate_modularity`, `community_centrality`, `get_top_terms`, `normalize_communities` e a nova `partition_stats` saíram de `metrics.py` para um módulo compartilhado, porque um filtro não pode importar funções internas de outro. `metrics.py` (Filtro 8) e `analysis.py` (Filtro 9) importam de `shared.scoring`; `metrics.py` reexporta as três originais para compatibilidade. É a única exceção sancionada à regra "sem algoritmos de domínio em `src/shared/`" (são métricas de grafo reusadas por dois filtros).
+3. **`report.txt` vira um Filtro 10 dedicado (`report_text.py`).** Como o Template Method escreve um único artefato por filtro (e proíbe I/O dentro de `process()`), a projeção legível não pode sair do mesmo `process()` do `report.json`. `ReportTextFilter` lê o `report.json` e o formata (`output_format="text"`), sem recomputar nada.
+4. **Filtro 7 passa a injetar a `CommunityDetectionStrategy`.** `community_detection.py` deixou de duplicar BFS/DFS/corte localmente e passou a delegar à `ProgressiveEdgeCuttingStrategy` (default injetável), garantindo que o "método 1" do relatório seja exatamente a baseline do pipeline.
+
+**Sem método escolhido:** o `report.json` entrega a **matriz comparativa dos 5 métodos** (Q, nº de comunidades, tamanhos min/máx, singletons); não há `chosen_method`. Eleger/interpretar um vencedor fica para a Análise de Resultados escrita, não para o pipeline. Duas convenções menores: o **método 4** usa **corte progressivo** na min-MST do subgrafo `c_↔c_` (mesma mecânica do método 1, restrita a comentários); e, como Q é uma métrica **global da partição**, cada bloco de comunidade no `report.txt` repete o **Q global do método** (não uma contribuição por comunidade).
+
+**Por quê:** manter um único filtro de relatório (em vez de comparação + análise separados) evita um artefato intermediário e mantém o lineup num só lugar; a extração para `shared/scoring.py` elimina a tentação de reimplementar Q/centralidade em dois filtros (risco de divergência); e injetar a Strategy no Filtro 7 remove código duplicado e alinha baseline e relatório. A matriz sem vencedor é coerente com a Análise de Resultados (peso 2.0): a comparação é o produto, a interpretação é textual.
 
 ---
 
@@ -172,3 +260,7 @@ Este documento reúne, em um só lugar, as decisões arquiteturais e algorítmic
 | 16/06/2026 | 1.3 | `topic` não circula no pipeline: removido de `preprocessed.json`/grafos, reservado à validação por `id` | Equipe |
 | 22/06/2026 | 1.4 | Grafo final (Filtro 6): peso das arestas hierárquicas `Palavra→Frase` e `Frase→Comentário` definido por pertencimento (`1 / nº de filhos do pai`), estritamente positivo | Equipe |
 | 22/06/2026 | 1.5 | Detecção de comunidades (Filtro 7): arestas hierárquicas excluídas do corte progressivo — somente arestas relacionais (`w_↔w_`, `s_↔s_`, `c_↔c_`) são candidatas | Vinícius Rufino |
+| 22/06/2026 | 1.6 | Relatório final (Filtro 9) em duas partes (`report.json` + página no frontend); comparação de 3 métodos de detecção de comunidades motivada pelo desbalanceamento do corte progressivo | Lucas Antunes |
+| 22/06/2026 | 1.7 | Causa raiz do blob diagnosticada (min-MST + escala minúscula do peso hierárquico); comparativo ampliado de 3 → 5 métodos, com o método 1 preservado como baseline e duas correções (peso recalibrado, max-MST) adicionadas como alternativas | Lucas Antunes |
+| 22/06/2026 | 1.8 | Fórmulas das correções (métodos 2, 3, 5) registradas: recalibração hierárquica, normalização por tipo + λ, árvore geradora máxima por inversão de peso, e ΔQ do greedy modularity | Lucas Antunes |
+| 22/06/2026 | 1.9 | Decomposição da implementação da US14: comparação dos 5 métodos dentro do `analysis.py`, score extraído para `src/shared/scoring.py`, `report.txt` como Filtro 10 (`report_text.py`), Filtro 7 injeta a Strategy; matriz comparativa sem método escolhido; método 4 por corte progressivo; Q global repetido por bloco | Lucas Antunes |

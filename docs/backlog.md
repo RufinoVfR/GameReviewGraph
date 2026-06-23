@@ -186,7 +186,9 @@ O MVP do **GameReviewGraph** corresponde ao pipeline completo e funcional — da
 
 - O relatório lista todas as comunidades detectadas com ID e rótulo de tópico
 - Cada comunidade exibe seus termos centrais, os IDs dos comentários associados e o valor de Q
-- A saída é produzida no terminal e/ou em arquivo de texto conforme definido pelo grupo
+- A saída estruturada é produzida em `report.json` (o `report.txt` legível é uma projeção dele)
+- O `report.json` inclui a comparação de **três métodos** de detecção de comunidades (corte progressivo, subgrafo de comentários, maximização gulosa de Q) com suas métricas de qualidade e balanceamento
+- O frontend possui uma **última página** que renderiza o `report.json`, incluindo a comparação dos métodos lado a lado
 
 ---
 
@@ -195,3 +197,4 @@ O MVP do **GameReviewGraph** corresponde ao pipeline completo e funcional — da
 | Data | Versão | Descrição | Autor |
 |------|--------|-----------|-------|
 | 11/06/2026 | 1.0 | Criação inicial do documento | [Vinícius Rufino](https://github.com/RufinoVfR) |
+| 22/06/2026 | 1.1 | US14 ampliada: `report.json` + página no frontend; comparação de 3 métodos de detecção de comunidades | [Lucas Antunes](https://github.com/LucasGSAntunes) |

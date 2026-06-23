@@ -91,6 +91,8 @@ The final graph is reduced to a Minimum Spanning Tree before cutting — this ke
 
 Why Prim over Kruskal here: the project's graphs are dense and already stored as adjacency matrices, so dense Prim is O(V²) with no extra data structures, versus Kruskal's O(E log E) (≈ O(V² log V) on a dense graph) which would require extracting and sorting all edges plus a Union-Find structure. The `degree(u) > 1 AND degree(v) > 1` guard is kept even though every MST cut splits the tree into exactly two components — it protects leaf nodes (degree 1) from being isolated as singleton communities prematurely.
 
+**Known imbalance — final report compares 3 methods.** On the canonical 200-comment dataset this MST + progressive-cut method is strongly unbalanced: one community absorbs every word and sentence node (a ~700-node blob) while the rest get 0–1 words, and size-1 (single-comment) communities appear — observed comment distribution `[80,47,21,20,16,8,3,3,1,1]`. The cause is structural: words join the MST almost only through (non-cuttable) hierarchical edges, so they never separate from the blob; cutting the weakest relational edges merely peels off 1–3-comment fragments. Rather than silently swapping the algorithm, the **final report (Filter 9) compares three detection methods** and justifies the chosen one by modularity Q and balance: (1) progressive edge cutting on the MST (this method), (2) detection restricted to the comment subgraph (`c_↔c_`), and (3) greedy modularity (Q) maximization. The `CommunityDetectionStrategy` (Strategy pattern) makes these swappable without touching the filter. See `docs/decisions.md` and `planning/us14_final_report.md`.
+
 ### Modularity Q
 
 ```
@@ -178,6 +180,16 @@ After implementing any module, run it via `make` and confirm the output artifact
 ---
 
 ## Expected Output Format
+
+The final report (Filter 9) has **two parts** from a single structured source:
+
+1. **`report.json`** — structured report consumed by tooling and the frontend. Holds,
+   per detection method, each community's topic, central terms, associated comments, and
+   modularity Q, plus the cross-method comparison (community count, size balance, Q).
+2. **Frontend final page** — a dedicated last page renders `report.json` (the 3-method
+   comparison) alongside the existing community/comment/sentence/word navigation.
+
+The human-readable `report.txt` (below) is a projection of the same `report.json`:
 
 ```
 === Comunidade 1 — Tópico: Desempenho ===

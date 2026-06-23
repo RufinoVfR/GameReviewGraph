@@ -8,11 +8,13 @@ Run with ``make run`` (delegates to ``docker compose run --rm app uv run
 python -m src.main``).
 """
 
+from src.analysis import AnalysisFilter
 from src.comment_graph import CommentGraphFilter
 from src.community_detection import CommunityDetectionFilter
 from src.final_graph import FinalGraphFilter
 from src.metrics import MetricsFilter
 from src.preprocessing import PreprocessingFilter
+from src.report_text import ReportTextFilter
 from src.sentence_graph import SentenceGraphFilter
 from src.shared.filter_base import AbstractFilter
 from src.shared.observers import LoggingObserver
@@ -30,6 +32,8 @@ FILTERS: list[AbstractFilter] = [
     FinalGraphFilter(),
     CommunityDetectionFilter(),
     MetricsFilter(),
+    AnalysisFilter(),
+    ReportTextFilter(),
 ]
 
 
