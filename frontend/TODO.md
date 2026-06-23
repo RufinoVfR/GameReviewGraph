@@ -38,3 +38,11 @@
 - [x] Add tests for loader, schema validation, and navigation state.
 - [x] Add a smoke test for the mock-only startup path.
 - [x] Validate the visual shell against the prototype.
+
+## Relatório final (US14)
+
+- [x] Consumir `report.json` no bundle (`build_bundle` → `bundle/report.json`, camelCase).
+- [x] Tipos `ReportData` e loader com fallback mock (`loadReport`/`isUsableReport`).
+- [x] Página de relatório: matriz comparativa dos 5 métodos + comunidades por método.
+- [x] Alternância para a página via botão no header.
+- [x] Testes do loader do relatório (vitest) e do build de bundle (pytest).

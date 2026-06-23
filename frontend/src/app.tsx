@@ -1,15 +1,17 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
-import { loadData } from "./data/loader";
+import { loadData, loadReport } from "./data/loader";
 import type {
   BundleData,
   CommentRecord,
   CommunityRecord,
+  ReportData,
   SentenceRecord,
   ViewLevel,
   ViewNode,
   ViewSnapshot,
   WordRecord,
 } from "./data/schemas";
+import { ReportView } from "./report/report-view";
 import { createCamera, screenToWorld } from "./render/camera";
 import type { CameraState } from "./render/camera";
 import { renderSnapshot } from "./render/renderer";
@@ -147,6 +149,8 @@ export function App() {
   const cameraRef = useRef<CameraState>(createCamera());
   const particlesRef = useRef<Array<{ x: number; y: number }>>([]);
   const [data, setData] = useState<BundleData | null>(null);
+  const [report, setReport] = useState<ReportData | null>(null);
+  const [showReport, setShowReport] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(0);
   const [selectedId, setSelectedId] = useState<string | undefined>();
@@ -185,6 +189,18 @@ export function App() {
         setLoading(false);
       });
 
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+    loadReport().then((loaded) => {
+      if (mounted) {
+        setReport(loaded);
+      }
+    });
     return () => {
       mounted = false;
     };
@@ -665,6 +681,15 @@ export function App() {
         </div>
 
         <button
+          className="reportButton"
+          type="button"
+          title="Relatório final — comparação de métodos"
+          onClick={() => setShowReport(true)}
+        >
+          ▤ Relatório
+        </button>
+
+        <button
           className="iconButton"
           type="button"
           title="Partículas ambiente"
@@ -867,6 +892,8 @@ export function App() {
           </button>
         </div>
       ) : null}
+
+      {showReport && report ? <ReportView report={report} onClose={() => setShowReport(false)} /> : null}
     </div>
   );
 }

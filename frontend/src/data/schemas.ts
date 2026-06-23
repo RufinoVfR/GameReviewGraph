@@ -66,6 +66,47 @@ export interface BundleData {
   textStore: Record<string, string>;
 }
 
+export interface ReportCommunity {
+  id: number;
+  topic: string | null;
+  centralTerms: string[];
+  comments: string[];
+}
+
+export interface ReportMethodStats {
+  nCommunities: number;
+  sizeMin: number;
+  sizeMax: number;
+  singletons: number;
+  nComments: number;
+}
+
+export interface ReportMethod {
+  id: number;
+  label: string;
+  modularityQ: number;
+  stats: ReportMethodStats;
+  communities: ReportCommunity[];
+}
+
+export interface ReportComparisonRow {
+  id: number;
+  label: string;
+  modularityQ: number;
+  nCommunities: number;
+  sizeMin: number;
+  sizeMax: number;
+  singletons: number;
+}
+
+export interface ReportData {
+  source: "mock" | "bundle";
+  k: number;
+  nComments: number;
+  methods: ReportMethod[];
+  comparison: ReportComparisonRow[];
+}
+
 export interface ViewNode {
   id: string;
   label: string;

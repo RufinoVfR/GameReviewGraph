@@ -322,6 +322,66 @@ def _graph_to_neighbors(graph_bundle: dict[str, Any]) -> dict[str, list[dict[str
     return neighbors
 
 
+def _derive_report(report: Any) -> dict[str, Any] | None:
+    """Reshape the pipeline report.json into the frontend's camelCase contract.
+
+    The pipeline emits the final report (Filter 9) in snake_case with raw node
+    keys (``c_3``); the frontend expects camelCase fields and ``comment-3`` ids,
+    matching every other bundle. This adapter performs that translation so the
+    report page can consume it without any per-field remapping.
+
+    Args:
+        report: Parsed report.json payload, or ``None`` when unavailable.
+
+    Returns:
+        The frontend-shaped report dict, or ``None`` when no report exists.
+    """
+    if not report:
+        return None
+
+    def method(item: dict[str, Any]) -> dict[str, Any]:
+        stats = item.get("stats", {})
+        return {
+            "id": item["id"],
+            "label": item["label"],
+            "modularityQ": item["modularity_q"],
+            "stats": {
+                "nCommunities": stats.get("n_communities", 0),
+                "sizeMin": stats.get("size_min", 0),
+                "sizeMax": stats.get("size_max", 0),
+                "singletons": stats.get("singletons", 0),
+                "nComments": stats.get("n_comments", 0),
+            },
+            "communities": [
+                {
+                    "id": community["id"],
+                    "topic": community.get("topic"),
+                    "centralTerms": community.get("central_terms", []),
+                    "comments": [_normalize_node_id(node) for node in community.get("comments", [])],
+                }
+                for community in item.get("communities", [])
+            ],
+        }
+
+    return {
+        "k": report.get("k", 0),
+        "nComments": report.get("n_comments", 0),
+        "methods": [method(item) for item in report.get("methods", [])],
+        "comparison": [
+            {
+                "id": row["id"],
+                "label": row["label"],
+                "modularityQ": row["modularity_q"],
+                "nCommunities": row["n_communities"],
+                "sizeMin": row["size_min"],
+                "sizeMax": row["size_max"],
+                "singletons": row["singletons"],
+            }
+            for row in report.get("comparison", [])
+        ],
+    }
+
+
 def _local_reader(input_dir: Path) -> ArtifactReader:
     """Build an artifact reader backed by a local directory.
 
@@ -390,6 +450,7 @@ def assemble_bundle(read_artifact: ArtifactReader, output_dir: Path) -> None:
     word_graph = read_artifact(S3_KEYS["word_graph"])
     sentence_graph = read_artifact(S3_KEYS["sentence_graph"])
     inverted_index = read_artifact(_INVERTED_INDEX) or {}
+    report = _derive_report(read_artifact(S3_KEYS["report_json"]))
 
     comment_to_sentences, sentence_to_words, sentences, words = _derive_tree_data(tree)
     communities = _derive_communities(raw_communities, comments)
@@ -427,6 +488,8 @@ def assemble_bundle(read_artifact: ArtifactReader, output_dir: Path) -> None:
     )
     _write_json(output / "inverted_index.json", inverted_index)
     _write_json(output / "text_store.json", text_store)
+    if report is not None:
+        _write_json(output / "report.json", report)
 
 
 def parse_args() -> argparse.Namespace:

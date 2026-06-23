@@ -1,4 +1,4 @@
-import type { BundleData } from "./schemas";
+import type { BundleData, ReportData } from "./schemas";
 
 export const mockData: BundleData = {
   source: "mock",
@@ -130,4 +130,49 @@ export const mockData: BundleData = {
     "comment-5": "A interface é clara, mas poderia ser mais rápida.",
     "comment-6": "O menu é bonito, porém alguns fluxos ainda confundem.",
   },
+};
+
+export const mockReport: ReportData = {
+  source: "mock",
+  k: 10,
+  nComments: 6,
+  methods: [
+    {
+      id: 1,
+      label: "Corte progressivo na min-MST (baseline)",
+      modularityQ: 0.08,
+      stats: { nCommunities: 3, sizeMin: 1, sizeMax: 4, singletons: 1, nComments: 6 },
+      communities: [
+        { id: 1, topic: "desempenho", centralTerms: ["fps", "lag"], comments: ["comment-1", "comment-2"] },
+        { id: 2, topic: "narrativa", centralTerms: ["história"], comments: ["comment-3", "comment-4"] },
+        { id: 3, topic: "interface", centralTerms: [], comments: ["comment-5", "comment-6"] },
+      ],
+    },
+    {
+      id: 4,
+      label: "Subgrafo de comentários (c_↔c_)",
+      modularityQ: 0.03,
+      stats: { nCommunities: 3, sizeMin: 2, sizeMax: 2, singletons: 0, nComments: 6 },
+      communities: [
+        { id: 1, topic: "desempenho", centralTerms: [], comments: ["comment-1", "comment-2"] },
+        { id: 2, topic: "narrativa", centralTerms: [], comments: ["comment-3", "comment-4"] },
+        { id: 3, topic: "interface", centralTerms: [], comments: ["comment-5", "comment-6"] },
+      ],
+    },
+    {
+      id: 5,
+      label: "Maximização gulosa da modularidade Q",
+      modularityQ: 0.62,
+      stats: { nCommunities: 2, sizeMin: 1, sizeMax: 6, singletons: 0, nComments: 6 },
+      communities: [
+        { id: 1, topic: "desempenho", centralTerms: ["fps"], comments: ["comment-1", "comment-2", "comment-3", "comment-4", "comment-5", "comment-6"] },
+        { id: 2, topic: null, centralTerms: ["menu"], comments: [] },
+      ],
+    },
+  ],
+  comparison: [
+    { id: 1, label: "Corte progressivo na min-MST (baseline)", modularityQ: 0.08, nCommunities: 3, sizeMin: 1, sizeMax: 4, singletons: 1 },
+    { id: 4, label: "Subgrafo de comentários (c_↔c_)", modularityQ: 0.03, nCommunities: 3, sizeMin: 2, sizeMax: 2, singletons: 0 },
+    { id: 5, label: "Maximização gulosa da modularidade Q", modularityQ: 0.62, nCommunities: 2, sizeMin: 1, sizeMax: 6, singletons: 0 },
+  ],
 };

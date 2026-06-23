@@ -1,5 +1,13 @@
-import { mockData } from "./mock-data";
-import type { BundleData, CommentRecord, CommunityRecord, MetaData, SentenceRecord, WordRecord } from "./schemas";
+import { mockData, mockReport } from "./mock-data";
+import type {
+  BundleData,
+  CommentRecord,
+  CommunityRecord,
+  MetaData,
+  ReportData,
+  SentenceRecord,
+  WordRecord,
+} from "./schemas";
 
 const BUNDLE_BASE = "/bundle";
 
@@ -53,5 +61,18 @@ export async function loadData(): Promise<BundleData> {
     return isUsableBundle(bundle) ? bundle : mockData;
   } catch {
     return mockData;
+  }
+}
+
+export function isUsableReport(report: Omit<ReportData, "source">): boolean {
+  return report.methods.length > 0 && report.comparison.length > 0;
+}
+
+export async function loadReport(): Promise<ReportData> {
+  try {
+    const report = await fetchJson<Omit<ReportData, "source">>("report.json");
+    return isUsableReport(report) ? { source: "bundle", ...report } : mockReport;
+  } catch {
+    return mockReport;
   }
 }
