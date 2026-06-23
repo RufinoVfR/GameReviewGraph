@@ -339,19 +339,22 @@ Não use `Strategy` para outros tipos de variação algorítmica — crie funç�
 
 ## 10. Definition of Done (por módulo)
 
-Um módulo está concluído quando **todos** os critérios abaixo são verdadeiros:
+Antes de abrir um PR, confirme todos os itens abaixo. Um filtro só está pronto quando **todos** estiverem marcados:
 
-- [ ] Executa sem erros via `make <nome-do-filtro>` (dentro de Docker)
-- [ ] `make test` passa sem falhas (todos os `test_placeholder` substituídos por testes reais)
-- [ ] Artefato JSON de saída gravado corretamente no MinIO (verificável em `http://localhost:9001`)
-- [ ] Saída consistente com os exemplos documentados em `docs/arquitetura.md`
-- [ ] Toda função pública tem type hints e docstring
-- [ ] Filtro concreto herda `AbstractFilter` e implementa apenas `process()`
-- [ ] Filtro registrado na `FilterChain` em `src/main.py`
-- [ ] Nenhuma importação direta entre filtros de domínio (somente `src/shared/`, `src/config.py`, `src/types.py`)
-- [ ] Código commitado em branch própria e PR aberto para `main` ou `dev`
-- [ ] PR aprovado por ao menos 1 outro membro da equipe e CI verde
-- [ ] PRs em `src/shared/` aprovados por **todos** os membros da equipe
+- [ ] 01. Herda `AbstractFilter` e implementa apenas `process()`.
+- [ ] 02. Atributos de classe declarados: `name`, `input_key`, `output_key` (e `extra_input_keys` quando necessário).
+- [ ] 03. Grafos: `deserialize_graph` na entrada, `serialize_graph` na saída.
+- [ ] 04. `assert_valid(graph)` chamado no final de `process()`.
+- [ ] 05. Docstrings em todas as funções públicas (linha resumo + `Args:` + `Returns:`).
+- [ ] 06. Type hints em todas as assinaturas.
+- [ ] 07. Nenhum import de outro filtro concreto (somente `src/shared/`, `src/config.py`, `src/types/`).
+- [ ] 08. Nenhuma chamada de S3/Redis dentro de `process()`.
+- [ ] 09. Testes unitários reais escritos (placeholder removido), passando com `make test`.
+- [ ] 10. `make <filtro>` gera o artefato esperado no MinIO (verificável em `http://localhost:9001`).
+- [ ] 11. Filtro registrado em `src/main.py` na posição correta.
+- [ ] 12. Branch criada e PR aberto — nunca commit direto na `main`.
+- [ ] 13. PR aprovado por ao menos 1 outro membro da equipe e CI verde.
+- [ ] 14. PRs em `src/shared/` aprovados por **todos** os membros da equipe.
 
 ---
 
@@ -365,3 +368,4 @@ Um módulo está concluído quando **todos** os critérios abaixo são verdadeir
 | 12/06/2026 | 1.3 | Fixtures de teste (mock_storage, mock_cache, clustered_graph, make_graph); template multi-input com extra_input_keys | Lucas Antunes |
 | 16/06/2026 | 1.4 | Seção Quick Start com a trilha de leitura do zero ao primeiro filtro | Equipe |
 | 16/06/2026 | 1.5 | PLN restrita ao pacote `preprocessing/` (NLTK; spaCy não usado) | Equipe |
+| 22/06/2026 | 1.6 | Definition of Done expandido para 14 itens numerados com `assert_valid`, type hints e regras de import explícitas | [Vinícius Rufino](https://github.com/RufinoVfR) |
