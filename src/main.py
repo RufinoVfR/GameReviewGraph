@@ -11,6 +11,7 @@ python -m src.main``).
 from src.comment_graph import CommentGraphFilter
 from src.community_detection import CommunityDetectionFilter
 from src.final_graph import FinalGraphFilter
+from src.metrics import MetricsFilter
 from src.preprocessing import PreprocessingFilter
 from src.sentence_graph import SentenceGraphFilter
 from src.shared.filter_base import AbstractFilter
@@ -28,6 +29,7 @@ FILTERS: list[AbstractFilter] = [
     CommentGraphFilter(),
     FinalGraphFilter(),
     CommunityDetectionFilter(),
+    MetricsFilter(),
 ]
 
 
