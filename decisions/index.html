@@ -1017,10 +1017,82 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#comparacao-de-3-metodos-de-deteccao-de-comunidades-problema-de-desbalanceamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparação de 3 métodos de detecção de comunidades (problema de desbalanceamento)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#causa-raiz-do-desbalanceamento-min-mst-escala-minuscula-do-peso-hierarquico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Causa raiz do desbalanceamento: min-MST + escala minúscula do peso hierárquico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparacao-de-5-metodos-de-deteccao-baseline-preservado-correcoes-como-alternativas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparação de 5 métodos de detecção: baseline preservado + correções como alternativas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#k-10-comunidades" class="md-nav__link">
     <span class="md-ellipsis">
       
         K = 10 comunidades
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#saida-final-filtro-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Saída final (Filtro 9)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Saída final (Filtro 9)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relatorio-final-em-duas-partes-reportjson-pagina-no-frontend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relatório final em duas partes: report.json + página no frontend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decomposicao-da-implementacao-do-relatorio-final" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decomposição da implementação do relatório final
       
     </span>
   </a>
@@ -1607,10 +1679,82 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#comparacao-de-3-metodos-de-deteccao-de-comunidades-problema-de-desbalanceamento" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparação de 3 métodos de detecção de comunidades (problema de desbalanceamento)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#causa-raiz-do-desbalanceamento-min-mst-escala-minuscula-do-peso-hierarquico" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Causa raiz do desbalanceamento: min-MST + escala minúscula do peso hierárquico
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#comparacao-de-5-metodos-de-deteccao-baseline-preservado-correcoes-como-alternativas" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparação de 5 métodos de detecção: baseline preservado + correções como alternativas
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#k-10-comunidades" class="md-nav__link">
     <span class="md-ellipsis">
       
         K = 10 comunidades
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#saida-final-filtro-9" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Saída final (Filtro 9)
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Saída final (Filtro 9)">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#relatorio-final-em-duas-partes-reportjson-pagina-no-frontend" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Relatório final em duas partes: report.json + página no frontend
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decomposicao-da-implementacao-do-relatorio-final" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Decomposição da implementação do relatório final
       
     </span>
   </a>
@@ -1833,9 +1977,71 @@
 <h3 id="arestas-hierarquicas-excluidas-do-corte-progressivo-apenas-arestas-relacionais-sao-cortaveis">Arestas hierárquicas excluídas do corte progressivo (apenas arestas relacionais são cortáveis)<a class="headerlink" href="#arestas-hierarquicas-excluidas-do-corte-progressivo-apenas-arestas-relacionais-sao-cortaveis" title="Permanent link">&para;</a></h3>
 <p><strong>Decisão:</strong> em <code>community_detection.py</code>, somente arestas <strong>relacionais</strong> — que ligam nós do mesmo nível (<code>w_↔w_</code>, <code>s_↔s_</code>, <code>c_↔c_</code>) e representam similaridade semântica — são candidatas ao corte progressivo. Arestas <strong>hierárquicas</strong> (<code>w_→s_</code>, <code>s_→c_</code>) são sempre puladas no loop de corte, mesmo que satisfaçam a condição de grau &gt; 1 e tenham peso menor que qualquer aresta relacional da MST.</p>
 <p><strong>Por quê:</strong> arestas hierárquicas representam <strong>contenção estrutural</strong> (uma palavra <em>pertence a</em> uma frase, uma frase <em>pertence a</em> um comentário), não similaridade semântica. Cortá-las quebraria os vínculos de pertencimento que ligam os três níveis do grafo: uma palavra poderia acabar em uma comunidade completamente separada da frase e do comentário ao qual pertence estruturalmente, tornando o resultado semanticamente ininterpretável. Como as arestas hierárquicas possuem peso em <code>(0, 1]</code> — tipicamente pequeno (ex.: <code>1/5 = 0.2</code> para uma frase de 5 palavras) — elas aparecem no topo da lista ordenada por peso ascendente e seriam as primeiras a ser cortadas se não fossem explicitamente excluídas. Ao mantê-las intactas na MST, elas funcionam como "esqueleto" de conectividade entre os níveis, garantindo que cada comunidade detectada possa conter nós de todos os três níveis (<code>w_</code>, <code>s_</code>, <code>c_</code>) relacionados tematicamente. A exclusão é implementada como um predicado <code>_is_relational(u, v)</code> em <code>community_detection.py</code> — retorna <code>True</code> quando ambos os nós compartilham o mesmo prefixo de nível — o que mantém a lógica de corte desacoplada da <code>ProgressiveEdgeCuttingStrategy</code> e isolada no filtro.</p>
+<h3 id="comparacao-de-3-metodos-de-deteccao-de-comunidades-problema-de-desbalanceamento">Comparação de 3 métodos de detecção de comunidades (problema de desbalanceamento)<a class="headerlink" href="#comparacao-de-3-metodos-de-deteccao-de-comunidades-problema-de-desbalanceamento" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> o relatório final compara <strong>três</strong> algoritmos de detecção de comunidades sobre o <code>final_graph</code>, em vez de assumir o corte progressivo como única abordagem: (1) corte progressivo na MST (atual), (2) detecção restrita ao <strong>subgrafo de comentários</strong> (<code>c_↔c_</code>), e (3) <strong>maximização gulosa da modularidade Q</strong> (aglomerativo, estilo Louvain). A qualidade de cada partição é medida por modularidade Q e por balanceamento (nº de comunidades, distribuição de tamanhos, nº de comunidades de tamanho 1).</p>
+<p><strong>Por quê:</strong> o método atual (MST mínima + corte ascendente) produz forte desbalanceamento medido no dataset canônico de 200 comentários: uma única comunidade absorve todas as 344 palavras e 279 frases (blob de ~700 nós), enquanto as demais recebem 0–1 palavra, e surgem comunidades de <strong>1 comentário</strong>. Distribuição observada: <code>[80, 47, 21, 20, 16, 8, 3, 3, 1, 1]</code>. A causa é estrutural: as palavras entram na MST quase só por arestas hierárquicas (não-cortáveis — ver decisão anterior), então nunca se separam do blob; o corte das arestas relacionais mais fracas apenas "descasca" fragmentos periféricos de 1–3 comentários. Em vez de trocar cegamente o algoritmo, optou-se por <strong>comparar três abordagens no próprio relatório</strong> e justificar objetivamente a escolhida — coerente com a Análise de Resultados (peso 2.0) e com o padrão Strategy já existente (<code>CommunityDetectionStrategy</code>), que permite trocar/justapor algoritmos sem alterar o filtro. O 3º método (maximização gulosa de Q) foi escolhido por otimizar diretamente a métrica de comparação, em vez de label propagation (resultado menos controlável) ou Girvan–Newman (recálculo de betweenness mais caro). O planejamento detalhado está em <code>planning/us14_final_report.md</code>.</p>
+<h3 id="causa-raiz-do-desbalanceamento-min-mst-escala-minuscula-do-peso-hierarquico">Causa raiz do desbalanceamento: min-MST + escala minúscula do peso hierárquico<a class="headerlink" href="#causa-raiz-do-desbalanceamento-min-mst-escala-minuscula-do-peso-hierarquico" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> registrar que o blob do método 1 tem <strong>duas</strong> causas, não uma. Além da exclusão das arestas hierárquicas do corte (decisão anterior), a combinação <strong>MST de mínimo + escala do peso hierárquico</strong> é determinante: o <code>final_graph</code> é um grafo de similaridade (peso alto = relação forte), mas <code>community_detection.py</code> constrói uma árvore geradora de <strong>mínimo</strong> (<code>minimum_spanning_tree</code>, Prim com <code>weight &lt; min_weight[v]</code>), que seleciona sempre as arestas <strong>mais fracas</strong>. As arestas hierárquicas pesam <code>1/|filhos|</code> (ex.: <code>1/10</code>), a menor escala de peso do grafo.</p>
+<p><strong>Por quê:</strong> encadeando as duas, o min-MST <strong>prefere</strong> as arestas hierárquicas (são as mais baratas), de modo que toda palavra entra na árvore por sua aresta de contenção — quase nunca por uma <code>w_↔w_</code> — e, sendo não-cortável, fica colada ao blob. Ou seja, é a <strong>escala</strong> do peso hierárquico, não apenas sua não-cortabilidade, que impõe a comunidade do nó. Esse diagnóstico é o que abre as duas correções registradas na decisão seguinte (recalibrar a escala; ou usar MST de máximo). Detalhe em <code>planning/questao_arestas_hierarquicas.md</code>.</p>
+<h3 id="comparacao-de-5-metodos-de-deteccao-baseline-preservado-correcoes-como-alternativas">Comparação de 5 métodos de detecção: baseline preservado + correções como alternativas<a class="headerlink" href="#comparacao-de-5-metodos-de-deteccao-baseline-preservado-correcoes-como-alternativas" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> <strong>revisa e amplia</strong> a decisão "Comparação de 3 métodos" acima. Em vez de substituir o método 1, ele é <strong>preservado intocado como baseline</strong> (sua falha é a evidência empírica de que a contenção estrutural não pode <em>impor</em> pertinência), e as correções entram como <strong>métodos adicionais</strong> no comparativo do relatório final. O lineup passa a ter <strong>cinco</strong> métodos, cada um uma <code>CommunityDetectionStrategy</code> plugável:</p>
+<ol>
+<li><strong>Corte progressivo na min-MST, hierárquicas não-cortáveis</strong> (atual, intocado) — o problema (blob, <code>size=1</code>).</li>
+<li><strong>Min-MST com peso hierárquico recalibrado</strong> (escala alta) — o peso passa a <em>influenciar</em> em vez de impor: num min-MST, a palavra entra pela aresta <code>w_↔w_</code> mais forte, não pela contenção. Mantém as hierárquicas não-cortáveis.</li>
+<li><strong>Max-MST + pesos normalizados por tipo + arestas cortáveis</strong> — backbone formado pelas similaridades mais fortes; o corte progressivo remove as arestas fracas. Correção principista.</li>
+<li><strong>Detecção no subgrafo de comentários</strong> (<code>c_↔c_</code>) — particiona só comentários, ignorando o blob de palavras.</li>
+<li><strong>Maximização gulosa da modularidade Q</strong> — aglomerativo estilo Louvain.</li>
+</ol>
+<p><strong>Por quê:</strong> a posição levantada na revisão do método 1 é que as arestas hierárquicas deveriam <em>influenciar</em>, não <em>impor</em>, a pertinência (ver decisão de causa raiz acima). Em vez de escolher silenciosamente uma correção, o time optou por <strong>transformar o achado em narrativa</strong>: o relatório mostra a causa (método 1), o fix mínimo (método 2, dentro do envelope min-MST), o fix principista (método 3, max-MST), e dois métodos ortogonais (4 e 5), todos medidos por modularidade Q e balanceamento. Isso aproveita o resultado "ruim" do método 1 como parte avaliável da Análise de Resultados (peso 2.0), em vez de descartá-lo. A decisão "Arestas hierárquicas excluídas do corte progressivo" <strong>não é revertida</strong> — passa a descrever especificamente o método 1; os métodos 2–3 redefinem a escala/direção do peso apenas dentro de suas próprias estratégias, sobre a cópia do grafo que recebem, sem reescrever o Filtro 6. A calibração concreta (<code>λ</code>, normalização por tipo) fica para a implementação. Planejamento em <code>planning/us14_final_report.md</code> e <code>planning/questao_arestas_hierarquicas.md</code>.</p>
+<p><strong>Fórmulas das correções (esboçadas em <code>src/shared/strategies.py</code>):</strong> todas operam sobre uma <strong>cópia</strong> do grafo final; nenhuma altera o Filtro 6. As constantes <code>factor</code> e <code>λ</code> são provisórias (a calibrar com Q).</p>
+<ul>
+<li><strong>Método 2 — recalibração do peso hierárquico.</strong> Cada aresta hierárquica recebe um peso uniforme acima da escala relacional, de modo que a min-MST deixe de preferi-las:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>peso&#39;(e) = factor × max{ peso(r) : r é aresta relacional },   para toda aresta hierárquica e
+peso&#39;(r) = peso(r),                                            para toda aresta relacional r
+factor ≥ 1   (provisório: 2.0)
+</code></pre></div>
+<p>As arestas relacionais mantêm o peso original; a min-MST passa a conectar a palavra pela <code>w_↔w_</code> mais forte, e o corte segue cortando <strong>só</strong> as relacionais (hierárquicas continuam não-cortáveis).</p>
+<ul>
+<li><strong>Método 3 — normalização por tipo + árvore geradora máxima.</strong> Primeiro normaliza cada aresta para <code>(0, 1]</code> dentro do próprio tipo (os três níveis relacionais e o tipo hierárquico têm escalas muito distintas), amortecendo a influência hierárquica por <code>λ</code>:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>peso&#39;(r) = peso(r) / max_L,            r relacional de nível L ∈ {w_, s_, c_};  max_L = maior peso daquele nível
+peso&#39;(e) = λ × ( peso(e) / max_hier ), e hierárquica;  max_hier = maior peso hierárquico
+λ ∈ (0, 1]   (provisório: 0.5)
+</code></pre></div>
+<p>Depois constrói a <strong>árvore geradora máxima</strong> reutilizando a <code>minimum_spanning_tree</code> (Prim) já implementada do zero, via inversão de peso — roda a MST mínima sobre <code>peso''</code> e restaura <code>peso'</code> nas arestas sobreviventes:</p>
+<div class="highlight"><pre><span></span><code>shift  = max{ peso&#39;(e) } + 1                 (o &quot;+1&quot; mantém tudo &gt; 0, longe do sentinela 0.0)
+peso&#39;&#39;(e) = shift − peso&#39;(e)                  (a aresta mais forte vira a mais leve)
+MaxST(G) = MinST(G com peso&#39;&#39;)               (arestas restauradas para peso&#39;)
+</code></pre></div>
+<p>O corte progressivo então remove as arestas mais fracas (ascendente) com <strong>todas</strong> as arestas cortáveis, mantendo o guard <code>grau &gt; 1</code> em ambos os lados.</p>
+<ul>
+<li><strong>Método 5 — maximização gulosa de modularidade (estilo CNM).</strong> Cada nó começa em sua própria comunidade; a cada passo funde-se o par de comunidades com maior ganho de modularidade positivo:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>ΔQ(a, b) = 2 × [ W_ab / 2m − (D_a × D_b) / (2m)² ]
+W_ab = soma dos pesos das arestas entre as comunidades a e b
+D_i  = grau ponderado somado dos nós da comunidade i
+2m   = soma dos graus ponderados de todos os nós
+</code></pre></div>
+<p>Para ao atingir <code>K</code> comunidades <strong>ou</strong> quando nenhum merge tem <code>ΔQ &gt; 0</code> (pico de modularidade) — o que vier primeiro; o número natural de comunidades no pico é, ele próprio, um dado de comparação.</p>
 <h3 id="k-10-comunidades">K = 10 comunidades<a class="headerlink" href="#k-10-comunidades" title="Permanent link">&para;</a></h3>
 <p><strong>Decisão:</strong> <code>K=10</code> é uma constante global em <code>src/config.py</code>, não hardcoded nos filtros.</p>
 <p><strong>Por quê:</strong> corresponde exatamente ao número de tópicos do dataset (desempenho, narrativa, multiplayer, etc.) — o objetivo é que a detecção de comunidades recupere esses 10 tópicos a partir da estrutura do grafo, sem que o algoritmo "veja" os rótulos de tópico originais. Mantê-lo como constante (em vez de espalhado pelo código) facilita ajustar o experimento sem alterar lógica de filtro.</p>
+<hr />
+<h2 id="saida-final-filtro-9">Saída final (Filtro 9)<a class="headerlink" href="#saida-final-filtro-9" title="Permanent link">&para;</a></h2>
+<h3 id="relatorio-final-em-duas-partes-reportjson-pagina-no-frontend">Relatório final em duas partes: <code>report.json</code> + página no frontend<a class="headerlink" href="#relatorio-final-em-duas-partes-reportjson-pagina-no-frontend" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão:</strong> o Filtro 9 (<code>analysis.py</code>) gera um <strong><code>report.json</code> estruturado</strong> (além do <code>report.txt</code> legível da seção 14 do planejamento), e o frontend ganha uma <strong>última página dedicada</strong> que renderiza esse JSON — incluindo a comparação dos três métodos de detecção. O <code>report.txt</code> passa a ser uma <strong>projeção</strong> do mesmo <code>report.json</code>.</p>
+<p><strong>Por quê:</strong> a entrega tem dois consumidores distintos: o avaliador acadêmico (texto formatado, seção 14) e a visualização interativa do frontend (que já consome bundles JSON do MinIO via <code>scripts/build_bundle.py</code>). Um <code>report.json</code> estruturado serve ambos sem duplicar lógica de formatação — o texto vira uma projeção do JSON, não um segundo formato mantido à mão. Renderizar no frontend, na mesma navegação que já mostra comunidades/comentários/frases/palavras, fecha o ciclo: o usuário vê tópicos detectados, termos centrais, Q e a comparação dos métodos lado a lado, em vez de só um arquivo <code>.txt</code>. Implica adicionar uma chave <code>report.json</code> ao <code>S3_KEYS</code> e estender o <code>build_bundle.py</code> + o loader do frontend para carregar o relatório. Detalhes e passos em <code>planning/us14_final_report.md</code>.</p>
+<h3 id="decomposicao-da-implementacao-do-relatorio-final">Decomposição da implementação do relatório final<a class="headerlink" href="#decomposicao-da-implementacao-do-relatorio-final" title="Permanent link">&para;</a></h3>
+<p><strong>Decisão (22/06/2026):</strong> ao implementar a US14, fixaram-se quatro escolhas estruturais:</p>
+<ol>
+<li><strong>Comparação dentro do <code>analysis.py</code>, sem filtro de comparação separado.</strong> O Filtro 9 itera o registro <code>DETECTION_METHODS</code> (<code>src/shared/strategies.py</code> — fonte única do lineup), roda as 5 estratégias sobre o <code>final_graph</code> e calcula Q/centralidade/estatísticas por método. Sua entrada é <code>final_graph.json</code> + <code>comments.json</code> (rótulos-ouro) — <strong>não</strong> o <code>metrics.json</code>; o método 1 é recalculado de forma uniforme com os demais, em vez de reusar o <code>communities.json</code> do Filtro 7.</li>
+<li><strong>Funções de score extraídas para <code>src/shared/scoring.py</code>.</strong> <code>weighted_degree_centrality</code>, <code>calculate_modularity</code>, <code>community_centrality</code>, <code>get_top_terms</code>, <code>normalize_communities</code> e a nova <code>partition_stats</code> saíram de <code>metrics.py</code> para um módulo compartilhado, porque um filtro não pode importar funções internas de outro. <code>metrics.py</code> (Filtro 8) e <code>analysis.py</code> (Filtro 9) importam de <code>shared.scoring</code>; <code>metrics.py</code> reexporta as três originais para compatibilidade. É a única exceção sancionada à regra "sem algoritmos de domínio em <code>src/shared/</code>" (são métricas de grafo reusadas por dois filtros).</li>
+<li><strong><code>report.txt</code> vira um Filtro 10 dedicado (<code>report_text.py</code>).</strong> Como o Template Method escreve um único artefato por filtro (e proíbe I/O dentro de <code>process()</code>), a projeção legível não pode sair do mesmo <code>process()</code> do <code>report.json</code>. <code>ReportTextFilter</code> lê o <code>report.json</code> e o formata (<code>output_format="text"</code>), sem recomputar nada.</li>
+<li><strong>Filtro 7 passa a injetar a <code>CommunityDetectionStrategy</code>.</strong> <code>community_detection.py</code> deixou de duplicar BFS/DFS/corte localmente e passou a delegar à <code>ProgressiveEdgeCuttingStrategy</code> (default injetável), garantindo que o "método 1" do relatório seja exatamente a baseline do pipeline.</li>
+</ol>
+<p><strong>Sem método escolhido:</strong> o <code>report.json</code> entrega a <strong>matriz comparativa dos 5 métodos</strong> (Q, nº de comunidades, tamanhos min/máx, singletons); não há <code>chosen_method</code>. Eleger/interpretar um vencedor fica para a Análise de Resultados escrita, não para o pipeline. Duas convenções menores: o <strong>método 4</strong> usa <strong>corte progressivo</strong> na min-MST do subgrafo <code>c_↔c_</code> (mesma mecânica do método 1, restrita a comentários); e, como Q é uma métrica <strong>global da partição</strong>, cada bloco de comunidade no <code>report.txt</code> repete o <strong>Q global do método</strong> (não uma contribuição por comunidade).</p>
+<p><strong>Por quê:</strong> manter um único filtro de relatório (em vez de comparação + análise separados) evita um artefato intermediário e mantém o lineup num só lugar; a extração para <code>shared/scoring.py</code> elimina a tentação de reimplementar Q/centralidade em dois filtros (risco de divergência); e injetar a Strategy no Filtro 7 remove código duplicado e alinha baseline e relatório. A matriz sem vencedor é coerente com a Análise de Resultados (peso 2.0): a comparação é o produto, a interpretação é textual.</p>
 <hr />
 <h2 id="pre-processamento-filtro-1">Pré-processamento (Filtro 1)<a class="headerlink" href="#pre-processamento-filtro-1" title="Permanent link">&para;</a></h2>
 <h3 id="normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie">Normalização A1': radical como chave de agrupamento, emitindo a forma de superfície<a class="headerlink" href="#normalizacao-a1-radical-como-chave-de-agrupamento-emitindo-a-forma-de-superficie" title="Permanent link">&para;</a></h3>
@@ -1914,6 +2120,30 @@
 <td>1.5</td>
 <td>Detecção de comunidades (Filtro 7): arestas hierárquicas excluídas do corte progressivo — somente arestas relacionais (<code>w_↔w_</code>, <code>s_↔s_</code>, <code>c_↔c_</code>) são candidatas</td>
 <td>Vinícius Rufino</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.6</td>
+<td>Relatório final (Filtro 9) em duas partes (<code>report.json</code> + página no frontend); comparação de 3 métodos de detecção de comunidades motivada pelo desbalanceamento do corte progressivo</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.7</td>
+<td>Causa raiz do blob diagnosticada (min-MST + escala minúscula do peso hierárquico); comparativo ampliado de 3 → 5 métodos, com o método 1 preservado como baseline e duas correções (peso recalibrado, max-MST) adicionadas como alternativas</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.8</td>
+<td>Fórmulas das correções (métodos 2, 3, 5) registradas: recalibração hierárquica, normalização por tipo + λ, árvore geradora máxima por inversão de peso, e ΔQ do greedy modularity</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.9</td>
+<td>Decomposição da implementação da US14: comparação dos 5 métodos dentro do <code>analysis.py</code>, score extraído para <code>src/shared/scoring.py</code>, <code>report.txt</code> como Filtro 10 (<code>report_text.py</code>), Filtro 7 injeta a Strategy; matriz comparativa sem método escolhido; método 4 por corte progressivo; Q global repetido por bloco</td>
+<td>Lucas Antunes</td>
 </tr>
 </tbody>
 </table>

@@ -1289,6 +1289,9 @@
     subgraph F9["Filtro 9"]
         AN["analysis.py"]
     end
+    subgraph F10["Filtro 10"]
+        RT["report_text.py"]
+    end
 
     PRE["pipeline/preprocessed.json"]
     TREE["pipeline/tree.json"]
@@ -1298,7 +1301,8 @@
     FGJ["pipeline/final_graph.json"]
     COM["pipeline/communities.json"]
     MET["pipeline/metrics.json"]
-    REP["pipeline/report.txt"]
+    REP["pipeline/report.json"]
+    RPT["pipeline/report.txt"]
 
     RAW --&gt; F1 --&gt; PRE --&gt; F2 --&gt; TREE
     TREE --&gt; F3 --&gt; WGJ
@@ -1313,7 +1317,9 @@
     FGJ --&gt; F7 --&gt; COM
     FGJ --&gt; F8
     COM --&gt; F8 --&gt; MET
-    MET --&gt; F9 --&gt; REP</code></pre>
+    FGJ --&gt; F9
+    RAW --&gt; F9 --&gt; REP
+    REP --&gt; F10 --&gt; RPT</code></pre>
 <blockquote>
 <p>Todos os artefatos intermediários residem no bucket <code>game-review-graph</code> do MinIO sob o prefixo <code>pipeline/</code>. O Redis mantém os resultados em cache com a chave <code>filter:&lt;nome&gt;</code> — em um cache hit, <code>AbstractFilter.execute()</code> pula <code>process()</code> e regrava o artefato no S3 sem reprocessar.</p>
 </blockquote>
@@ -1382,16 +1388,23 @@
 <tr>
 <td>8</td>
 <td><code>metrics.py</code></td>
-<td><code>final_graph.json</code> + <code>communities.json</code></td>
+<td><code>communities.json</code> + <code>final_graph.json</code></td>
 <td><code>metrics.json</code></td>
 <td>Centralidade de grau ponderada + Modularidade Q</td>
 </tr>
 <tr>
 <td>9</td>
 <td><code>analysis.py</code></td>
-<td><code>metrics.json</code></td>
+<td><code>final_graph.json</code> + <code>comments.json</code></td>
+<td><code>report.json</code></td>
+<td>Relatório final estruturado: roda as 5 estratégias de detecção e, por método, monta tópicos, termos centrais, comentários, Q e estatísticas de balanceamento — entregando a <strong>matriz comparativa dos 5 métodos</strong> (sem eleger vencedor). Consumido também pela última página do frontend</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>report_text.py</code></td>
+<td><code>report.json</code></td>
 <td><code>report.txt</code></td>
-<td>Geração do relatório final com tópicos e métricas</td>
+<td>Projeção legível do <code>report.json</code> no formato de seções (não recomputa nada; repete o Q global do método em cada bloco de comunidade)</td>
 </tr>
 </tbody>
 </table>
@@ -1444,13 +1457,18 @@
 </tr>
 <tr>
 <td><code>metrics.py</code></td>
-<td><code>Graph</code> + <code>Communities</code></td>
+<td><code>Communities</code> + <code>Graph</code></td>
 <td><code>Metrics</code></td>
 </tr>
 <tr>
 <td><code>analysis.py</code></td>
-<td><code>Metrics</code></td>
-<td><code>str</code> (relatório)</td>
+<td><code>Graph</code> + <code>list[RawComment]</code></td>
+<td><code>Report</code> (<code>dict</code>, <code>report.json</code>)</td>
+</tr>
+<tr>
+<td><code>report_text.py</code></td>
+<td><code>Report</code> (<code>dict</code>)</td>
+<td><code>str</code> (<code>report.txt</code>)</td>
 </tr>
 </tbody>
 </table>
@@ -1477,7 +1495,8 @@
     ├── final_graph.json        # saída do Filtro 6
     ├── communities.json        # saída do Filtro 7
     ├── metrics.json            # saída do Filtro 8
-    └── report.txt              # saída do Filtro 9 (legível por humanos)
+    ├── report.json             # saída do Filtro 9 (estruturada; consumida pelo frontend)
+    └── report.txt              # projeção legível do report.json
 </code></pre></div>
 <p><strong>Cache Redis:</strong> cada filtro armazena seu resultado serializado com pickle sob a chave <code>filter:&lt;nome&gt;</code> (ex.: <code>filter:word_graph</code>). <code>make clean</code> apaga todas as chaves <code>filter:*</code> e os artefatos S3 (exceto <code>comments.json</code>).</p>
 <hr />
@@ -1596,6 +1615,18 @@
 <td>2.5</td>
 <td>Remoção do diagrama ASCII redundante; diagrama Mermaid existente já cobre o pipeline completo</td>
 <td><a href="https://github.com/RufinoVfR">Vinícius Rufino</a></td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>2.6</td>
+<td>Filtro 9 gera <code>report.json</code> estruturado (+ <code>report.txt</code> como projeção) com comparação de 3 métodos de detecção; saída renderizada na última página do frontend</td>
+<td>Lucas Antunes</td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>2.7</td>
+<td>Filtro 9 (<code>analysis.py</code>) roda as <strong>5</strong> estratégias e entrega a matriz comparativa (sem vencedor); entrada passa a ser <code>final_graph.json</code> + <code>comments.json</code>. Filtro 10 (<code>report_text.py</code>) projeta o <code>report.txt</code>. Funções de score extraídas para <code>src/shared/scoring.py</code>; Filtro 7 passa a injetar a <code>CommunityDetectionStrategy</code></td>
+<td>Lucas Antunes</td>
 </tr>
 </tbody>
 </table>

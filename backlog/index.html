@@ -1812,7 +1812,9 @@
 <ul>
 <li>O relatório lista todas as comunidades detectadas com ID e rótulo de tópico</li>
 <li>Cada comunidade exibe seus termos centrais, os IDs dos comentários associados e o valor de Q</li>
-<li>A saída é produzida no terminal e/ou em arquivo de texto conforme definido pelo grupo</li>
+<li>A saída estruturada é produzida em <code>report.json</code> (o <code>report.txt</code> legível é uma projeção dele)</li>
+<li>O <code>report.json</code> inclui a comparação de <strong>três métodos</strong> de detecção de comunidades (corte progressivo, subgrafo de comentários, maximização gulosa de Q) com suas métricas de qualidade e balanceamento</li>
+<li>O frontend possui uma <strong>última página</strong> que renderiza o <code>report.json</code>, incluindo a comparação dos métodos lado a lado</li>
 </ul>
 <hr />
 <h2 id="historico-de-revisao">Histórico de Revisão<a class="headerlink" href="#historico-de-revisao" title="Permanent link">&para;</a></h2>
@@ -1831,6 +1833,12 @@
 <td>1.0</td>
 <td>Criação inicial do documento</td>
 <td><a href="https://github.com/RufinoVfR">Vinícius Rufino</a></td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.1</td>
+<td>US14 ampliada: <code>report.json</code> + página no frontend; comparação de 3 métodos de detecção de comunidades</td>
+<td><a href="https://github.com/LucasGSAntunes">Lucas Antunes</a></td>
 </tr>
 </tbody>
 </table>

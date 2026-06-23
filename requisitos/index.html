@@ -1327,7 +1327,7 @@
 <p><strong>RF07 — Detectar comunidades por corte progressivo de arestas:</strong> O sistema deve implementar um algoritmo que ordena todas as arestas do grafo final em ordem crescente de peso e as remove iterativamente — respeitando a restrição de grau mínimo maior que 1 para ambos os vértices —, executando BFS ou DFS após cada remoção para contar os componentes conexos, até atingir K = 10 comunidades ou esgotar as arestas removíveis.</p>
 <p><strong>RF08 — Calcular centralidade de grau ponderada:</strong> O sistema deve calcular, para cada vértice, a soma dos pesos de todas as suas arestas, identificando os termos mais representativos dentro de cada comunidade detectada.</p>
 <p><strong>RF09 — Calcular modularidade Q:</strong> O sistema deve calcular a métrica de modularidade Q ao final do processo de corte, avaliando objetivamente a qualidade dos agrupamentos obtidos com base na fórmula <code>Q = (1/2m) × Σ [Aij − (ki × kj / 2m)] × δ(ci, cj)</code>.</p>
-<p><strong>RF10 — Gerar relatório de análise:</strong> O sistema deve produzir uma saída estruturada listando cada comunidade detectada com seus termos centrais, comentários associados e o valor de modularidade Q, no formato definido no planejamento do projeto.</p>
+<p><strong>RF10 — Gerar relatório de análise:</strong> O sistema deve produzir uma saída estruturada (<code>report.json</code>) listando cada comunidade detectada com seus termos centrais, comentários associados e o valor de modularidade Q, incluindo a comparação de três métodos de detecção de comunidades. O <code>report.json</code> é renderizado na última página do frontend; o <code>report.txt</code> legível (formato do planejamento) é uma projeção dele.</p>
 <hr />
 <h2 id="2-requisitos-nao-funcionais">2. Requisitos Não Funcionais<a class="headerlink" href="#2-requisitos-nao-funcionais" title="Permanent link">&para;</a></h2>
 <p>Os requisitos não funcionais definem restrições técnicas e de qualidade que o sistema deve satisfazer, derivadas das exigências da disciplina e das decisões arquiteturais do grupo.</p>
@@ -1358,6 +1358,12 @@
 <td>1.0</td>
 <td>Criação inicial do documento</td>
 <td><a href="https://github.com/RufinoVfR">Vinícius Rufino</a></td>
+</tr>
+<tr>
+<td>22/06/2026</td>
+<td>1.1</td>
+<td>RF10 ampliado: <code>report.json</code> estruturado + comparação de 3 métodos de detecção + renderização no frontend</td>
+<td><a href="https://github.com/LucasGSAntunes">Lucas Antunes</a></td>
 </tr>
 </tbody>
 </table>
